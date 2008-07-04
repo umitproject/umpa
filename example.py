@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2008 Adriano Monteiro Marques.
+#
+# Author: Bartosz SKOWRON <getxsick at gmail dot com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+# This an example of how to use UMPA
+
+import umpa
+from umpa.protocols import IP, TCP
+
+# create new IP object
+ip1 = IP()
+# setting some fields
+ip1.src_addr = "127.0.0.1"
+ip1.dst_addr = "156.17.17.157"
+
+# the same for TCP
+tcp1 = TCP()
+tcp1.src_port = 6544
+tcp1.dst_port = 9494
+
+# also, SYN flag will be set up
+tcp1.set_flags(syn=True)
+
+# create a new packet
+packet = umpa.Packet()
+# packing those protocols into our packet
+packet.include(ip1, tcp1)
+
+# XXX: other solutions would be
+# ip1.include(tcp1)
+# packet = umpa.Packet(ip1)
+
+# creating new socket connection
+sock = umpa.Socket()
+
+# sending packet
+sock.send(packet)
