@@ -20,3 +20,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from my_exceptions import UMPAException
+
+def _pairwise(iterable):
+    itnext = iter(iterable).next
+    while True:
+        yield itnext(), itnext()
+
+def dict_from_sequence(seq):
+    '''Returns a dictionary based on a sequence.'''
+    return dict(_pairwise(seq))

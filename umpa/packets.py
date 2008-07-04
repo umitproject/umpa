@@ -24,10 +24,6 @@ class Packet:
     An instance of the class should contains protocols which
     you want to send.'''
 
-    def _add_new_protocols(*protos):
-        for p in protos:
-            self.protos.append(p)
-
     def __init__(self, *protos):
         '''You can include some protocols objects in construtor
         or use include() method later.
@@ -35,10 +31,6 @@ class Packet:
         self.protos = []
         self._add_new_protocols(protos)
 
-    def include(self, *protos):
-        '''You can add protocols into your packet.
-        '''
-        self._add_new_protocols(protos)
     def __str__(self):
         '''Prints in human-readable style a content of the packet.'''
         print "Not implemented yet."
@@ -47,3 +39,12 @@ class Packet:
         '''Prints all included protocols into the packet.'''
         for p in self.protos:
             print p
+
+    def include(self, *protos):
+        '''You can add protocols into your packet.
+        '''
+        self._add_new_protocols(protos)
+
+    def _add_new_protocols(*protos):
+        for p in protos:
+            self.protos.append(p)

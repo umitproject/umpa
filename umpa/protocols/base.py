@@ -19,8 +19,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import utils
+
 class Protocol:
-    pass
+    def set_fields(self, *args, **kwargs):
+        '''You can use this method to set fields of the protocol.
+        There are 2 ways to do that with using tuple or dict-style.
+        '''
+
+        # converting args list to the dict and update our kwargs
+        kwargs.update(utils.dict_from_sequence(args))
+
+        for key in kwargs:
+            self.fields[key].set(kwargs[key])
 
 class Layer4(Protocol):
     pass
