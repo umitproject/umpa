@@ -41,7 +41,8 @@ class Packet:
         self._add_new_protocols(protos)
     def __str__(self):
         '''Prints in human-readable style a content of the packet.'''
-        pass
+        print "Not implemented yet."
+
     def print_protocols(self):
         '''Prints all included protocols into the packet.'''
         for p in self.protos:
