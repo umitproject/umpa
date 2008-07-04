@@ -23,7 +23,7 @@ import sys
 from socket import *
 
 import utils
-
+from utils import UMPAException
 
 class Socket:
     '''To send built packets your need to create a socket.
@@ -35,12 +35,15 @@ class Socket:
         '''This is a default constructor for Socket's class.
         Just use it in any doubts.
         '''
-        # XXX: if non-root EUID, then Python will exit the application
-        # and report the error
-        # TODO: try/except section + trying to switch EUID into root and recall socket()
-        self._sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)
-        # dropping root-priviliges
-        utils.drop_priviliges()    
+        # XXX: if non-root EUID, then exception is raised
+        # TODO: before raising UMPAException, we can try
+        # to switch EUID into root and recall socket()
+        try:
+            self._sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)
+            # dropping root-priviliges
+            utils.security.drop_priviliges()
+        except error, msg:
+            raise UMPAException(msg)
         # to build own headers of IP
         self._sock.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
 
