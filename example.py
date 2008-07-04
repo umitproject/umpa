@@ -37,14 +37,10 @@ tcp1.dst_port = 9494
 # also, SYN flag will be set up
 tcp1.set_flags(syn=True)
 
-# create a new packet
+# create a new packet and include one protocol (ip1)
 packet = umpa.Packet(ip1)
-# packing those protocols into our packet
+# packing another protocol into our packet
 packet.include(tcp1)
-
-# XXX: other solutions would be
-# ip1.include(tcp1)
-# packet = umpa.Packet(ip1)
 
 # creating new socket connection
 sock = umpa.Socket()

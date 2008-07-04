@@ -35,17 +35,29 @@ class Socket:
         '''This is a default constructor for Socket's class.
         Just use it in any doubts.
         '''
-        #try:
+        # XXX: if non-root EUID, then Python will exit the application
+        # and report the error
+        # TODO: try/except section + trying to switch EUID into root and recall socket()
         self._sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)
-        utils.leave_priviliges()    # dropping root-priviliges
-        #except error, msg:
-        #    sys.stderr.write('Error while opening new socket:\n')
-        #    sys.stderr.write(str(msg) + '\n')
-        #    sys.stderr.write('Leaving...')
-        #    sys.exit(1)
+        # dropping root-priviliges
+        utils.drop_priviliges()    
+        # to build own headers of IP
+        self._sock.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
 
     def send(self, *packets):
         '''Sending your packets'''
 
         for packet in packets:
-            self._sock.send(packet.get_raw())
+            # XXX: this connects to a remote socket, so destination address has to be known.
+            # the better solution would be to use ARP (the lowest software layer from OSI).
+            # it will be implemented when ARP protocol will be implemented ;)
+            # so now we have to parse the packet for destination address
+            dst_addr = self._get_address(packet)
+            self._sock.sendto(packet.get_raw(), (dst_addr,0) )
+
+    def _get_address(self, packet):
+        '''Because of ARP issue (described in send() method,
+        we have to parse packets for destination addresses.
+        '''
+        print "Not implemented yet."
+        return False

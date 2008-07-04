@@ -22,7 +22,7 @@
 import os
 import pwd
 
-def leave_priviliges():
+def drop_priviliges():
     '''Some functions require root-privilegies and after we done them,
     we don't really need this privilegies. So, we can simple leave them.
     It makes the application more safier.
