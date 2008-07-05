@@ -21,17 +21,39 @@
 
 import utils
 
+#class Field:
+#    def set(self, val):
+#        if self.is_valid(val):
+#            self.val = val
+#
+#    def is_valid(self, val):
+#        return True
+
 class Protocol:
+    _valid_fields = []
+
     def set_fields(self, *args, **kwargs):
-        '''You can use this method to set fields of the protocol.
+        '''Set fields of the protocol.
         There are 2 ways to do that with using tuple or dict-style.
         '''
-
         # converting args list to the dict and update our kwargs
         kwargs.update(utils.dict_from_sequence(args))
 
         for key in kwargs:
             self.fields[key].set(kwargs[key])
+
+    def get_raw(self):
+        '''Return raw bit of the protocol's object'''
+        print "Not implemented yet."
+        return False
+
+    def set_flags(self, val):
+        pass
+
+    def get_flags(self):
+        return self._Flags
+
+    flags = property(get_flags, set_flags)
 
 class Layer4(Protocol):
     pass

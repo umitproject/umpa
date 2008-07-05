@@ -32,19 +32,24 @@ class Packet:
         self._add_new_protocols(protos)
 
     def __str__(self):
-        '''Prints in human-readable style a content of the packet.'''
+        '''Print in human-readable style a content of the packet.'''
         print "Not implemented yet."
 
     def print_protocols(self):
-        '''Prints all included protocols into the packet.'''
+        '''Print all included protocols into the packet.'''
         for p in self.protos:
             print p
 
     def include(self, *protos):
-        '''You can add protocols into your packet.
+        '''Add protocols into packet.
         '''
         self._add_new_protocols(protos)
 
-    def _add_new_protocols(*protos):
+    def _add_new_protocols(self, *protos):
         for p in protos:
             self.protos.append(p)
+
+    def get_raw(self):
+        '''Return raw packet, in bit-mode (big-endian).'''
+        # TODO: calling method to pack it for each protocols
+        print "Not implemented yet."
