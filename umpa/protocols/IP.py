@@ -20,63 +20,106 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import base
+from utils.my_exceptions import UMPAAttributeException
+
+class HVersion(base.Field):
+    def fillout(self):
+        pass
+
+class HIHL(base.Field):
+    def fillout(self):
+        pass
+
+class HTypeOfService(base.Field):
+    def fillout(self):
+        pass
+
+class HTotalLength(base.Field):
+    def fillout(self):
+        pass
+
+class HIdentification(base.Field):
+    def fillout(self):
+        pass
+
+class HFlags(base.Field):
+    def fillout(self):
+        pass
+
+class HFragmentOffset(base.Field):
+    def fillout(self):
+        pass
+
+class HTimeToLive(base.Field):
+    def fillout(self):
+        pass
+
+class HProtocol(base.Field):
+    def fillout(self):
+        pass
+
+class HHeaderChecksum(base.Field):
+    def fillout(self):
+        pass
+
+class HSourceAddress(base.Field):
+    def fillout(self):
+        pass
+
+class HDestinationAddress(base.Field):
+    def fillout(self):
+        pass
+
+class HOptions(base.Field):
+    def fillout(self):
+        pass
+
+class HPadding(base.Field):
+    def fillout(self):
+        pass
+
+# main IP class
 
 class IP(base.Protocol):
+    valid_fields = ['_version', '_ihl', 'type_of_service', '_total_length',
+                    'identification', 'flags', '_fragment_offset', 'time_to_live',
+                    'protocol', '_header_checksum', 'source_address',
+                    'destination_address', 'options', '_padding',]
+
     def __init__(self, **kw):
+        base.Protocol.__init__(kw)
+
         # attributes listed below shouldn't be modifed by user
         # they will be generated automatically
-        self._version = None
-        self._ihl = None
-        self._total_length = None
-        self._fragment_offset = None
-        self._header_checksum = None
-        self._padding = None
+        self._fields = [ HVersion(4, True), HIHL(4, True),
+                        HTypeOfService(8), HTotalLength(16, True),
+                        HIdentification(16, True), HFlags(3, True),
+                        HFragmentOffset(13, True), HTimeToLive(8),
+                        HProtocol(8, True), HHeaderChecksum(16, True),
+                        HSourceAddress(16), HDestinationAddress(16),
+                        HOptions(0), HPadding(0, True), ]
 
         # setting up passed fields
         for field in kw:
-            setattr(self, field, kw[field])
+            self.__setattr__(field, kw[field])
 
-    # fields
 
-    def set_type_of_service(self, val):
-        pass
-    def get_type_of_service(self):
-        return self._type_of_service
-    type_of_service = property(get_type_of_service, set_type_of_service)
+    def _is_valid(self, name):
+        '''Check if attribute is allowed.'''
+        if name in valid_fields:
+            return True
+        return False
 
-    def set_identification(self, val):
-        pass
-    def get_identification(self):
-        return self._identification
-    identification = property(get_identification, set_identification)
+    def __setattr__(self, attr, val):
+        '''Set value of the field.'''
+        if self._is_valid(attr):
+            self._fields[valid_fields.index(attr)].set(val)
+        else:
+            raise UMPAAttributeException, attr + ' not allowed'
 
-    def set_time_to_live(self, val):
-        pass
-    def get_time_to_live(self):
-        return self._time_to_live
-    time_to_live = property(get_time_to_live, set_time_to_live)
-
-    def set_protocol(self, val):
-        pass
-    def get_protocol(self):
-        return self._protocol
-    protocol = property(get_protocol, set_protocol)
-
-    def set_source_address(self, val):
-        pass
-    def get_source_address(self):
-        return self._source_address
-    source_address = property(get_source_address, set_source_address)
-
-    def set_destination_address(self, val):
-        pass
-    def get_destination_address(self):
-        return self._destination_address
-    destination_address = property(get_destination_address,
-            set_destination_address)
-
-    def set_option(self, val):
-        pass
-    def get_option(self):
-        return self._option
-    option = property(get_option, set_option)
+    def __getattr__(self, attr):
+        '''Return value of the field.'''
+        if self._is_valid(attr):
+            return self._fields[valid_fields.index(attr)].get()
+        else:
+            raise UMPAAttributeException, attr + ' not allowed'

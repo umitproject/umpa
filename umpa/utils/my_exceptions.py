@@ -24,3 +24,6 @@ class UMPAException(Exception):
         self.msg = msg
     def __str__(self):
         return repr(self.msg)
+
+class UMPAAttributeException(UMPAException):
+    pass

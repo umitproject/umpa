@@ -21,16 +21,30 @@
 
 import utils
 
-#class Field:
-#    def set(self, val):
-#        if self.is_valid(val):
-#            self.val = val
-#
-#    def is_valid(self, val):
-#        return True
+class Field(object):
+    def __init__(self, bits, auto=False):
+        '''Set auto if you wish to take care about the field
+        by the library. Then you will have to write how
+        to manage the field.
+        '''
+        self._auto = auto
+        self._bits = bits
+        self._value = None   # default value of the field
 
-class Protocol:
-    _valid_fields = []
+    def set(self, value):
+        if self.is_valid(value):
+            self.value = value
+
+    def is_valid(self, val):
+        '''Should be overload by sub-classes.
+
+        Otherwise always return true.
+        '''
+        return True
+
+class Protocol(object):
+    def __init__(self, **kw):
+        self._fields = []
 
     def set_fields(self, *args, **kwargs):
         '''Set fields of the protocol.
@@ -40,6 +54,8 @@ class Protocol:
         kwargs.update(utils.dict_from_sequence(args))
 
         for key in kwargs:
+            if self._is_valid(key):
+                setattr(self, key, kwargs[key])
             self.fields[key].set(kwargs[key])
 
     def get_raw(self):
@@ -47,13 +63,15 @@ class Protocol:
         print "Not implemented yet."
         return False
 
-    def set_flags(self, val):
-        pass
+    def _is_valid(self, field):
+        '''Overload it in subclasses.'''
+        raise NotImplementedError
 
-    def get_flags(self):
-        return self._Flags
-
-    flags = property(get_flags, set_flags)
+    #def set_flags(self, val):
+    #    pass
+    #def get_flags(self):
+    #    return self._Flags
+    #flags = property(get_flags, set_flags)
 
 class Layer4(Protocol):
     pass
