@@ -44,6 +44,19 @@ class Field(object):
 
 class Protocol(object):
     def __init__(self, **kw):
+        # TODO
+        # ok, there is an ugly implementation of this.
+        # because there isn't ordered dict type.
+        # so the fact is, that we use 2 lists
+        # first with objects (fields)
+        # and second with valid names of objects
+
+        # there is some implementation in PEP372
+        # and it should be implemtented
+
+        # also there is other wrong now, because this mechanism isn't
+        # only this class but also in sub-classes
+        # it means that it spreads out and also means about bad API design
         self._fields = []
 
     def set_fields(self, *args, **kwargs):
