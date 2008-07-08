@@ -27,13 +27,16 @@ class Field(object):
         by the library. Then you will have to write how
         to manage the field.
         '''
-        self._auto = auto
         self._bits = bits
+        self._auto = auto
         self._value = None   # default value of the field
 
     def set(self, value):
         if self.is_valid(value):
             self.value = value
+
+    def get(self):
+        return self.value
 
     def is_valid(self, val):
         '''Should be overload by sub-classes.
@@ -41,6 +44,40 @@ class Field(object):
         Otherwise always return true.
         '''
         return True
+
+class Flags(Field):
+    '''Most of protocols have a special field with bit-flags.
+    For those fields we use this subclass of Field.
+    '''
+
+    def __init__(self, auto=False, *names):
+        Field.__init__(len(names), auto)
+
+        # we overwrite an attribute self._value
+        # because we need a list instead of simple var here
+        self._value = []
+        self.valid_fields = list(names)
+
+    def is_valid(self, val):
+        if val in self.valid_fields:
+            return True
+        else:
+            return False
+
+    def set(self, kw):
+        for flag_name in kw:
+            if self.is_valid(self, flag_name):
+                utils.get_item_by_name(self._value, self.valid_fields,
+                                                    flag_name) = kw[flag_name]
+
+    def get(self, *names):
+        # we check if name of the field in the flag is correct
+        result = [ utils.get_item_by_name(self._value, self.valid_fields, val)
+                for val in names if val in self.valid_fields ]
+        # if no results above we return whole list of values
+        if len(result) < 1:
+            result = self._value
+        return result
 
 class Protocol(object):
     def __init__(self, **kw):
@@ -70,6 +107,28 @@ class Protocol(object):
             if self._is_valid(key):
                 setattr(self, key, kwargs[key])
             self.fields[key].set(kwargs[key])
+
+    def set_flags(self, *args, **kw):
+        '''Set flags with dict using.
+
+        There are 2 ways to do that with using tuple or dict-style.
+
+        There is no effect if the protocol doesn't have this field.
+        '''
+
+        # converting args list to the dict and update our kwargs
+        kw.update(util.dict_from_sequence(args))
+
+        # first checking if the protocol has special field 'Flags'
+        # and assign it to a local variable
+        # XXX: what if there is more than one Flags field in the protocol?
+        for obj in self._fields:
+            if type(obj) == Flags:
+                flag_field = obj
+                break
+
+        if flag_field is not None:
+            flag_field.set(kw)
 
     def get_raw(self):
         '''Return raw bit of the protocol's object'''

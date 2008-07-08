@@ -43,7 +43,7 @@ class HIdentification(base.Field):
     def fillout(self):
         pass
 
-class HFlags(base.Field):
+class HFlags(base.Flags):
     def fillout(self):
         pass
 
@@ -94,7 +94,7 @@ class IP(base.Protocol):
         # they will be generated automatically
         self._fields = [ HVersion(4, True), HIHL(4, True),
                         HTypeOfService(8), HTotalLength(16, True),
-                        HIdentification(16, True), HFlags(3, True),
+                        HIdentification(16, True), HFlags(3, True), # add names to flags later
                         HFragmentOffset(13, True), HTimeToLive(8),
                         HProtocol(8, True), HHeaderChecksum(16, True),
                         HSourceAddress(16), HDestinationAddress(16),
@@ -103,7 +103,6 @@ class IP(base.Protocol):
         # setting up passed fields
         for field in kw:
             self.__setattr__(field, kw[field])
-
 
     def _is_valid(self, name):
         '''Check if attribute is allowed.'''
