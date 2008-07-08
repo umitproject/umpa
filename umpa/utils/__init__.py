@@ -27,5 +27,11 @@ def _pairwise(iterable):
         yield itnext(), itnext()
 
 def dict_from_sequence(seq):
-    '''Returns a dictionary based on a sequence.'''
+    '''Return a dictionary based on a sequence.'''
     return dict(_pairwise(seq))
+
+def get_item_by_name(seq, seq_with_name, name):
+    '''Return an item from the sequence based on the another sequence
+    and position of the name there.
+    '''
+    return seq[seq_with_name.index(name)]

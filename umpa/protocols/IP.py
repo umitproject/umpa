@@ -21,6 +21,7 @@
 
 import base
 from utils.my_exceptions import UMPAAttributeException
+from utils import get_item_by_name
 
 class HVersion(base.Field):
     def fillout(self):
@@ -113,13 +114,14 @@ class IP(base.Protocol):
     def __setattr__(self, attr, val):
         '''Set value of the field.'''
         if self._is_valid(attr):
-            self._fields[valid_fields.index(attr)].set(val)
+            get_item_by_name(self._fields, self.valid_fields, attr).set(val)
         else:
             raise UMPAAttributeException, attr + ' not allowed'
 
     def __getattr__(self, attr):
         '''Return value of the field.'''
         if self._is_valid(attr):
-            return self._fields[valid_fields.index(attr)].get()
+            return get_item_by_name(self._fields, self.valid_fields,
+                                    attr).get()
         else:
             raise UMPAAttributeException, attr + ' not allowed'
