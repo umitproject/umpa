@@ -22,8 +22,8 @@
 import sys
 from socket import *
 
-import utils
-from utils import UMPAException
+import umpa.utils
+from umpa.utils import UMPAException
 
 class Socket:
     '''To send built packets your need to create a socket.
