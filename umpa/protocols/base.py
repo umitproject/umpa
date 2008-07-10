@@ -95,7 +95,7 @@ class Protocol(object):
 
     def __init__(self, **kw):
         self._fields = {}
-    # XXX chyba trzeba dodac jakies get flags czy cos
+
     def set_fields(self, *args, **kwargs):
         """Set fields of the protocol.
         There are 2 ways to do that with using tuple or dict-style.
@@ -108,6 +108,17 @@ class Protocol(object):
                 setattr(self, key, kwargs[key])
             self.fields[key].set(kwargs[key])
 
+    def _get_flag_obj(self):
+        """Check if the protocol has special field 'Flags'
+         and return it.
+         """
+        # XXX: what if there is more than one Flags field in the protocol?
+        for obj in self._fields:
+            if type(obj) == Flags:
+                flag_field = obj
+                break
+        return flag_field
+
     def set_flags(self, *args, **kw):
         """Set flags with dict using.
 
@@ -119,16 +130,24 @@ class Protocol(object):
         # converting args list to the dict and update our kwargs
         kw.update(util.dict_from_sequence(args))
 
-        # first checking if the protocol has special field 'Flags'
-        # and assign it to a local variable
-        # XXX: what if there is more than one Flags field in the protocol?
-        for obj in self._fields:
-            if type(obj) == Flags:
-                flag_field = obj
-                break
-
+        flag_field = _get_flag_obj()
         if flag_field is not None:
-            flag_field.set(kw)
+            for flag_name in kw:
+                if kw[flag_name] == True:
+                    flag_field.set(flag_name)
+                elif kw[flag_name] == False:
+                    flag_field.unset(flag_name)
+                else:
+                    raise UMPAException, "Only bool type is supported" 
+        else:
+            raise UMPAAttributeException, 'No Flags instance for this protocol'
+
+    def get_flags(self, *args):
+        flag_field = _get_flag_obj()
+        if flag_field is not None:
+            return flag_field.get(*args)
+        else:
+            return None
 
     def get_raw(self):
         """Return raw bit of the protocol's object"""
@@ -138,12 +157,6 @@ class Protocol(object):
     def _is_valid(self, field):
         """Overload it in subclasses."""
         raise NotImplementedError
-
-    #def set_flags(self, val):
-    #    pass
-    #def get_flags(self):
-    #    return self._Flags
-    #flags = property(get_flags, set_flags)
 
 class Layer4(Protocol):
     pass
