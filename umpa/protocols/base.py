@@ -55,20 +55,27 @@ class Flags(Field):
     def __init__(self, auto=False, *names):
         Field.__init__(self, len(names), auto)
 
+        self._ordered_fields = list(names)
         # we overwrite an attribute self._value
         # because we need a list instead of simple var here
-        self._value = {}
-        self._ordered_fields = list(names)
+        false_list = [ False for i in xrange(self._bits) ]
+        self._value = dict(zip(self._ordered_fields, false_list))
 
     def _is_valid(self, name):
         return self._value.has_key(name)
 
-    def set(self, kw):
-        for flag_name in kw:
+    def _set_bit(self, names, value):
+        for flag_name in names:
             if self._is_valid(flag_name):
-                self._value[flag_name] = kw[flag_name]
+                self._value[flag_name] = value
             else:
                 raise UMPAAttributeException, attr + ' not allowed'
+
+    def set(self, *names):
+        self._set_bit(names, True)
+
+    def unset(self, *names):
+        self._set_bit(names, False)
 
     def get(self, *names):
         # we check if name of the field in the flag is correct
@@ -78,6 +85,10 @@ class Flags(Field):
         if len(result) < 1:
             result = self._value
         return result
+
+    def fillout(self):
+        print "Not implemented yet"
+        return False
 
 class Protocol(object):
     _ordered_fields = ()
