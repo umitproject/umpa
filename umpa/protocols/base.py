@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import utils
+from umpa import utils
 
 class Field(object):
     def __init__(self, bits, auto=False):
@@ -95,7 +95,7 @@ class Protocol(object):
         # only this class but also in sub-classes
         # it means that it spreads out and also means about bad API design
         self._fields = []
-
+    # XXX chyba trzeba dodac jakies get flags czy cos
     def set_fields(self, *args, **kwargs):
         '''Set fields of the protocol.
         There are 2 ways to do that with using tuple or dict-style.

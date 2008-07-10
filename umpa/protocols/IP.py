@@ -20,8 +20,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import base
-from utils.my_exceptions import UMPAAttributeException
-from utils import get_item_by_name
+from umpa.utils.my_exceptions import UMPAAttributeException
+from umpa.utils import get_item_by_name
 
 class HVersion(base.Field):
     def fillout(self):
