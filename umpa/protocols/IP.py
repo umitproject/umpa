@@ -88,7 +88,7 @@ class IP(base.Protocol):
                     'destination_address', 'options', '_padding',]
 
     def __init__(self, **kw):
-        base.Protocol.__init__(kw)
+        base.Protocol.__init__(self,kw)
 
         # attributes listed below shouldn't be modifed by user
         # they will be generated automatically
