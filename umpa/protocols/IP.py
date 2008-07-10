@@ -21,7 +21,6 @@
 
 import base
 from umpa.utils.my_exceptions import UMPAAttributeException
-from umpa.utils import get_item_by_name
 
 class HVersion(base.Field):
     def fillout(self):
@@ -82,17 +81,16 @@ class HPadding(base.Field):
 # main IP class
 
 class IP(base.Protocol):
-    valid_fields = ['_version', '_ihl', 'type_of_service', '_total_length',
-                    'identification', 'flags', '_fragment_offset', 'time_to_live',
-                    'protocol', '_header_checksum', 'source_address',
-                    'destination_address', 'options', '_padding',]
+    _ordered_fields = ('_version', '_ihl', 'type_of_service', '_total_length',
+                        'identification', 'flags', '_fragment_offset',
+                        'time_to_live', 'protocol', '_header_checksum',
+                        'source_address', 'destination_address', 'options',
+                        '_padding',)
 
     def __init__(self, **kw):
-        base.Protocol.__init__(self,kw)
+        base.Protocol.__init__(self, kw)
 
-        # attributes listed below shouldn't be modifed by user
-        # they will be generated automatically
-        self._fields = [ HVersion(4, True), HIHL(4, True),
+        fields_list = [ HVersion(4, True), HIHL(4, True),
                         HTypeOfService(8), HTotalLength(16, True),
                         HIdentification(16, True), HFlags(3, True), # add names to flags later
                         HFragmentOffset(13, True), HTimeToLive(8),
@@ -100,27 +98,30 @@ class IP(base.Protocol):
                         HSourceAddress(16), HDestinationAddress(16),
                         HOptions(0), HPadding(0, True), ]
 
+        # we pack objects of header's fields to the dict
+        self._fields = dict(zip(self._ordered_list, fields_list))
+
         # setting up passed fields
         for field in kw:
             self.__setattr__(field, kw[field])
 
     def _is_valid(self, name):
         """Check if attribute is allowed."""
-        if name in valid_fields:
-            return True
-        return False
+        return self._fields.has_key(name)
 
     def __setattr__(self, attr, val):
         """Set value of the field."""
+
+        # we can do the same without _is_valid() with just try/except section
+        # but Francesco asked me about this method
         if self._is_valid(attr):
-            get_item_by_name(self._fields, self.valid_fields, attr).set(val)
+            self._fields[attr].set(val)
         else:
             raise UMPAAttributeException, attr + ' not allowed'
 
     def __getattr__(self, attr):
         """Return value of the field."""
         if self._is_valid(attr):
-            return get_item_by_name(self._fields, self.valid_fields,
-                                    attr).get()
+            return self._fields[attr].get()
         else:
             raise UMPAAttributeException, attr + ' not allowed'

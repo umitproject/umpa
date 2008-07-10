@@ -32,13 +32,15 @@ class Field(object):
         self._value = None   # default value of the field
 
     def set(self, value):
-        if self.is_valid(value):
-            self.value = value
+        if self._is_valid(value):
+            self._value = value
+        else:
+            raise
 
     def get(self):
-        return self.value
+        return self._value
 
-    def is_valid(self, val):
+    def _is_valid(self, val):
         """Should be overload by sub-classes.
 
         Otherwise always return true.
@@ -55,46 +57,33 @@ class Flags(Field):
 
         # we overwrite an attribute self._value
         # because we need a list instead of simple var here
-        self._value = []
-        self.valid_fields = list(names)
+        self._value = {}
+        self._ordered_fields = list(names)
 
-    def is_valid(self, val):
-        if val in self.valid_fields:
-            return True
-        else:
-            return False
+    def _is_valid(self, name):
+        return self._value.has_key(name)
 
     def set(self, kw):
         for flag_name in kw:
-            if self.is_valid(self, flag_name):
-                utils.get_item_by_name(self._value, self.valid_fields,
-                                                    flag_name) = kw[flag_name]
+            if self._is_valid(flag_name):
+                self._value[flag_name] = kw[flag_name]
+            else:
+                raise UMPAAttributeException, attr + ' not allowed'
 
     def get(self, *names):
         # we check if name of the field in the flag is correct
-        result = [ utils.get_item_by_name(self._value, self.valid_fields, val)
-                for val in names if val in self.valid_fields ]
+        result = [ self._value[val] for val in name if self._is_valid(val) ]
+
         # if no results above we return whole list of values
         if len(result) < 1:
             result = self._value
         return result
 
 class Protocol(object):
+    _ordered_fields = ()
+
     def __init__(self, **kw):
-        # TODO
-        # ok, there is an ugly implementation of this.
-        # because there isn't ordered dict type.
-        # so the fact is, that we use 2 lists
-        # first with objects (fields)
-        # and second with valid names of objects
-
-        # there is some implementation in PEP372
-        # and it should be implemtented
-
-        # also there is other wrong now, because this mechanism isn't
-        # only this class but also in sub-classes
-        # it means that it spreads out and also means about bad API design
-        self._fields = []
+        self._fields = {}
     # XXX chyba trzeba dodac jakies get flags czy cos
     def set_fields(self, *args, **kwargs):
         """Set fields of the protocol.
