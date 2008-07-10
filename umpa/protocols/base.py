@@ -55,7 +55,7 @@ class Flags(Field):
     def __init__(self, auto=False, *names):
         Field.__init__(self, len(names), auto)
 
-        self._ordered_fields = list(names)
+        self._ordered_fields = names
         # we overwrite an attribute self._value
         # because we need a list instead of simple var here
         false_list = [ False for i in xrange(self._bits) ]
