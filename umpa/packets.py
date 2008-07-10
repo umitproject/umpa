@@ -20,29 +20,29 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 class Packet:
-    '''You have to use this class to build a completely packets.
+    """You have to use this class to build a completely packets.
     An instance of the class should contains protocols which
-    you want to send.'''
+    you want to send."""
 
     def __init__(self, *protos):
-        '''You can include some protocols objects in construtor
+        """You can include some protocols objects in construtor
         or use include() method later.
-        '''
+        """
         self.protos = []
         self._add_new_protocols(protos)
 
     def __str__(self):
-        '''Print in human-readable style a content of the packet.'''
+        """Print in human-readable style a content of the packet."""
         print "Not implemented yet."
 
     def print_protocols(self):
-        '''Print all included protocols into the packet.'''
+        """Print all included protocols into the packet."""
         for p in self.protos:
             print p
 
     def include(self, *protos):
-        '''Add protocols into packet.
-        '''
+        """Add protocols into packet.
+        """
         self._add_new_protocols(protos)
 
     def _add_new_protocols(self, *protos):
@@ -50,6 +50,6 @@ class Packet:
             self.protos.append(p)
 
     def get_raw(self):
-        '''Return raw packet, in bit-mode (big-endian).'''
+        """Return raw packet, in bit-mode (big-endian)."""
         # TODO: calling method to pack it for each protocols
         print "Not implemented yet."

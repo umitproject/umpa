@@ -23,7 +23,7 @@ import os
 import pwd
 
 def drop_priviliges():
-    '''Some functions require root-privilegies and after we done them,
+    """Some functions require root-privilegies and after we done them,
     we don't really need this privilegies. So, we can simple leave them.
     It makes the application more safier.
 
@@ -31,7 +31,7 @@ def drop_priviliges():
     
     It works only under UNIX. For other operation systems,
     this function doesn't do anything.
-    '''
+    """
 
     # checking if it's UNIX-family OS
     if os.name != 'posix':

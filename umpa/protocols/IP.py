@@ -105,20 +105,20 @@ class IP(base.Protocol):
             self.__setattr__(field, kw[field])
 
     def _is_valid(self, name):
-        '''Check if attribute is allowed.'''
+        """Check if attribute is allowed."""
         if name in valid_fields:
             return True
         return False
 
     def __setattr__(self, attr, val):
-        '''Set value of the field.'''
+        """Set value of the field."""
         if self._is_valid(attr):
             get_item_by_name(self._fields, self.valid_fields, attr).set(val)
         else:
             raise UMPAAttributeException, attr + ' not allowed'
 
     def __getattr__(self, attr):
-        '''Return value of the field.'''
+        """Return value of the field."""
         if self._is_valid(attr):
             return get_item_by_name(self._fields, self.valid_fields,
                                     attr).get()

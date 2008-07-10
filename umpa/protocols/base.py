@@ -23,10 +23,10 @@ from umpa import utils
 
 class Field(object):
     def __init__(self, bits, auto=False):
-        '''Set auto if you wish to take care about the field
+        """Set auto if you wish to take care about the field
         by the library. Then you will have to write how
         to manage the field.
-        '''
+        """
         self._bits = bits
         self._auto = auto
         self._value = None   # default value of the field
@@ -39,16 +39,16 @@ class Field(object):
         return self.value
 
     def is_valid(self, val):
-        '''Should be overload by sub-classes.
+        """Should be overload by sub-classes.
 
         Otherwise always return true.
-        '''
+        """
         return True
 
 class Flags(Field):
-    '''Most of protocols have a special field with bit-flags.
+    """Most of protocols have a special field with bit-flags.
     For those fields we use this subclass of Field.
-    '''
+    """
 
     def __init__(self, auto=False, *names):
         Field.__init__(len(names), auto)
@@ -97,9 +97,9 @@ class Protocol(object):
         self._fields = []
     # XXX chyba trzeba dodac jakies get flags czy cos
     def set_fields(self, *args, **kwargs):
-        '''Set fields of the protocol.
+        """Set fields of the protocol.
         There are 2 ways to do that with using tuple or dict-style.
-        '''
+        """
         # converting args list to the dict and update our kwargs
         kwargs.update(utils.dict_from_sequence(args))
 
@@ -109,12 +109,12 @@ class Protocol(object):
             self.fields[key].set(kwargs[key])
 
     def set_flags(self, *args, **kw):
-        '''Set flags with dict using.
+        """Set flags with dict using.
 
         There are 2 ways to do that with using tuple or dict-style.
 
         There is no effect if the protocol doesn't have this field.
-        '''
+        """
 
         # converting args list to the dict and update our kwargs
         kw.update(util.dict_from_sequence(args))
@@ -131,12 +131,12 @@ class Protocol(object):
             flag_field.set(kw)
 
     def get_raw(self):
-        '''Return raw bit of the protocol's object'''
+        """Return raw bit of the protocol's object"""
         print "Not implemented yet."
         return False
 
     def _is_valid(self, field):
-        '''Overload it in subclasses.'''
+        """Overload it in subclasses."""
         raise NotImplementedError
 
     #def set_flags(self, val):

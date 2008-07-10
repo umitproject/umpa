@@ -26,15 +26,15 @@ import umpa.utils
 from umpa.utils import UMPAException
 
 class Socket:
-    '''To send built packets your need to create a socket.
+    """To send built packets your need to create a socket.
     You can use socket module from Python Standard Library directly
     but it's recommended to use this class instead.
     That is because there is some other features, and for some security issues.
-    '''
+    """
     def __init__(self):
-        '''This is a default constructor for Socket's class.
+        """This is a default constructor for Socket's class.
         Just use it in any doubts.
-        '''
+        """
         # XXX: if non-root EUID, then exception is raised
         # TODO: before raising UMPAException, we can try
         # to switch EUID into root and recall socket()
@@ -48,7 +48,7 @@ class Socket:
         self._sock.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
 
     def send(self, *packets):
-        '''Sending your packets'''
+        """Sending your packets"""
 
         for packet in packets:
             # XXX: this connects to a remote socket, so destination address has to be known.
@@ -59,8 +59,8 @@ class Socket:
             self._sock.sendto(packet.get_raw(), (dst_addr,0) )
 
     def _get_address(self, packet):
-        '''Because of ARP issue (described in send() method,
+        """Because of ARP issue (described in send() method,
         we have to parse packets for destination addresses.
-        '''
+        """
         print "Not implemented yet."
         return False
