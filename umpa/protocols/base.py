@@ -22,12 +22,13 @@
 from umpa import utils
 
 class Field(object):
-    def __init__(self, bits, value=None, auto=False):
+    def __init__(self, value=None, bits=None, auto=False):
         """Set auto if you wish to take care about the field
         by the library. Then you will have to write how
         to manage the field.
         """
-        self._bits = bits
+        if bits is not None:
+            self._bits = bits
         self._auto = auto
         self._value = value
 
@@ -128,6 +129,7 @@ class Protocol(object):
          and return it.
          """
         # XXX: what if there is more than one Flags field in the protocol?
+        flag_field = None
         for obj in self._fields:
             if type(obj) == Flags:
                 flag_field = obj

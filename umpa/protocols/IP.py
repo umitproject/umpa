@@ -25,38 +25,37 @@ from base import Field, Flags
 from umpa.utils.my_exceptions import UMPAAttributeException
 
 class HIHL(base.Field):
+    _bits = 4
     def fillout(self):
         pass
 
 class HTotalLength(base.Field):
+    _bits = 16
     def fillout(self):
         pass
 
 class HIdentification(base.Field):
+    _bits = 16
     def fillout(self):
         pass
 
 class HFragmentOffset(base.Field):
+    _bits = 13
     def fillout(self):
         pass
 
 class HProtocol(base.Field):
+    _bits = 8
     def fillout(self):
         pass
 
 class HHeaderChecksum(base.Field):
-    def fillout(self):
-        pass
-
-class HSourceAddress(base.Field):
-    def fillout(self):
-        pass
-
-class HDestinationAddress(base.Field):
+    _bits = 16
     def fillout(self):
         pass
 
 class HPadding(base.Field):
+    _bits = 0
     def fillout(self):
         pass
 
@@ -76,15 +75,14 @@ class IP(base.Protocol):
                 'throughput', 'relibility', 'reserved0', 'reserverd1')
         flags = ('reserved', 'df', 'mf')
 
-        fields_list = [ Field(4, 4, auto=True), HIHL(4, auto=True),
-                        Flags(tos, auto=False), HTotalLength(16, auto=True),
-                        HIdentification(16, auto=True),
+        fields_list = [ Field(4, 4, auto=True), HIHL(auto=True),
+                        Flags(tos, auto=False), HTotalLength(auto=True),
+                        HIdentification(auto=True),
                         Flags(flags, auto=False, reserved=0),
-                        HFragmentOffset(13, auto=True), Field(8, 255),
-                        HProtocol(8, auto=True),
-                        HHeaderChecksum(16, auto=True),
+                        HFragmentOffset(auto=True), Field(255, 8),
+                        HProtocol(auto=True), HHeaderChecksum(auto=True),
                         Field(16), Field(16), Flags((), auto=True),
-                        HPadding(0, auto=True) ]
+                        HPadding(auto=True) ]
 
         # we pack objects of header's fields to the dict
         self._fields = dict(zip(self._ordered_list, fields_list))
