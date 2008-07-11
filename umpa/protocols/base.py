@@ -22,14 +22,9 @@
 from umpa import utils
 
 class Field(object):
-    def __init__(self, value=None, bits=None, auto=False):
-        """Set auto if you wish to take care about the field
-        by the library. Then you will have to write how
-        to manage the field.
-        """
+    def __init__(self, value=None, bits=None):
         if bits is not None:
             self._bits = bits
-        self._auto = auto
         self._value = value
 
     def set(self, value):
@@ -57,12 +52,12 @@ class Flags(Field):
     For those fields we use this subclass of Field.
     """
 
-    def __init__(self, names, auto=False, **preset):
+    def __init__(self, names, **preset):
         """Names has to be in correct order.
         If you use **preset, check if keys are in names list as well
         because of order issue.
         """
-        Field.__init__(self, len(names), auto=auto)
+        Field.__init__(self, len(names))
 
         self._ordered_fields = names
         # we overwrite an attribute self._value
@@ -168,6 +163,8 @@ class Protocol(object):
 
     def get_raw(self):
         """Return raw bit of the protocol's object"""
+        #XXX: i will try to write general get_raw method for all subclasses
+        # i mean that it should be unnecessary to overwrite it by subclasses 
         print "Not implemented yet."
         return False
 

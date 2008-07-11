@@ -75,14 +75,11 @@ class IP(base.Protocol):
                 'throughput', 'relibility', 'reserved0', 'reserverd1')
         flags = ('reserved', 'df', 'mf')
 
-        fields_list = [ Field(4, 4, auto=True), HIHL(auto=True),
-                        Flags(tos, auto=False), HTotalLength(auto=True),
-                        HIdentification(auto=True),
-                        Flags(flags, auto=False, reserved=0),
-                        HFragmentOffset(auto=True), Field(255, 8),
-                        HProtocol(auto=True), HHeaderChecksum(auto=True),
-                        Field(16), Field(16), Flags((), auto=True),
-                        HPadding(auto=True) ]
+        fields_list = [ Field(4, 4), HIHL(), Flags(tos), HTotalLength(),
+                        HIdentification(), Flags(flags, reserved=0),
+                        HFragmentOffset(), Field(255, 8), HProtocol(),
+                        HHeaderChecksum(), Field(16), Field(16), Flags(()),
+                        HPadding() ]
 
         # we pack objects of header's fields to the dict
         self._fields = dict(zip(self._ordered_list, fields_list))
