@@ -35,7 +35,7 @@ class Field(object):
         if self._is_valid(value):
             self._value = value
         else:
-            raise
+            raise UMPAAttributeException, value + ' not allowed'
 
     def get(self):
         return self._value
