@@ -78,8 +78,8 @@ class IP(base.Protocol):
         fields_list = [ Field(4, 4), HIHL(), Flags(tos), HTotalLength(),
                         HIdentification(), Flags(flags, reserved=0),
                         HFragmentOffset(), Field(255, 8), HProtocol(),
-                        HHeaderChecksum(), Field(16), Field(16), Flags(()),
-                        HPadding() ]
+                        HHeaderChecksum(), Field(bits=16), Field(bits=16),
+                        Flags(()), HPadding() ]
 
         # we pack objects of header's fields to the dict
         self._fields = dict(zip(self._ordered_list, fields_list))
