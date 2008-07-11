@@ -22,14 +22,14 @@
 from umpa import utils
 
 class Field(object):
-    def __init__(self, bits, auto=False):
+    def __init__(self, bits, value=None, auto=False):
         """Set auto if you wish to take care about the field
         by the library. Then you will have to write how
         to manage the field.
         """
         self._bits = bits
         self._auto = auto
-        self._value = None   # default value of the field
+        self._value = value
 
     def set(self, value):
         if self._is_valid(value):
@@ -47,19 +47,34 @@ class Field(object):
         """
         return True
 
+    def fillout(self):
+        print "Not implemented yet."
+        return False
+
 class Flags(Field):
     """Most of protocols have a special field with bit-flags.
     For those fields we use this subclass of Field.
     """
 
-    def __init__(self, auto=False, *names):
-        Field.__init__(self, len(names), auto)
+    def __init__(self, names, auto=False, **preset):
+        """Names has to be in correct order.
+        If you use **preset, check if keys are in names list as well
+        because of order issue.
+        """
+        Field.__init__(self, len(names), auto=auto)
 
         self._ordered_fields = names
         # we overwrite an attribute self._value
         # because we need a list instead of simple var here
         false_list = [ False for i in xrange(self._bits) ]
         self._value = dict(zip(self._ordered_fields, false_list))
+
+        # if preset exists then we update values
+        for name in preset:
+            if preset[name] == False:
+                self.set(name)
+            else:
+                self.unset(name)
 
     def _is_valid(self, name):
         return self._value.has_key(name)

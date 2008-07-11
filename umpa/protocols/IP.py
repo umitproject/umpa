@@ -20,17 +20,11 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import base
+
+from base import Field, Flags
 from umpa.utils.my_exceptions import UMPAAttributeException
 
-class HVersion(base.Field):
-    def fillout(self):
-        pass
-
 class HIHL(base.Field):
-    def fillout(self):
-        pass
-
-class HTypeOfService(base.Field):
     def fillout(self):
         pass
 
@@ -42,15 +36,7 @@ class HIdentification(base.Field):
     def fillout(self):
         pass
 
-class HFlags(base.Flags):
-    def fillout(self):
-        pass
-
 class HFragmentOffset(base.Field):
-    def fillout(self):
-        pass
-
-class HTimeToLive(base.Field):
     def fillout(self):
         pass
 
@@ -70,10 +56,6 @@ class HDestinationAddress(base.Field):
     def fillout(self):
         pass
 
-class HOptions(base.Field):
-    def fillout(self):
-        pass
-
 class HPadding(base.Field):
     def fillout(self):
         pass
@@ -82,21 +64,27 @@ class HPadding(base.Field):
 
 class IP(base.Protocol):
     _ordered_fields = ('_version', '_ihl', 'type_of_service', '_total_length',
-                        'identification', 'flags', '_fragment_offset',
-                        'time_to_live', 'protocol', '_header_checksum',
+                        '_identification', 'flags', '_fragment_offset',
+                        'time_to_live', '_protocol', '_header_checksum',
                         'source_address', 'destination_address', 'options',
                         '_padding',)
 
     def __init__(self, **kw):
         base.Protocol.__init__(self, kw)
 
-        fields_list = [ HVersion(4, True), HIHL(4, True),
-                        HTypeOfService(8), HTotalLength(16, True),
-                        HIdentification(16, True), HFlags(3, True), # add names to flags later
-                        HFragmentOffset(13, True), HTimeToLive(8),
-                        HProtocol(8, True), HHeaderChecksum(16, True),
-                        HSourceAddress(16), HDestinationAddress(16),
-                        HOptions(0), HPadding(0, True), ]
+        tos = ('presedence0','presedence1', 'presedence2', 'delay',
+                'throughput', 'relibility', 'reserved0', 'reserverd1')
+        flags = ('reserved', 'df', 'mf')
+
+        fields_list = [ Field(4, 4, auto=True), HIHL(4, auto=True),
+                        Flags(tos, auto=False), HTotalLength(16, auto=True),
+                        HIdentification(16, auto=True),
+                        Flags(flags, auto=False, reserved=0),
+                        HFragmentOffset(13, auto=True), Field(8, 255),
+                        HProtocol(8, auto=True),
+                        HHeaderChecksum(16, auto=True),
+                        Field(16), Field(16), Flags((), auto=True),
+                        HPadding(0, auto=True) ]
 
         # we pack objects of header's fields to the dict
         self._fields = dict(zip(self._ordered_list, fields_list))
