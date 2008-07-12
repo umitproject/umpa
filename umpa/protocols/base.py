@@ -19,12 +19,14 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import struct
+
 from umpa import utils
 
 class Field(object):
     def __init__(self, value=None, bits=None):
         if bits is not None:
-            self._bits = bits
+            self.bits = bits
         self._value = value
 
     def set(self, value):
@@ -37,11 +39,27 @@ class Field(object):
         return self._value
 
     def _is_valid(self, val):
-        """Should be overload by sub-classes.
-
-        Otherwise always return true.
+        """Check if a value is not bigger than expected.
         """
-        return True
+        if 2**self.bits > val:
+            return True
+        else:
+            return False
+
+    def _pack(self):
+        val = self.get()
+
+        if self.bits <= 8:
+            bits = struct.pack('!B', val)
+        elif self.bits > 8 and self.bits <= 16:
+            bits = struct.pack('!H', val)
+        elif self.bits > 16 and self.bits <= 32:
+            bits = struct.pack('!I', val)
+        else:
+            raise UMPAException, 'Fields with ' + self.bits + \
+                                ' bits are not supported'
+
+        return bits
 
     def fillout(self):
         print "Not implemented yet."
@@ -62,7 +80,7 @@ class Flags(Field):
         self._ordered_fields = names
         # we overwrite an attribute self._value
         # because we need a list instead of simple var here
-        false_list = [ False for i in xrange(self._bits) ]
+        false_list = [ False for i in xrange(self.bits) ]
         self._value = dict(zip(self._ordered_fields, false_list))
 
         # if preset exists then we update values
@@ -162,11 +180,21 @@ class Protocol(object):
             return None
 
     def get_raw(self):
-        """Return raw bit of the protocol's object"""
+        """Return raw bits of the protocol's object."""
         #XXX: i will try to write general get_raw method for all subclasses
         # i mean that it should be unnecessary to overwrite it by subclasses 
-        print "Not implemented yet."
-        return False
+
+        # get all fields in binary mode
+        header_unpack = [ self._fields[field].fillout()
+                        for field in self._ordered_fields ]
+        # pack all binaries fields together
+        header_pack = "".join(header_pack)
+
+        return header_pack
+
+    def _stick_fields(self, *fields):
+        """Join fields together if length is not byte compatible.
+        """
 
     def _is_valid(self, field):
         """Overload it in subclasses."""
