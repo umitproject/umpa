@@ -200,7 +200,10 @@ class Protocol(object):
 
     def get_offset(self, field):
         """Return of set for the field."""
-        
+    
+        if field not in self._ordered_fields:
+            raise UMPAAttributeException, field + ' not allowed'
+
         offset = 0
         for f in self._ordered_fields:
             if f == field:
