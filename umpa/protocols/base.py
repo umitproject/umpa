@@ -23,6 +23,8 @@ import struct
 
 from umpa import utils
 
+BYTE = 8
+
 class Field(object):
     def __init__(self, value=None, bits=None):
         if bits is not None:
@@ -41,25 +43,11 @@ class Field(object):
     def _is_valid(self, val):
         """Check if a value is not bigger than expected.
         """
+        # FIXME: what with src.addr or others non-numeric?
         if 2**self.bits > val:
             return True
         else:
             return False
-
-    def _pack(self):
-        val = self.get()
-
-        if self.bits <= 8:
-            bits = struct.pack('!B', val)
-        elif self.bits > 8 and self.bits <= 16:
-            bits = struct.pack('!H', val)
-        elif self.bits > 16 and self.bits <= 32:
-            bits = struct.pack('!I', val)
-        else:
-            raise UMPAException, 'Fields with ' + self.bits + \
-                                ' bits are not supported'
-
-        return bits
 
     def fillout(self):
         print "Not implemented yet."
@@ -181,20 +169,30 @@ class Protocol(object):
 
     def get_raw(self):
         """Return raw bits of the protocol's object."""
-        #XXX: i will try to write general get_raw method for all subclasses
-        # i mean that it should be unnecessary to overwrite it by subclasses 
 
-        # get all fields in binary mode
-        header_unpack = [ self._fields[field].fillout()
-                        for field in self._ordered_fields ]
-        # pack all binaries fields together
-        header_pack = "".join(header_pack)
+        # The deal: we join all value's fields into one big number
+        # (with taking care about amount of bits).
+        # then we devide the number on byte-chunks
+        # and pack it by struct.pack() function
+        bit = 0
+        raw_value = 0
+        # lets make a biiiig number ;)
+        for field in reversed(self._ordered_fields):
+            raw_value |= self._fields[field].fillout() << bit
+            bit += self._fields[field].bits
+        
+        # protocol should return byte-compatible length
+        if bit%BYTE != 0:
+            raise UMPAException, 'odd number of bits in ' + self.__name__
 
+        # check how many bytes we need
+        bytes = bit/BYTE
+        # split the number on byte-chunks
+        l = [ (raw_value & (0xff << (BYTE*i))) >> BYTE*i
+                                    for i in reversed(xrange(bytes)) ]
+        # and pack it
+        header_pack = struct.pack('!' + 'B'*bytes, *l)
         return header_pack
-
-    def _stick_fields(self, *fields):
-        """Join fields together if length is not byte compatible.
-        """
 
     def _is_valid(self, field):
         """Overload it in subclasses."""
