@@ -26,6 +26,13 @@ from umpa import utils
 BYTE = 8
 
 class Field(object):
+    """Superclass for fields.
+    To implement new fields, create subclass of this.
+
+    IMPORTANT: You should overwrite this __doc__ to get hints in some frontends
+    like the one provided by Umit Project.
+    """
+
     def __init__(self, value=None, bits=None):
         if bits is not None:
             self.bits = bits
@@ -39,6 +46,9 @@ class Field(object):
 
     def get(self):
         return self._value
+
+    def set_doc(self, text):
+        self.__doc__ = text
 
     def _is_valid(self, val):
         """Check if a value is not bigger than expected.
@@ -108,6 +118,12 @@ class Flags(Field):
         return False
 
 class Protocol(object):
+    """Superclass for protocols.
+    To implement new protocol, make a subclass.
+    
+    IMPORTANT: You should overwrite this __doc__ to get hints in some frontends
+    like the one provided by Umit Project.
+    """
     _ordered_fields = ()
 
     def __init__(self, layer=None, **kw):
