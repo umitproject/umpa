@@ -198,5 +198,15 @@ class Protocol(object):
         """Overload it in subclasses."""
         raise NotImplementedError
 
+    def get_offset(self, field):
+        """Return of set for the field."""
+        
+        offset = 0
+        for f in self._ordered_fields:
+            if f == field:
+                break
+            offset += self._fields[f].bits
+        return offset
+
 class Layer4(Protocol):
     pass
