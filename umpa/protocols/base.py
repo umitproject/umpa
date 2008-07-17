@@ -63,7 +63,7 @@ class Flags(Field):
         If you use **preset, check if keys are in names list as well
         because of order issue.
         """
-        Field.__init__(self, len(names))
+        Field.__init__(self, bits=len(names))
 
         self._ordered_fields = names
         # we overwrite an attribute self._value
