@@ -114,6 +114,23 @@ class Protocol(object):
         self._fields = {}
         self.layer = layer
 
+    def __setattr__(self, attr, val):
+        """Set value of the field."""
+
+        # we can do the same without _is_valid() with just try/except section
+        # but Francesco asked me about this method
+        if self._is_valid(attr):
+            self._fields[attr].set(val)
+        else:
+            raise UMPAAttributeException, attr + ' not allowed'
+
+    def __getattr__(self, attr):
+        """Return value of the field."""
+        if self._is_valid(attr):
+            return self._fields[attr].get()
+        else:
+            raise UMPAAttributeException, attr + ' not allowed'
+
     def set_fields(self, *args, **kwargs):
         """Set fields of the protocol.
         There are 2 ways to do that with using tuple or dict-style.

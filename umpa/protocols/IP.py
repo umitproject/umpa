@@ -93,20 +93,3 @@ class IP(base.Protocol):
     def _is_valid(self, name):
         """Check if attribute is allowed."""
         return self._fields.has_key(name)
-
-    def __setattr__(self, attr, val):
-        """Set value of the field."""
-
-        # we can do the same without _is_valid() with just try/except section
-        # but Francesco asked me about this method
-        if self._is_valid(attr):
-            self._fields[attr].set(val)
-        else:
-            raise UMPAAttributeException, attr + ' not allowed'
-
-    def __getattr__(self, attr):
-        """Return value of the field."""
-        if self._is_valid(attr):
-            return self._fields[attr].get()
-        else:
-            raise UMPAAttributeException, attr + ' not allowed'
