@@ -76,7 +76,7 @@ class IP(base.Protocol):
 
         self.layer = 3      # layer of OSI
 
-        tos = ('presedence0','presedence1', 'presedence2', 'delay',
+        tos = ('precedence0','precedence1', 'precedence2', 'delay',
                 'throughput', 'relibility', 'reserved0', 'reserverd1')
         flags = ('reserved', 'df', 'mf')
 
