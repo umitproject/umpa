@@ -71,6 +71,8 @@ class IP(base.Protocol):
     def __init__(self, **kw):
         base.Protocol.__init__(self, kw)
 
+        self.layer = 3      # layer of OSI
+
         tos = ('presedence0','presedence1', 'presedence2', 'delay',
                 'throughput', 'relibility', 'reserved0', 'reserverd1')
         flags = ('reserved', 'df', 'mf')

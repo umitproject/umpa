@@ -110,8 +110,9 @@ class Flags(Field):
 class Protocol(object):
     _ordered_fields = ()
 
-    def __init__(self, **kw):
+    def __init__(self, layer=None, **kw):
         self._fields = {}
+        self.layer = layer
 
     def set_fields(self, *args, **kwargs):
         """Set fields of the protocol.
