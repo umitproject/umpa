@@ -147,6 +147,23 @@ class Protocol(object):
         else:
             raise UMPAAttributeException, attr + ' not allowed'
 
+    def get_fields(self):
+        """Generator for ordered fields."""
+        for field in self._ordered_fields:
+            yield self._fields[field]
+
+    @staticmethod
+    def get_fields_keys():
+        """Generator for ordered names (keys) of header's fields.
+        
+        I don't see any reason to use this method but
+        Francesco asked me to make this.
+
+        NOTE: You should use get_fields() method instead.
+        """
+        for field in Protocol._ordered_fields:
+            yield field
+
     def set_fields(self, *args, **kwargs):
         """Set fields of the protocol.
         There are 2 ways to do that with using tuple or dict-style.
