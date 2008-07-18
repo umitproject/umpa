@@ -70,11 +70,11 @@ class IP(base.Protocol):
                         'time_to_live', '_protocol', '_header_checksum',
                         'source_address', 'destination_address', 'options',
                         '_padding',)
+    layer = 3      # layer of OSI
 
     def __init__(self, **kw):
         base.Protocol.__init__(self, kw)
 
-        self.layer = 3      # layer of OSI
 
         tos = ('precedence0','precedence1', 'precedence2', 'delay',
                 'throughput', 'relibility', 'reserved0', 'reserverd1')

@@ -125,10 +125,10 @@ class Protocol(object):
     like the one provided by Umit Project.
     """
     _ordered_fields = ()
+    layer = None
 
-    def __init__(self, layer=None, **kw):
+    def __init__(self, **kw):
         self._fields = {}
-        self.layer = layer
 
     def __setattr__(self, attr, val):
         """Set value of the field."""
