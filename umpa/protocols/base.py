@@ -59,9 +59,26 @@ class Field(object):
         else:
             return False
 
+    def _pre_fillout(self):
+        pass
+
+    def _raw_value(self):
+        return self._value
+
+    def _generate_value(self):
+        raise UMPAException, "value is not defined or generate_value()
+                                            method is not implemented."
+
     def fillout(self):
-        print "Not implemented yet."
-        return False
+        self._pre_fillout()
+
+        if not self._value:
+            self._value = self._generate_value()
+        
+        self._raw_value()
+
+class IntField(Field):
+    pass
 
 class Flags(Field):
     """Most of protocols have a special field with bit-flags.
