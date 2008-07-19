@@ -19,49 +19,48 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import base
-
-from base import Field, Flags
+from base import *
 from umpa.utils.my_exceptions import UMPAAttributeException
 
-class HIHL(base.Field):
-    _bits = 4
+class HIHL(IntField):
+    bits = 4
+    def generate_value(self):
+        pass
+        # FIXME: how to get length of every fields in this scope?
+
+class HTotalLength(Field):
+    bits = 16
     def fillout(self):
         pass
 
-class HTotalLength(base.Field):
-    _bits = 16
+class HIdentification(Field):
+    bits = 16
     def fillout(self):
         pass
 
-class HIdentification(base.Field):
-    _bits = 16
+class HFragmentOffset(Field):
+    bits = 13
     def fillout(self):
         pass
 
-class HFragmentOffset(base.Field):
-    _bits = 13
+class HProtocol(Field):
+    bits = 8
     def fillout(self):
         pass
 
-class HProtocol(base.Field):
-    _bits = 8
+class HHeaderChecksum(Field):
+    bits = 16
     def fillout(self):
         pass
 
-class HHeaderChecksum(base.Field):
-    _bits = 16
-    def fillout(self):
-        pass
-
-class HPadding(base.Field):
-    _bits = 0
+class HPadding(Field):
+    bits = 0
     def fillout(self):
         pass
 
 # main IP class
 
-class IP(base.Protocol):
+class IP(Protocol):
     """This is Internet Protocol.
     The main protocol in third layer of OSI model.
     """
@@ -73,14 +72,14 @@ class IP(base.Protocol):
     layer = 3      # layer of OSI
 
     def __init__(self, **kw):
-        base.Protocol.__init__(self, kw)
+        Protocol.__init__(self, kw)
 
 
         tos = ('precedence0','precedence1', 'precedence2', 'delay',
                 'throughput', 'relibility', 'reserved0', 'reserverd1')
         flags = ('reserved', 'df', 'mf')
 
-        fields_list = [ Field(4, 4), HIHL(), Flags(tos), HTotalLength(),
+        fields_list = [ IntField(4, 4), HIHL(), Flags(tos), HTotalLength(),
                         HIdentification(), Flags(flags, reserved=0),
                         HFragmentOffset(), Field(255, 8), HProtocol(),
                         HHeaderChecksum(), Field(bits=16), Field(bits=16),
