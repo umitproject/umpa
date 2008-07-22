@@ -21,7 +21,7 @@
 
 import struct
 
-from umpa import utils
+#from umpa import utils
 
 BYTE = 8
 
@@ -66,7 +66,7 @@ class Field(object):
         return self._value
 
     def _generate_value(self):
-        raise UMPAException, "value is not defined or generate_value()
+        raise UMPAException, "value is not defined or generate_value() \
                                             method is not implemented."
 
     def fillout(self):
@@ -144,8 +144,9 @@ class Protocol(object):
     _ordered_fields = ()
     layer = None
 
-    def __init__(self, **kw):
-        self._fields = {}
+    def __init__(self, fields, **kw):
+        #self._fields = {}
+        super(Protocol, self).__setattr__('_fields', fields)
 
     def __setattr__(self, attr, val):
         """Set value of the field."""
@@ -278,6 +279,3 @@ class Protocol(object):
                 break
             offset += self._fields[f].bits
         return offset
-
-class Layer4(Protocol):
-    pass
