@@ -32,9 +32,11 @@ class Field(object):
     IMPORTANT: You should overwrite this __doc__ to get hints in some frontends
     like the one provided by Umit Project.
     """
-
-    def __init__(self, name, value=None, bits=None):
+    auto = False
+    def __init__(self, name, value=None, bits=None, auto=None):
         self.name = name
+        if auto is not None:
+            self.auto = auto
 
         if bits is not None:
             self.bits = bits

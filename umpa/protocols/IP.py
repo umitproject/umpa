@@ -24,37 +24,44 @@ from umpa.utils.my_exceptions import UMPAAttributeException
 
 class HIHL(IntField):
     bits = 4
+    auto = True
     def generate_value(self):
         pass
         # FIXME: how to get length of every fields in this scope?
 
 class HTotalLength(Field):
     bits = 16
+    auto = True
     def fillout(self):
         pass
 
 class HIdentification(Field):
     bits = 16
+    auto = True
     def fillout(self):
         pass
 
 class HFragmentOffset(Field):
     bits = 13
+    auto = True
     def fillout(self):
         pass
 
 class HProtocol(Field):
     bits = 8
+    auto = True
     def fillout(self):
         pass
 
 class HHeaderChecksum(Field):
     bits = 16
+    auto = True
     def fillout(self):
         pass
 
 class HPadding(Field):
     bits = 0
+    auto = True
     def fillout(self):
         pass
 
@@ -77,7 +84,7 @@ class IP(Protocol):
                 'throughput', 'relibility', 'reserved0', 'reserverd1')
         flags = ('reserved', 'df', 'mf')
 
-        fields_list = [ IntField("Version", 4, 4), HIHL("IHL"),
+        fields_list = [ IntField("Version", 4, 4, True), HIHL("IHL"),
                         Flags("TOS",tos), HTotalLength("Total Length"),
                         HIdentification("Identification"),
                         Flags("Flags", flags, reserved=0),
