@@ -33,7 +33,9 @@ class Field(object):
     like the one provided by Umit Project.
     """
 
-    def __init__(self, value=None, bits=None):
+    def __init__(self, name, value=None, bits=None):
+        self.name = name
+
         if bits is not None:
             self.bits = bits
         self._value = value
