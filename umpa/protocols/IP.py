@@ -22,6 +22,8 @@
 from _ import *
 from umpa.utils.my_exceptions import UMPAAttributeException
 
+protocols = [ IP, ]
+
 class HIHL(IntField):
     bits = 4
     def generate_value(self):
