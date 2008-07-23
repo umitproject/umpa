@@ -25,7 +25,7 @@ from socket import *
 import umpa.utils
 from umpa.utils import UMPAException
 
-class Socket:
+class Socket(object):
     """To send built packets your need to create a socket.
     You can use socket module from Python Standard Library directly
     but it's recommended to use this class instead.

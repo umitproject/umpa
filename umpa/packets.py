@@ -19,7 +19,7 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-class Packet:
+class Packet(object):
     """You have to use this class to build a completely packets.
     An instance of the class should contains protocols which
     you want to send."""
