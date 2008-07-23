@@ -22,8 +22,6 @@
 from _ import *
 from umpa.utils.my_exceptions import UMPAAttributeException
 
-protocols = [ IP, ]
-
 class HIHL(IntField):
     bits = 4
     def generate_value(self):
@@ -135,3 +133,5 @@ more.")
     def _is_valid(self, name):
         """Check if attribute is allowed."""
         return self._fields.has_key(name)
+
+protocols = [ IP, ]
