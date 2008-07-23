@@ -21,7 +21,7 @@
 
 import struct
 
-#from umpa import utils
+from umpa import utils
 
 BYTE = 8
 
@@ -123,7 +123,7 @@ class Flags(Field):
 
     def get(self, *names):
         # we check if name of the field in the flag is correct
-        result = [ self._value[val] for val in name if self._is_valid(val) ]
+        result = [ self._value[val] for val in names if self._is_valid(val) ]
 
         # if no results above we return whole list of values
         if len(result) < 1:
