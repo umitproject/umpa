@@ -223,21 +223,21 @@ class Protocol(object):
         # we can do the same without _is_valid() with just try/except section
         # but Francesco asked me about this method
         if self._is_valid(attr):
-            self._fields[attr].set(val)
+            self._get_field(attr).set(val)
         else:
             raise UMPAAttributeException, attr + ' not allowed'
 
     def __getattr__(self, attr):
         """Return value of the field."""
         if self._is_valid(attr):
-            return self._fields[attr].get()
+            return self._get_field(attr).get()
         else:
             raise UMPAAttributeException, attr + ' not allowed'
 
     def get_fields(self):
         """Generator for ordered fields."""
         for field in self._ordered_fields:
-            yield self._fields[field]
+            yield self._get_field(field)
 
     @staticmethod
     def get_fields_keys():
@@ -250,6 +250,12 @@ class Protocol(object):
         """
         for field in Protocol._ordered_fields:
             yield field
+    
+    def _get_field(self, keyname):
+        if self._is_valid(keyname):
+            return self._fields[keyname]
+        else:
+            raise UMPAAttributeException, keyname + ' not allowed'
 
     def set_fields(self, *args, **kwargs):
         """Set fields of the protocol.
@@ -316,8 +322,8 @@ class Protocol(object):
         raw_value = 0
         # lets make a biiiig number ;)
         for field in reversed(self._ordered_fields):
-            raw_value |= self._fields[field].fillout() << bit
-            bit += self._fields[field].bits
+            raw_value |= self._get_field(field).fillout() << bit
+            bit += self._get_field(field).bits
         
         # protocol should return byte-compatible length
         if bit%BYTE != 0:
@@ -357,5 +363,5 @@ class Protocol(object):
         for i, f in enumerate(self.field_list):
             if field == f:
                 break
-            offset += self._fields[self._ordered_fields[i]].bits
+            offset += self._get_field(self._ordered_fields[i]).bits
         return offset

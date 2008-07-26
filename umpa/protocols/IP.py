@@ -200,16 +200,16 @@ class IP(Protocol):
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self._fields['type_of_service'].set_doc("The Type of Service provides \
+        self._get_field('type_of_service').set_doc("The Type of Service provides \
 an indication of the abstract parameters of the quality of service desired. \
 See RFC 791 for more.")
-        self._fields['flags'].set_doc("Various Control Flags. See RFC 791 \
+        self._get_field('flags').set_doc("Various Control Flags. See RFC 791 \
 for more.")
-        self._fields['source_address'].set_doc("The source address. \
+        self._get_field('source_address').set_doc("The source address. \
 See RFC 791 for more.")
-        self._fields['destination_address'].set_doc("The destination address. \
+        self._get_field('destination_address').set_doc("The destination address. \
 See RFC 791 for more.")
-        self._fields['options'].set_doc("The options may appear or not in \
+        self._get_field('options').set_doc("The options may appear or not in \
 datagrams. See RFC 791 for more.")
 
     def _is_valid(self, name):
@@ -221,18 +221,19 @@ datagrams. See RFC 791 for more.")
         raw_value = 0
 
         # Padding
-        self._fields['_padding']._temp_value = self._fields['options'].bits
+        self._get_field('_padding')._temp_value = \
+                                                self._get_field('options').bits
 
         # IHL
         # we store sum of option and padding bits in the _temp_value
         # we can't overwrite _value because user might set his own value there
         # later, generate_value() will return correct value
-        self._fields['_ihl']._temp_value = self._fields['options'].bits + \
-                                            self._fields['_padding'].bits
+        self._get_field('_ihl')._temp_value = \
+            self._get_field('options').bits + self._get_field('_padding').bits
 
         for field in reversed(self._ordered_list):
-            raw_value |= self._fields[field].fillout() << bit
-            bit += self._fields[field].bits
+            raw_value |= self._get_field(field).fillout() << bit
+            bit += self._get_field(field).bits
 
         return bit, raw_value
 
