@@ -23,6 +23,7 @@ import struct
 
 from umpa import utils
 from umpa.protocols._consts import *
+from umpa.utils.my_exceptions import *
 
 class Field(object):
     """Superclass for fields.
@@ -31,6 +32,7 @@ class Field(object):
     IMPORTANT: You should overwrite this __doc__ to get hints in some frontends
     like the one provided by Umit Project.
     """
+    bits = 0
     auto = False
     def __init__(self, name, value=None, bits=None, auto=None):
         self.name = name
@@ -79,7 +81,7 @@ class Field(object):
         if not self._value:
             self._value = self._generate_value()
             raw = self._raw_value()
-            self._value = self.clear()
+            self.clear()
         else:
             raw = self._raw_value()
         
