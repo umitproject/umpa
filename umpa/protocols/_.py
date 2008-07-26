@@ -79,7 +79,7 @@ class Field(object):
         if not self._value:
             self._value = self._generate_value()
             raw = self._raw_value()
-            self._value = None
+            self._value = self.clear()
         else:
             raw = self._raw_value()
         
