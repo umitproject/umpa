@@ -65,11 +65,10 @@ class Field(object):
         pass
 
     def _raw_value(self):
-        raise UMPAException, "value is not defined or generate_value() \
-                                            method is not implemented."
+        raise NotImplementedError, "this is abstract class"
 
     def _generate_value(self):
-        raise UMPAException, "value is not defined or generate_value() \
+        raise UMPAException, "value is not defined or _generate_value() \
                                             method is not implemented."
 
     def fillout(self):
