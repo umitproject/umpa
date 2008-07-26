@@ -133,7 +133,7 @@ class HHeaderChecksum(IntField):
     def _generate_value(self):
         pass
 
-class HPadding(IntField):
+class HPadding(PaddingField):
     """The internet header padding is used to ensure that the internet header
     ends on a 32 bit boundary.
     
@@ -141,8 +141,13 @@ class HPadding(IntField):
     """
     bits = 0
     auto = True
+
+    def __init__(self, *args, **kwds):
+        super(HIHL, self).__init__(*args, **kwds)
+        self._temp_value = 0
+
     def _generate_value(self):
-        pass
+        return (32 - (self._temp_value % 32)) % 32
 
 # main IP class
 
@@ -214,6 +219,9 @@ datagrams. See RFC 791 for more.")
     def _raw(self):
         bit = 0
         raw_value = 0
+
+        # Padding
+        self._fields['_padding']._temp_value = self._fields['options'].bits
 
         # IHL
         # we store sum of option and padding bits in the _temp_value

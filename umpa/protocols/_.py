@@ -92,6 +92,7 @@ class IntField(Field):
     def _is_valid(self, val):
         """Check if a value is not bigger than expected.
         """
+
         if 2**self.bits > val:
             return True
         else:
@@ -130,6 +131,23 @@ class IPv4Field(AddrField):
 
         return raw
 
+class PaddingField(IntField):
+    def _is_valid(self, val):
+        if isinstance(val, int):
+            return True
+        return False
+
+    def fillout(self):
+        self._pre_fillout()
+
+        if not self._value:
+            self.bits = self._generate_value()
+        else:
+            self.bits = self._value
+        return self._raw_value()
+    
+    def _raw_value(self):
+        return 0
 
 class Flags(Field):
     """Most of protocols have a special field with bit-flags.
