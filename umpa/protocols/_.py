@@ -164,8 +164,7 @@ class Flags(Field):
         self._ordered_fields = names
         # we overwrite an attribute self._value
         # because we need a list instead of simple var here
-        false_list = [ False for i in xrange(self.bits) ]
-        self._value = dict(zip(self._ordered_fields, false_list))
+        self._value = dict.fromkeys(self._ordered_fields, False)
 
         # if preset exists then we update values
         for name in preset:
