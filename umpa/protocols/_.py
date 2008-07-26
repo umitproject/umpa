@@ -65,7 +65,8 @@ class Field(object):
         pass
 
     def _raw_value(self):
-        return self._value
+        raise UMPAException, "value is not defined or generate_value() \
+                                            method is not implemented."
 
     def _generate_value(self):
         raise UMPAException, "value is not defined or generate_value() \
@@ -86,6 +87,9 @@ class Field(object):
         return raw
 
 class IntField(Field):
+    def _raw_value(self):
+        return self._value
+
     def _is_valid(self, val):
         """Check if a value is not bigger than expected.
         """
