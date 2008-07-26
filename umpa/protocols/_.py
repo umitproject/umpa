@@ -101,7 +101,35 @@ class AddrField(Field):
     pass
 
 class IPv4Field(AddrField):
-    pass
+    """Address in IPv4 style.
+    """
+    def _is_valid(self, val):
+        """Return True if passed value is correct for IPv4.
+        """
+        bytes = val.split(".")
+
+        if len(bytes) != 4:
+            return False
+
+        for i in bytes:
+            if int(i) > 255 or int(i) < 0:
+                return False
+
+        return True
+
+    def _raw_value(self):
+        """Convert IPv4 address (string) to binary value.
+        """
+        bytes = self._value.split(".")
+
+        raw = 0
+        for b in bytes:
+            raw += int(b)
+            raw <<= 8
+        raw >>= 8
+
+        return raw
+
 
 class Flags(Field):
     """Most of protocols have a special field with bit-flags.
