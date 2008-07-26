@@ -19,50 +19,87 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-from _ import *
-from umpa.utils.my_exceptions import UMPAAttributeException
+import umpa.protocols._consts as const
+
+from umpa.protocols._ import *
+from umpa.utils import net
+
+class HVersion(IntField):
+    bits = 4
+    auto = True
+    def _generate_value(self):
+        return const.IPVERSION_4
 
 class HIHL(IntField):
     bits = 4
     auto = True
-    def generate_value(self):
-        pass
-        # FIXME: how to get length of every fields in this scope?
+    def __init__(self, *args, **kwds):
+        super(HIHL, self).__init__(*args, **kwds)
+        self._temp_value = 0
 
-class HTotalLength(Field):
+    def _generate_value(self):
+        return 5 + self._temp_value / 32 # 5 is a minimum value (see RFC 791)
+
+class HTotalLength(IntField):
     bits = 16
     auto = True
-    def fillout(self):
+    def _generate_value(self):
         pass
 
-class HIdentification(Field):
+class HIdentification(IntField):
     bits = 16
     auto = True
-    def fillout(self):
-        pass
+    def _generate_value(self):
+        # TODO: implementation of fragmentation
+        # otherwise we can simple return 0 ;-)
+        return 0
 
-class HFragmentOffset(Field):
+class HFragmentOffset(IntField):
     bits = 13
     auto = True
-    def fillout(self):
-        pass
+    def _generate_value(self):
+        # TODO: implementation of fragmentation
+        # otherwise we can simple return 0 ;-)
+        return 0
 
-class HProtocol(Field):
+class HTTL(IntField):
     bits = 8
     auto = True
-    def fillout(self):
+    def _generate_value(self):
+        # TODO: checking platform to get correct value of TTL
+        # unfortunately, there isn't any official document which described
+        # list of returns from sys.platform
+        # also, there is some changes in Python 2.6 about sys.platform
+        return const.TTL_LINUX
+
+    def ttl(self, name):
+        """To set correct value of TTL for following platforms:
+        AIX, DEC, FREEBSD, HPUX, IRIX, LINUX, MACOS, OS2, SOLARIS,
+        SUNOS, ULTRIX, WINDOWS.
+
+        name argument can be pass as shown above or as TTL_NAME
+        """
+
+        if not name.startswith("TTL_"):
+            name = "TTL_" + name
+        self._value = getattr(const, name)
+
+class HProtocol(IntField):
+    bits = 8
+    auto = True
+    def _generate_value(self):
         pass
 
-class HHeaderChecksum(Field):
+class HHeaderChecksum(IntField):
     bits = 16
     auto = True
-    def fillout(self):
+    def _generate_value(self):
         pass
 
-class HPadding(Field):
+class HPadding(IntField):
     bits = 0
     auto = True
-    def fillout(self):
+    def _generate_value(self):
         pass
 
 # main IP class
@@ -81,18 +118,29 @@ class IP(Protocol):
 
     def __init__(self, **kw):
         tos = ('precedence0','precedence1', 'precedence2', 'delay',
-                'throughput', 'relibility', 'reserved0', 'reserverd1')
-        flags = ('reserved', 'df', 'mf')
+                'throughput', 'relibility', 'reserved0', 'reserved1')
+        tos_predefined = dict.fromkeys(tos, 0)
 
-        fields_list = [ IntField("Version", 4, 4, True), HIHL("IHL"),
-                        Flags("TOS",tos), HTotalLength("Total Length"),
-                        HIdentification("Identification"),
-                        Flags("Flags", flags, reserved=0),
-                        HFragmentOffset("Fragment Offeset"),
-                        Field("TTL", 255, 8), HProtocol("Protocol"),
+        flags = ('reserved', 'df', 'mf')
+        flags_predefined = dict.fromkeys(flags, 0)
+
+        # TODO:
+        #   - support for fragmentation
+        #       defaulty we don't you fragmentation but we should support it
+        #       if user choose this option
+        #   - checking platform for TTL value
+        #       to be more reliable we should generate default value depends on
+        #       user platform. does anyone know every values of sys.platform? :)
+        fields_list = [ HVersion("Version", 4), HIHL("IHL"),
+                        Flags("TOS", tos, **tos_predefined),
+                        HTotalLength("Total Length"),
+                        HIdentification("Identification", 0),
+                        Flags("Flags", flags, **flags_predefined),
+                        HFragmentOffset("Fragment Offset", 0),
+                        HTTL("TTL", const.TTL_LINUX), HProtocol("Protocol"),
                         HHeaderChecksum("Header Checksum"),
-                        Field("Source Address", bits=16),
-                        Field("Destination Address", bits=16),
+                        IPv4Field("Source Address", bits=16),
+                        IPv4Field("Destination Address", bits=16),
                         Flags("Options", ()), HPadding("Padding") ]
 
         # we pack objects of header's fields to the dict
@@ -102,7 +150,6 @@ class IP(Protocol):
         # setting up passed fields
         for field in kw:
             self.__setattr__(field, kw[field])
-
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
@@ -145,5 +192,22 @@ more.")
     def _is_valid(self, name):
         """Check if attribute is allowed."""
         return self._fields.has_key(name)
+
+    def _raw(self):
+        bit = 0
+        raw_value = 0
+
+        # IHL
+        # we store sum of option and padding bits in the _temp_value
+        # we can't overwrite _value because user might set his own value there
+        # later, generate_value() will return correct value
+        self._fields['_ihl']._temp_value = self._fields['options'].bits + \
+                                            self._fields['_padding'].bits
+
+        for field in reversed(self._ordered_list):
+            raw_value |= self._fields[field].fillout() << bit
+            bit += self._fields[field].bits
+
+        return bit, raw_value
 
 protocols = [ IP, ]

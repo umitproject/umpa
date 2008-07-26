@@ -22,8 +22,7 @@
 import struct
 
 from umpa import utils
-
-BYTE = 8
+from umpa.protocols._consts import *
 
 class Field(object):
     """Superclass for fields.
@@ -35,10 +34,12 @@ class Field(object):
     auto = False
     def __init__(self, name, value=None, bits=None, auto=None):
         self.name = name
-        if auto is not None:
+        if auto:
             self.auto = auto
+        elif value:
+            self.auto = True    # if there's default value, auto should be True
 
-        if bits is not None:
+        if bits:
             self.bits = bits
         self._value = value
 
@@ -51,17 +52,14 @@ class Field(object):
     def get(self):
         return self._value
 
+    def clear(self):
+        self._value = None
+
     def set_doc(self, text):
         self.__doc__ = text
 
     def _is_valid(self, val):
-        """Check if a value is not bigger than expected.
-        """
-        # FIXME: what with src.addr or others non-numeric?
-        if 2**self.bits > val:
-            return True
-        else:
-            return False
+        raise NotImplementedError, "this is abstract class"
 
     def _pre_fillout(self):
         pass
@@ -76,12 +74,30 @@ class Field(object):
     def fillout(self):
         self._pre_fillout()
 
+        # we have to clear self._value if it was not defined
+        # because of later usage
         if not self._value:
             self._value = self._generate_value()
+            raw = self._raw_value()
+            self._value = None
+        else:
+            raw = self._raw_value()
         
-        self._raw_value()
+        return raw
 
 class IntField(Field):
+    def _is_valid(self, val):
+        """Check if a value is not bigger than expected.
+        """
+        if 2**self.bits > val:
+            return True
+        else:
+            return False
+
+class AddrField(Field):
+    pass
+
+class IPv4Field(AddrField):
     pass
 
 class Flags(Field):
