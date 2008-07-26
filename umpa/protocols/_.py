@@ -319,14 +319,25 @@ class Protocol(object):
         raise NotImplementedError
 
     def get_offset(self, field):
-        """Return of set for the field."""
+        """Return offset for the field.
+        
+        NOTE: the argument field CAN be key or instance.
+        """
+
+        # checking if argument is a key or instance
+        if isinstance(x, str):
+            field_list = self._ordered_fields
+        elif isinstance(x, Field):
+            field_list = [ field for field in self.get_fields() ]
+        else:
+            raise UMPAException, type(field) + ' unsupported'
     
-        if field not in self._ordered_fields:
+        if field not in self.field_list:
             raise UMPAAttributeException, field + ' not allowed'
 
         offset = 0
-        for f in self._ordered_fields:
-            if f == field:
+        for i, f in enumerate(self.field_list):
+            if field == f:
                 break
-            offset += self._fields[f].bits
+            offset += self._fields[self._ordered_fields[i]].bits
         return offset
