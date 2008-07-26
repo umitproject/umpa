@@ -143,7 +143,7 @@ class HPadding(PaddingField):
     auto = True
 
     def __init__(self, *args, **kwds):
-        super(HIHL, self).__init__(*args, **kwds)
+        super(HPadding, self).__init__(*args, **kwds)
         self._temp_value = 0
 
     def _generate_value(self):
