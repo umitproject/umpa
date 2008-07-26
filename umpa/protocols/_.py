@@ -350,18 +350,18 @@ class Protocol(object):
         """
 
         # checking if argument is a key or instance
-        if isinstance(x, str):
+        if isinstance(field, str):
             field_list = self._ordered_fields
-        elif isinstance(x, Field):
-            field_list = [ field for field in self.get_fields() ]
+        elif isinstance(field, Field):
+            field_list = [ f for f in self.get_fields() ]
         else:
             raise UMPAException, type(field) + ' unsupported'
     
-        if field not in self.field_list:
+        if field not in field_list:
             raise UMPAAttributeException, field + ' not allowed'
 
         offset = 0
-        for i, f in enumerate(self.field_list):
+        for i, f in enumerate(field_list):
             if field == f:
                 break
             offset += self._get_field(self._ordered_fields[i]).bits
