@@ -25,12 +25,21 @@ from umpa.protocols._ import *
 from umpa.utils import net
 
 class HVersion(IntField):
+    """The Version field indicates the format of the internet header.
+    
+    See RFC 791 for more.
+    """
     bits = 4
     auto = True
     def _generate_value(self):
         return const.IPVERSION_4
 
 class HIHL(IntField):
+    """Internet Header Length is the length of the internet header in 32 bit
+    words, and thus points to the beginning of the data.
+    
+    See RFC 791 for more.
+    """
     bits = 4
     auto = True
     def __init__(self, *args, **kwds):
@@ -41,12 +50,22 @@ class HIHL(IntField):
         return 5 + self._temp_value / 32 # 5 is a minimum value (see RFC 791)
 
 class HTotalLength(IntField):
+    """Total Length is the length of the datagram, measured in octets,
+    including internet header and data.
+
+    See RFC 791 for more.
+    """
     bits = 16
     auto = True
     def _generate_value(self):
         pass
 
 class HIdentification(IntField):
+    """An identifying value assigned by the sender to aid in assembling the
+    fragments of a datagram.
+
+    See RFC 791 for more.
+    """
     bits = 16
     auto = True
     def _generate_value(self):
@@ -55,6 +74,10 @@ class HIdentification(IntField):
         return 0
 
 class HFragmentOffset(IntField):
+    """This field indicates where in the datagram this fragment belongs.
+    
+    See RFC 791 for more.
+    """
     bits = 13
     auto = True
     def _generate_value(self):
@@ -63,6 +86,11 @@ class HFragmentOffset(IntField):
         return 0
 
 class HTTL(IntField):
+    """This field indicates the maximum time the datagram is allowed to
+    remain in the internet system.
+    
+    See RFC 791 for more.
+    """
     bits = 8
     auto = True
     def _generate_value(self):
@@ -85,18 +113,32 @@ class HTTL(IntField):
         self._value = getattr(const, name)
 
 class HProtocol(IntField):
+    """This field indicates the next level protocol used in the data portion
+    of the internet datagram.
+    
+    See RFC 791 for more.
+    """
     bits = 8
     auto = True
     def _generate_value(self):
         pass
 
 class HHeaderChecksum(IntField):
+    """A checksum on the header only.
+    
+    See RFC 791 for more.
+    """
     bits = 16
     auto = True
     def _generate_value(self):
         pass
 
 class HPadding(IntField):
+    """The internet header padding is used to ensure that the internet header
+    ends on a 32 bit boundary.
+    
+    See RFC 791 for more.
+    """
     bits = 0
     auto = True
     def _generate_value(self):
@@ -153,41 +195,17 @@ class IP(Protocol):
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self._fields['_version'].set_doc("The Version field indicates the \
-format of the internet header. See RFC 791 for more.")
-        self._fields['_ihl'].set_doc("Internet Header Length is the length \
-of the internet header in 32 bit words, and thus points to the beginning of \
-the data. See RFC 791 for more.")
         self._fields['type_of_service'].set_doc("The Type of Service provides \
 an indication of the abstract parameters of the quality of service desired. \
 See RFC 791 for more.")
-        self._fields['_total_length'].set_doc("Total Length is the length of \
-the datagram, measured in octets, including internet header and data. \
-See RFC 791 for more.")
-        self._fields['_identification'].set_doc("An identifying value \
-assigned by the sender to aid in assembling the fragments of a datagram. \
-See RFC 791 for more.")
         self._fields['flags'].set_doc("Various Control Flags. See RFC 791 \
 for more.")
-        self._fields['_fragment_offset'].set_doc("This field indicates where \
-in the datagram this fragment belongs. See RFC 791 for more.")
-        self._fields['time_to_live'].set_doc("This field indicates the \
-maximum time the datagram is allowed to remain in the internet system. \
-See RFC 791 for more.")
-        self._fields['_protocol'].set_doc("This field indicates the next \
-level protocol used in the data portion of the internet datagram. See RFC 791 \
-for more.")
-        self._fields['_header_checksum'].set_doc("A checksum on the header \
-only. See RFC 791 for more.")
         self._fields['source_address'].set_doc("The source address. \
 See RFC 791 for more.")
         self._fields['destination_address'].set_doc("The destination address. \
 See RFC 791 for more.")
         self._fields['options'].set_doc("The options may appear or not in \
 datagrams. See RFC 791 for more.")
-        self._fields['_padding'].set_doc("The internet header padding is used \
-to ensure that the internet header ends on a 32 bit boundary. See RFC 791 for \
-more.")
 
     def _is_valid(self, name):
         """Check if attribute is allowed."""
