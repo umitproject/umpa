@@ -136,12 +136,12 @@ class Flags(Field):
     For those fields we use this subclass of Field.
     """
 
-    def __init__(self, names, **preset):
+    def __init__(self, name, names, **preset):
         """Names has to be in correct order.
         If you use **preset, check if keys are in names list as well
         because of order issue.
         """
-        super(Flags, self).__init__(bits=len(names))
+        super(Flags, self).__init__(name, bits=len(names))
 
         self._ordered_fields = names
         # we overwrite an attribute self._value
