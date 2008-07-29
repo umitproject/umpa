@@ -379,13 +379,8 @@ class Protocol(object):
         # (with taking care about amount of bits).
         # then we devide the number on byte-chunks
         # and pack it by struct.pack() function
-        bit = 0
-        raw_value = 0
-        # lets make a biiiig number ;)
-        for field in reversed(self._ordered_fields):
-            raw_value |= self._get_field(field).fillout() << bit
-            bit += self._get_field(field).bits
-        
+        bit, raw_value = self._raw()
+
         # protocol should return byte-compatible length
         if bit%BYTE != 0:
             raise UMPAException, 'odd number of bits in ' + self.__name__
