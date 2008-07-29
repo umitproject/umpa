@@ -19,21 +19,40 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-def in_cksum(data, sum=0):
-    """Return internet checksum.
+def _pieces_of_number(number, piece_size=8):
+    """Return list of pieces of the number.
+    
+    Number is divided on piece_size bits.
+    Default is 8bits.
+    """
+
+    ret = []
+    mask = 2**piece_size - 1
+    while number:
+        ret.append(number & mask)
+        number >>= piece_size
+    ret.reverse()
+    return ret
+
+def in_cksum(data, cksum=0):
+    """Return Internet Checksum.
 
     It is an implementation of RFC 1071.
+
+    To check if checksum is correct pass it as cksum argument.
+    If the result is 0, then the ckecksum has not detected an error.
     """
-    l = len(data)
-    for i in xrange(0, l, 2):
-        if i + 1 >= l:
-            cksum += ord(data[i]) & 0xff
+
+    pieces = _pieces_of_number(data)
+    for i in xrange(0, len(pieces), 2):
+        if i + 1 >= len(pieces):
+            cksum += pieces[i] & 0xff
         else:
-            x = ((ord(data[i]) << 8) & 0xff00) + (ord(data[i+1]) & 0xff)
+            x = ((pieces[i] << 8) & 0xff00) + (pieces[i+1] & 0xff)
             cksum += x
 
     while (cksum >> 16) > 0:
         cksum = (cksum & 0xffff) + (cksum >> 16)
 
     cksum = ~cksum
-    return cksum & 0xffff
+    return int(cksum & 0xffff)
