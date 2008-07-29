@@ -168,7 +168,7 @@ class Flags(Field):
         # because we need a list instead of simple var here
         self._value = {}
         for flag in self._ordered_fields:
-            self._value[flag] = BitField(flag, False, True)
+            self._value[flag] = BitField(flag)
         #self._value = dict.fromkeys(self._ordered_fields, False)
 
         # if **preset exists then we update values
@@ -226,6 +226,8 @@ class BitField(Field):
         # fillout, so for most of cases we don't need to make subclasses with
         # distinct fillout() method
         self._default_value = value
+        if self._default_value:
+            self.auto = True
 
     def _is_valid(self, val):
         # always True because it's bool type
