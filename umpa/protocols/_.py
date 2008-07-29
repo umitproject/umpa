@@ -344,19 +344,7 @@ class Protocol(object):
                 setattr(self, key, kwargs[key])
             self.fields[key].set(kwargs[key])
 
-    def _get_flag_obj(self):
-        """Check if the protocol has special field 'Flags'
-         and return it.
-         """
-        # XXX: what if there is more than one Flags field in the protocol?
-        flag_field = None
-        for obj in self._fields:
-            if type(obj) == Flags:
-                flag_field = obj
-                break
-        return flag_field
-
-    def set_flags(self, *args, **kw):
+    def set_flags(self, name, *args, **kw):
         """Set flags with dict using.
 
         There are 2 ways to do that with using tuple or dict-style.
@@ -367,24 +355,22 @@ class Protocol(object):
         # converting args list to the dict and update our kwargs
         kw.update(util.dict_from_sequence(args))
 
-        flag_field = _get_flag_obj()
-        if flag_field is not None:
+        flag_field = self._get_field(name)
+        if isinstance(flag_field, Flags):
             for flag_name in kw:
-                if kw[flag_name] == True:
+                if kw[flag_name]:
                     flag_field.set(flag_name)
-                elif kw[flag_name] == False:
-                    flag_field.unset(flag_name)
                 else:
-                    raise UMPAException, "Only bool type is supported" 
+                    flag_field.unset(flag_name)
         else:
-            raise UMPAAttributeException, 'No Flags instance for this protocol'
+            raise UMPAAttributeException, "No Flags instance for " + name
 
-    def get_flags(self, *args):
-        flag_field = _get_flag_obj()
-        if flag_field is not None:
+    def get_flags(self, name, *args):
+        flag_field = self._get_field(name)
+        if isinstance(flag_field, Flags):
             return flag_field.get(*args)
         else:
-            return None
+            raise UMPAAttributeException, "No Flags instance for " + name
 
     def get_raw(self):
         """Return raw bits of the protocol's object."""
