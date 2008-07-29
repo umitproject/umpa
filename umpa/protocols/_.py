@@ -204,6 +204,56 @@ class Flags(Field):
         print "Not implemented yet"
         return False
 
+class BitField(Field):
+    bits = 1
+    def __init__(self, name, value=None, auto=None):
+        super(BitField, self).__init__(name, value, BitField.bits, auto)
+        
+        # we store value as a _default_view, it's necessary by generic
+        # fillout, so for most of cases we don't need to make subclasses with
+        # distinct fillout() method
+        self._default_value = value
+
+    def _is_valid(self, val):
+        # always True because it's bool type
+        return True
+
+    def get(self):
+        return bool(self._value)
+
+    def fillout(self):
+        print "Not implemented yet"
+        return False
+        if self._value is None:
+            self._value = self._generate_value()
+            raw = self._raw_value()
+            self.clear()
+        else:
+            raw = self._raw_value()
+
+        return raw
+
+    def _generate_value(self):
+        """Generate value of bit.
+        
+        Be default it checks if self._default_value is defined,
+        if so it returns this value.
+        
+        If you need more complex action,
+        create subclass and overwrite this method.
+        """
+        if self._default_value:
+            return bool(self._default_value)
+        else:
+            raise UMPAException, "value is not defined or _generate_value() \
+                                                    method is not implemented."
+
+    def _raw_value(self):
+        if self._value:
+            return 1
+        else:
+            return 0
+
 class Protocol(object):
     """Superclass for protocols.
     To implement new protocol, make a subclass.
