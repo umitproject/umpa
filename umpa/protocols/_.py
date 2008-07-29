@@ -128,6 +128,14 @@ class IPAddrField(AddrField):
 
         return True
 
+class IPv4AddrField(IPAddrField):
+    """Address in IPv4 style.
+    """
+    separator = "."
+    piece_size = 8
+    pieces_amount = 4
+    base = 10
+
 class PaddingField(IntField):
     def _is_valid(self, val):
         if isinstance(val, int):
