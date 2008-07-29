@@ -232,7 +232,7 @@ datagrams. See RFC 791 for more.")
             self._get_field('options').bits + self._get_field('_padding').bits
 
         # so we make a big number with bits of every fields of the protocol
-        for field in reversed(self._ordered_list):
+        for field in reversed(self._ordered_fields):
             raw_value |= self._get_field(field).fillout() << bit
             bit += self._get_field(field).bits
 
