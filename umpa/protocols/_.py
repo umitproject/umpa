@@ -136,6 +136,14 @@ class IPv4AddrField(IPAddrField):
     pieces_amount = 4
     base = 10
 
+class IPv6AddrField(IPAddrField):
+    """Address in IPv6 style.
+    """
+    separator = ":"
+    piece_size = 16
+    pieces_amount = 8
+    base = 16
+
 class PaddingField(IntField):
     def _is_valid(self, val):
         if isinstance(val, int):
