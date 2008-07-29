@@ -186,8 +186,8 @@ class IP(Protocol):
                         HFragmentOffset("Fragment Offset", 0),
                         HTTL("TTL", const.TTL_LINUX), HProtocol("Protocol"),
                         HHeaderChecksum("Header Checksum", 0),
-                        IPv4Field("Source Address", bits=16),
-                        IPv4Field("Destination Address", bits=16),
+                        IPv4AddrField("Source Address", bits=16),
+                        IPv4AddrField("Destination Address", bits=16),
                         Flags("Options", ()), HPadding("Padding") ]
 
         # we pack objects of header's fields to the dict
@@ -237,8 +237,8 @@ datagrams. See RFC 791 for more.")
             bit += self._get_field(field).bits
 
         # Header Checksum
-        cksum_offset = bit - self.get_offset('_header_checksum')
-                            - self._get_field('_header_checksum').bits
+        cksum_offset = bit - self.get_offset('_header_checksum') - \
+                       self._get_field('_header_checksum').bits
         # check if user doesn't provide own values of bits
         if (raw_value & (0xff << cksum_offset)) >> cksum_offset == 0:
             # calculate and add checksum to the raw_value
