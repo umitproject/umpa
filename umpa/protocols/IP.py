@@ -131,7 +131,7 @@ class HHeaderChecksum(IntField):
     bits = 16
     auto = True
     def _generate_value(self):
-        pass
+        return 0        # HeaderChecksum field should be initialized by 0
 
 class HPadding(PaddingField):
     """The internet header padding is used to ensure that the internet header
@@ -185,7 +185,7 @@ class IP(Protocol):
                         Flags("Flags", flags, **flags_predefined),
                         HFragmentOffset("Fragment Offset", 0),
                         HTTL("TTL", const.TTL_LINUX), HProtocol("Protocol"),
-                        HHeaderChecksum("Header Checksum"),
+                        HHeaderChecksum("Header Checksum", 0),
                         IPv4Field("Source Address", bits=16),
                         IPv4Field("Destination Address", bits=16),
                         Flags("Options", ()), HPadding("Padding") ]
@@ -234,6 +234,15 @@ datagrams. See RFC 791 for more.")
         for field in reversed(self._ordered_list):
             raw_value |= self._get_field(field).fillout() << bit
             bit += self._get_field(field).bits
+
+        # Header Checksum
+        cksum_offset = bit - self.get_offset('_header_checksum')
+                            - self._get_field('_header_checksum').bits
+        # check if user doesn't provide own values of bits
+        if (raw_value & (0xff << cksum_offset)) >> cksum_offset == 0:
+            # calculate and add checksum to the raw_value
+            cksum = net.in_cksum(raw_value)
+            raw_value |= cksum << cksum_offset
 
         return bit, raw_value
 
