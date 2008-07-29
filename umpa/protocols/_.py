@@ -104,8 +104,26 @@ class AddrField(Field):
     pass
 
 class IPAddrField(AddrField):
+    """Main class for IP-style adresses.
+    It handles with 2 types of data:
+    1 - strings as "127.0.0.1" or "0:0:0:0:0:0:0:1"
+    2 - tuples as (127,0,0,1) or (0,0,0,0,0,0,0,1)
+    """
+    def set(self, value):
+        # convert list to tuple
+        if type(value) is list:
+            value = tuple(value)
+        # validation
+        if self._is_valid(value):
+            self._value = value
+        else:
+            raise UMPAAttributeException, value + ' not allowed'
+
     def _raw_value(self):
-        pieces = self._value.split(self.separator)
+        if type(self._value) is str:
+            pieces = self._value.split(self.separator)
+        else:
+            pieces = self._value
 
         raw = 0
         for b in pieces:
@@ -116,14 +134,18 @@ class IPAddrField(AddrField):
         return raw
 
     def _is_valid(self, val):
-        pieces = self._value.split(self.separator)
+        if type(val) is str:
+            pieces = val.split(self.separator)
+        elif type(val) is tuple:
+            pieces = val
+        else:
+            return False
 
         if len(pieces) != self.pieces_amount:
             return False
 
         for i in pieces:
-            if int(i, self.base) > 2**self.piece_size -1 or \
-                                                        int(i, self.base) < 0:
+            if int(i, self.base) > 2**self.piece_size or int(i, self.base) < 0:
                 return False
 
         return True
