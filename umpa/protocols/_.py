@@ -166,11 +166,14 @@ class Flags(Field):
         self._ordered_fields = names
         # we overwrite an attribute self._value
         # because we need a list instead of simple var here
-        self._value = dict.fromkeys(self._ordered_fields, False)
+        self._value = {}
+        for flag in self._ordered_fields:
+            self._value[flag] = BitField(flag, False, True)
+        #self._value = dict.fromkeys(self._ordered_fields, False)
 
-        # if preset exists then we update values
+        # if **preset exists then we update values
         for name in preset:
-            if preset[name] == False:
+            if preset[name] == True:
                 self.set(name)
             else:
                 self.unset(name)
@@ -181,7 +184,7 @@ class Flags(Field):
     def _set_bit(self, names, value):
         for flag_name in names:
             if self._is_valid(flag_name):
-                self._value[flag_name] = value
+                self._value[flag_name].set(value)
             else:
                 raise UMPAAttributeException, attr + ' not allowed'
 
@@ -193,16 +196,26 @@ class Flags(Field):
 
     def get(self, *names):
         # we check if name of the field in the flag is correct
-        result = [ self._value[val] for val in names if self._is_valid(val) ]
+        result = [ self._value[val].get() for val in names
+                                                    if self._is_valid(val) ]
 
         # if no results above we return whole list of values
         if len(result) < 1:
             result = self._value
         return result
 
+    def _pre_fillout(self):
+        pass
+
     def fillout(self):
-        print "Not implemented yet"
-        return False
+        self._pre_fillout()
+
+        raw = 0
+        for bitname in self._ordered_fields:
+            raw += self._value[bitname].fillout()
+            raw <<= 1
+        raw >>= 1
+        return raw
 
 class BitField(Field):
     bits = 1
@@ -222,8 +235,6 @@ class BitField(Field):
         return bool(self._value)
 
     def fillout(self):
-        print "Not implemented yet"
-        return False
         if self._value is None:
             self._value = self._generate_value()
             raw = self._raw_value()
