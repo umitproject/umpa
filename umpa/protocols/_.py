@@ -103,35 +103,30 @@ class IntField(Field):
 class AddrField(Field):
     pass
 
-class IPv4Field(AddrField):
-    """Address in IPv4 style.
-    """
-    def _is_valid(self, val):
-        """Return True if passed value is correct for IPv4.
-        """
-        bytes = val.split(".")
+class IPAddrField(AddrField):
+    def _raw_value(self):
+        pieces = self._value.split(self.separator)
 
-        if len(bytes) != 4:
+        raw = 0
+        for b in pieces:
+            raw += int(b, self.base)
+            raw <<= self.piece_size
+        raw >>= self.piece_size
+
+        return raw
+
+    def _is_valid(self, val):
+        pieces = self._value.split(self.separator)
+
+        if len(pieces) != self.pieces_amount:
             return False
 
-        for i in bytes:
-            if int(i) > 255 or int(i) < 0:
+        for i in pieces:
+            if int(i, self.base) > 2**self.piece_size -1 or \
+                                                        int(i, self.base) < 0:
                 return False
 
         return True
-
-    def _raw_value(self):
-        """Convert IPv4 address (string) to binary value.
-        """
-        bytes = self._value.split(".")
-
-        raw = 0
-        for b in bytes:
-            raw += int(b)
-            raw <<= 8
-        raw >>= 8
-
-        return raw
 
 class PaddingField(IntField):
     def _is_valid(self, val):
