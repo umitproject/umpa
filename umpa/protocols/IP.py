@@ -34,7 +34,7 @@ class HVersion(IntField):
     def _generate_value(self):
         return const.IPVERSION_4
 
-class HIHL(IntField):
+class HIHL(SpecialIntField):
     """Internet Header Length is the length of the internet header in 32 bit
     words, and thus points to the beginning of the data.
     
@@ -42,12 +42,8 @@ class HIHL(IntField):
     """
     bits = 4
     auto = True
-    def __init__(self, *args, **kwds):
-        super(HIHL, self).__init__(*args, **kwds)
-        self._temp_value = 0
-
     def _generate_value(self):
-        return 5 + self._temp_value / 32 # 5 is a minimum value (see RFC 791)
+        return 5 + self._tmp_value / 32 # 5 is a minimum value (see RFC 791)
 
 class HTotalLength(IntField):
     """Total Length is the length of the datagram, measured in octets,
@@ -112,7 +108,7 @@ class HTTL(IntField):
             name = "TTL_" + name
         self._value = getattr(const, name)
 
-class HProtocol(IntField):
+class HProtocol(SpecialIntField):
     """This field indicates the next level protocol used in the data portion
     of the internet datagram.
     
@@ -121,7 +117,7 @@ class HProtocol(IntField):
     bits = 8
     auto = True
     def _generate_value(self):
-        pass
+        return self._tmp_value
 
 class HHeaderChecksum(IntField):
     """A checksum on the header only.
@@ -133,7 +129,7 @@ class HHeaderChecksum(IntField):
     def _generate_value(self):
         return 0        # HeaderChecksum field should be initialized by 0
 
-class HPadding(PaddingField):
+class HPadding(PaddingField, SpecialIntField):
     """The internet header padding is used to ensure that the internet header
     ends on a 32 bit boundary.
     
@@ -141,11 +137,6 @@ class HPadding(PaddingField):
     """
     bits = 0
     auto = True
-
-    def __init__(self, *args, **kwds):
-        super(HPadding, self).__init__(*args, **kwds)
-        self._temp_value = 0
-
     def _generate_value(self):
         return (32 - (self._temp_value % 32)) % 32
 

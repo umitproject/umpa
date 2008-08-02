@@ -300,6 +300,25 @@ class BitField(Field):
         else:
             return 0
 
+class SpecialIntField(IntField):
+    """Use this class if the field handle with other fields from the protocol
+    or other layers/protocols.
+    """
+    def __init__(self, *args, **kwds):
+        super(SpecialIntField, self).__init__(*args, **kwds)
+        self.__temp_value = 0
+
+    def get_tmpvalue(self):
+        return self.__temp_value
+
+    def set_tmpvalue(self, val):
+        self.__temp_value = val
+
+    def clear_tmpvalue(self):
+        self.__temp_value = 0
+
+    _tmp_value = property(get_tmpvalue, set_tmpvalue, clear_tmpvalue)
+
 class Protocol(object):
     """Superclass for protocols.
     To implement new protocol, make a subclass.
