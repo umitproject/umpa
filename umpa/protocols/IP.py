@@ -200,10 +200,6 @@ address. See RFC 791 for more.")
         self._get_field('options').set_doc("The options may appear or not in \
 datagrams. See RFC 791 for more.")
 
-    def _is_valid(self, name):
-        """Check if attribute is allowed."""
-        return self._fields.has_key(name)
-
     def _raw(self, protocol_container, protocol_bits):
         bit = 0
         raw_value = 0

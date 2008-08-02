@@ -140,8 +140,8 @@ class Protocol(object):
         return raw_value, bit
 
     def _is_valid(self, field):
-        """Overload it in subclasses."""
-        raise NotImplementedError
+        """Check if attribute is allowed."""
+        return self._fields.has_key(name)
 
     def get_offset(self, field):
         """Return offset for the field.
