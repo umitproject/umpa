@@ -50,13 +50,16 @@ class Socket(object):
     def send(self, *packets):
         """Sending your packets"""
 
+        sent_bits = []
         for packet in packets:
-            # XXX: this connects to a remote socket, so destination address has to be known.
-            # the better solution would be to use ARP (the lowest software layer from OSI).
-            # it will be implemented when ARP protocol will be implemented ;)
+            # XXX: this connects to a remote socket, so destination address has
+            # to be known. the better solution would be to use Ethernet protocol
+            # (the lowest software layer from OSI).
+            # it will be implemented when Ethernet protocol will be implemented
             # so now we have to parse the packet for destination address
             dst_addr = self._get_address(packet)
-            self._sock.sendto(packet.get_raw(), (dst_addr,0) )
+            sent_bits.append(self._sock.sendto(packet.get_raw(), (dst_addr,0)))
+        return sent_bits
 
     def _get_address(self, packet):
         """Because of Ethernet issue (described in send() method,
