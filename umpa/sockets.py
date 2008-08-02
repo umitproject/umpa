@@ -62,7 +62,7 @@ class Socket(object):
         return sent_bits
 
     def _get_address(self, packet):
-        """Because of Ethernet issue (described in send() method,
+        """Because of ARP issue (described in send() method,
         we have to parse packets for destination addresses.
         """
         for p in packet.protos:
