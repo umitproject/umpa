@@ -188,15 +188,15 @@ class IP(Protocol):
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self._get_field('type_of_service').set_doc("The Type of Service provides \
-an indication of the abstract parameters of the quality of service desired. \
-See RFC 791 for more.")
+        self._get_field('type_of_service').set_doc("The Type of Service \
+provides an indication of the abstract parameters of the quality of service \
+desired. See RFC 791 for more.")
         self._get_field('flags').set_doc("Various Control Flags. See RFC 791 \
 for more.")
         self._get_field('source_address').set_doc("The source address. \
 See RFC 791 for more.")
-        self._get_field('destination_address').set_doc("The destination address. \
-See RFC 791 for more.")
+        self._get_field('destination_address').set_doc("The destination \
+address. See RFC 791 for more.")
         self._get_field('options').set_doc("The options may appear or not in \
 datagrams. See RFC 791 for more.")
 
