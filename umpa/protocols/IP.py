@@ -45,7 +45,7 @@ class HIHL(SpecialIntField):
     def _generate_value(self):
         return 5 + self._tmp_value / 32 # 5 is a minimum value (see RFC 791)
 
-class HTotalLength(IntField):
+class HTotalLength(SpecialIntField):
     """Total Length is the length of the datagram, measured in octets,
     including internet header and data.
 
@@ -54,7 +54,7 @@ class HTotalLength(IntField):
     bits = 16
     auto = True
     def _generate_value(self):
-        pass
+        return self._tmp_value / const.BYTE
 
 class HIdentification(IntField):
     """An identifying value assigned by the sender to aid in assembling the
@@ -137,8 +137,9 @@ class HPadding(PaddingField, SpecialIntField):
     """
     bits = 0
     auto = True
+
     def _generate_value(self):
-        return (32 - (self._temp_value % 32)) % 32
+        return (32 - (self._tmp_value % 32)) % 32
 
 # main IP class
 
@@ -147,6 +148,7 @@ class IP(Protocol):
     The main protocol in third layer of OSI model.
     """
     layer = 3      # layer of OSI
+    protocol_id = const.ETHERTYPE_IP
 
     _ordered_fields = ('_version', '_ihl', 'type_of_service', '_total_length',
                     '_identification', 'flags', '_fragment_offset',
@@ -207,35 +209,56 @@ datagrams. See RFC 791 for more.")
         """Check if attribute is allowed."""
         return self._fields.has_key(name)
 
-    def _raw(self):
+    def _raw(self, protocol_container, protocol_bits):
         bit = 0
         raw_value = 0
 
         # Padding
-        self._get_field('_padding')._temp_value = \
+        self._get_field('_padding')._tmp_value = \
                                                 self._get_field('options').bits
 
         # IHL
         # we store sum of option and padding bits in the _temp_value
         # we can't overwrite _value because user might set his own value there
         # later, generate_value() will return correct value
-        self._get_field('_ihl')._temp_value = \
+        self._get_field('_ihl')._tmp_value = \
             self._get_field('options').bits + self._get_field('_padding').bits
+
+        # Total Length
+        # we sum length of upper layers and IP layer
+        self._get_field('_total_length')._tmp_value = \
+            self._get_field('_ihl')._generate_value()*32 + protocol_bits
+
+        # Protocol
+        # field indicates the next level protocol used in the data
+        # portion of the internet datagram.
+        it = iter(protocol_container)
+        for proto in it:
+            if proto is self:
+                break
+        try:
+            proto = it.next()
+            proto_id = proto.protocol_id
+        except StopIteration:
+            proto_id = 0 # FIXME: what's the default value for non-upper layer?
+        finally:
+            self._get_field('_protocol')._tmp_value = proto_id
 
         # so we make a big number with bits of every fields of the protocol
         for field in reversed(self._ordered_fields):
-            raw_value |= self._get_field(field).fillout() << bit
+            x = self._get_field(field).fillout()
+            raw_value |= x << bit
             bit += self._get_field(field).bits
-
         # Header Checksum
+        # a checksum on the header only.
         cksum_offset = bit - self.get_offset('_header_checksum') - \
-                       self._get_field('_header_checksum').bits
+                            self._get_field('_header_checksum').bits
         # check if user doesn't provide own values of bits
         if (raw_value & (0xff << cksum_offset)) >> cksum_offset == 0:
             # calculate and add checksum to the raw_value
             cksum = net.in_cksum(raw_value)
             raw_value |= cksum << cksum_offset
 
-        return bit, raw_value
+        return raw_value, bit
 
 protocols = [ IP, ]

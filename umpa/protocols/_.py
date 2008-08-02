@@ -328,6 +328,7 @@ class Protocol(object):
     """
     _ordered_fields = ()
     layer = None
+    protocol_id = None
 
     def __init__(self, fields, **kw):
         #self._fields = {}
@@ -413,27 +414,20 @@ class Protocol(object):
         else:
             raise UMPAAttributeException, "No Flags instance for " + name
 
-    def get_raw(self):
+    def get_raw(self, protolol_container, protocol_bits):
         """Return raw bits of the protocol's object."""
 
         # The deal: we join all value's fields into one big number
         # (with taking care about amount of bits).
         # then we devide the number on byte-chunks
         # and pack it by struct.pack() function
-        bit, raw_value = self._raw()
+        raw_value, bit = self._raw(protolol_container, protocol_bits)
 
         # protocol should return byte-compatible length
         if bit%BYTE != 0:
             raise UMPAException, 'odd number of bits in ' + self.__name__
 
-        # check how many bytes we need
-        bytes = bit/BYTE
-        # split the number on byte-chunks
-        l = [ (raw_value & (0xff << (BYTE*i))) >> BYTE*i
-                                    for i in reversed(xrange(bytes)) ]
-        # and pack it
-        header_pack = struct.pack('!' + 'B'*bytes, *l)
-        return header_pack
+        return raw_value, bit
 
     def _is_valid(self, field):
         """Overload it in subclasses."""
