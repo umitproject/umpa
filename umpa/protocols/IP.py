@@ -179,8 +179,8 @@ class IP(Protocol):
                         HFragmentOffset("Fragment Offset", 0),
                         HTTL("TTL", const.TTL_LINUX), HProtocol("Protocol"),
                         HHeaderChecksum("Header Checksum", 0),
-                        IPv4AddrField("Source Address", "127.0.0.1", 32),
-                        IPv4AddrField("Destination Address", "127.0.0.1", 32),
+                        IPv4AddrField("Source Address", "127.0.0.1"),
+                        IPv4AddrField("Destination Address", "127.0.0.1"),
                         Flags("Options", ()), HPadding("Padding") ]
 
         # we pack objects of header's fields to the dict
