@@ -118,7 +118,7 @@ class Protocol(object):
         else:
             raise UMPAAttributeException, "No Flags instance for " + name
 
-    def get_raw(self, protolol_container, protocol_bits):
+    def _get_raw(self, protolol_container, protocol_bits):
         """Return raw bits of the protocol's object."""
 
         # The deal: we join all value's fields into one big number

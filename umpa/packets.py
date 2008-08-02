@@ -63,7 +63,10 @@ class Packet(object):
         self.bits = 0
         proto_id = 0
         for proto in reversed(self.protos):
-            raw_proto, bit_proto = proto.get_raw(tuple(self.protos), self.bits)
+            # unfortunately we must pass list of prototocols to every protocol
+            # because some fields handle with other protocols, so they need
+            # an access to them
+            raw_proto, bit_proto = proto._get_raw(tuple(self.protos), self.bits)
             self.raw |= raw_proto << self.bits
             self.bits += bit_proto
         # split into chunks
