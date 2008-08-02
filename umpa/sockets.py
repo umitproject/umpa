@@ -59,8 +59,10 @@ class Socket(object):
             self._sock.sendto(packet.get_raw(), (dst_addr,0) )
 
     def _get_address(self, packet):
-        """Because of ARP issue (described in send() method,
+        """Because of Ethernet issue (described in send() method,
         we have to parse packets for destination addresses.
         """
-        print "Not implemented yet."
-        return False
+        for p in packet.protos:
+            if p.layer == 3:    # XXX: if we included more than one protocol
+                break           #      of layer 3 we got IP from the first one
+        return p.destination_address
