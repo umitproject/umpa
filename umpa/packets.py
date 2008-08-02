@@ -19,6 +19,11 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import struct
+
+import umpa.utils.bits
+from umpa.protocols._consts import BYTE
+
 class Packet(object):
     """You have to use this class to build a completely packets.
     An instance of the class should contains protocols which
@@ -30,6 +35,8 @@ class Packet(object):
         """
         self.protos = []
         self._add_new_protocols(protos)
+        self.raw = None
+        self.bits = 0
 
     def __str__(self):
         """Print in human-readable style a content of the packet."""
@@ -45,11 +52,22 @@ class Packet(object):
         """
         self._add_new_protocols(protos)
 
-    def _add_new_protocols(self, *protos):
+    def _add_new_protocols(self, protos):
         for p in protos:
             self.protos.append(p)
 
     def get_raw(self):
         """Return raw packet, in bit-mode (big-endian)."""
-        # TODO: calling method to pack it for each protocols
-        print "Not implemented yet."
+
+        self.raw = 0
+        self.bits = 0
+        proto_id = 0
+        for proto in reversed(self.protos):
+            raw_proto, bit_proto = proto.get_raw(tuple(self.protos), self.bits)
+            self.raw |= raw_proto << self.bits
+            self.bits += bit_proto
+        # split into chunks
+        # we make it because we need string for socket object
+        # so after that we pack it by struct module.pack()
+        byte_chunks = umpa.utils.bits.split_into_chunks(self.raw, self.bits)
+        return struct.pack('!' + 'B'*(self.bits/BYTE), *byte_chunks)
