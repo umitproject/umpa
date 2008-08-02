@@ -129,18 +129,6 @@ class HHeaderChecksum(IntField):
     def _generate_value(self):
         return 0        # HeaderChecksum field should be initialized by 0
 
-class HPadding(PaddingField, SpecialIntField):
-    """The internet header padding is used to ensure that the internet header
-    ends on a 32 bit boundary.
-    
-    See RFC 791 for more.
-    """
-    bits = 0
-    auto = True
-
-    def _generate_value(self):
-        return (32 - (self._tmp_value % 32)) % 32
-
 # main IP class
 
 class IP(Protocol):
@@ -181,10 +169,10 @@ class IP(Protocol):
                         HHeaderChecksum("Header Checksum", 0),
                         IPv4AddrField("Source Address", "127.0.0.1"),
                         IPv4AddrField("Destination Address", "127.0.0.1"),
-                        Flags("Options", ()), HPadding("Padding") ]
+                        Flags("Options", ()), PaddingField("Padding") ]
 
         # we call super.__init__ after prepared necessary data
-        super(IP, self).__init__(fields, **kw)
+        super(IP, self).__init__(fields_list, **kw)
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
@@ -199,7 +187,9 @@ See RFC 791 for more.")
 address. See RFC 791 for more.")
         self._get_field('options').set_doc("The options may appear or not in \
 datagrams. See RFC 791 for more.")
-
+        self._get_field('_padding').set_doc("The internet header padding is \
+used to ensure that the internet header ends on a 32 bit boundary. \
+See RFC 791 for more.")
     def _raw(self, protocol_container, protocol_bits):
         bit = 0
         raw_value = 0

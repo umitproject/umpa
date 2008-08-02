@@ -98,6 +98,25 @@ class IntField(Field):
         else:
             return False
 
+class SpecialIntField(IntField):
+    """Use this class if the field handle with other fields from the protocol
+    or other layers/protocols.
+    """
+    def __init__(self, *args, **kwds):
+        super(SpecialIntField, self).__init__(*args, **kwds)
+        self.__temp_value = 0
+
+    def get_tmpvalue(self):
+        return self.__temp_value
+
+    def set_tmpvalue(self, val):
+        self.__temp_value = val
+
+    def clear_tmpvalue(self):
+        self.__temp_value = 0
+
+    _tmp_value = property(get_tmpvalue, set_tmpvalue, clear_tmpvalue)
+
 class AddrField(Field):
     pass
 
@@ -163,7 +182,14 @@ class IPv6AddrField(IPAddrField):
     base = 16
     bits = 128
 
-class PaddingField(IntField):
+class PaddingField(SpecialIntField):
+    bits = 0
+    auto = True
+
+    def __init__(self, name, word=32, *args, **kwds):
+        self._word = word
+        super(PaddingField, self).__init__(name, *args, **kwds)
+
     def _is_valid(self, val):
         if isinstance(val, int):
             return True
@@ -180,6 +206,9 @@ class PaddingField(IntField):
     
     def _raw_value(self):
         return 0
+
+    def _generate_value(self):
+        return (self._word - (self._tmp_value % self._word)) % self._word
 
 class Flags(Field):
     """Most of protocols have a special field with bit-flags.
@@ -304,21 +333,3 @@ class BitField(Field):
         else:
             return 0
 
-class SpecialIntField(IntField):
-    """Use this class if the field handle with other fields from the protocol
-    or other layers/protocols.
-    """
-    def __init__(self, *args, **kwds):
-        super(SpecialIntField, self).__init__(*args, **kwds)
-        self.__temp_value = 0
-
-    def get_tmpvalue(self):
-        return self.__temp_value
-
-    def set_tmpvalue(self, val):
-        self.__temp_value = val
-
-    def clear_tmpvalue(self):
-        self.__temp_value = 0
-
-    _tmp_value = property(get_tmpvalue, set_tmpvalue, clear_tmpvalue)
