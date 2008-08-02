@@ -44,14 +44,10 @@ class Field(object):
         if bits:
             self.bits = bits
         self._value = value
-        # _modified is logical attribute to have easy access if user
-        # modified the value. it's helpful for autofilling fields
-        self._modified = False
 
     def set(self, value):
         if self._is_valid(value):
             self._value = value
-            self._modified = True
         else:
             raise UMPAAttributeException, value + ' not allowed'
 
@@ -60,7 +56,6 @@ class Field(object):
 
     def clear(self):
         self._value = None
-        self._modified = False
 
     def set_doc(self, text):
         self.__doc__ = text
@@ -91,14 +86,6 @@ class Field(object):
             raw = self._raw_value()
         
         return raw
-
-    def _check_related_field(self, raw_value, bits_raw, offset):
-        temp_value = ( raw >> bits_raw - offset - self.bits) \
-                                                    & ( 1 << self.bits ) - 1
-        if temp_value == AUTOFILL_DEFAULT and self.default:
-            return True
-        else:
-            return False
 
 class IntField(Field):
     def _raw_value(self):
@@ -236,7 +223,6 @@ class Flags(Field):
         for flag in self._ordered_fields:
             self._value[flag] = BitField(flag)
         #self._value = dict.fromkeys(self._ordered_fields, False)
-        self._modified = False
 
     def set(self, *names):
         self._set_bit(names, True)
