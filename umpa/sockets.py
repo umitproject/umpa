@@ -22,7 +22,7 @@
 import sys
 from socket import *
 
-import umpa.utils
+import umpa.utils.security
 from umpa.utils import UMPAException
 
 class Socket(object):
@@ -41,7 +41,7 @@ class Socket(object):
         try:
             self._sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)
             # dropping root-priviliges
-            utils.security.drop_priviliges()
+            umpa.utils.security.drop_priviliges()
         except error, msg:
             raise UMPAException(msg)
         # to build own headers of IP
