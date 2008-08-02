@@ -37,8 +37,14 @@ class Protocol(object):
     layer = None
     protocol_id = None
 
-    def __init__(self, fields, **kw):
+    def __init__(self, fields_list, **kw):
+        # we pack objects of header's fields to the dict
+        fields = dict(zip(self._ordered_fields, fields_list))
+
         super(Protocol, self).__setattr__('_fields', fields)
+        # setting up passed fields
+        for field in kw:
+            self.__setattr__(field, kw[field])
 
     def __setattr__(self, attr, val):
         """Set value of the field."""

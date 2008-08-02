@@ -183,13 +183,8 @@ class IP(Protocol):
                         IPv4AddrField("Destination Address", "127.0.0.1"),
                         Flags("Options", ()), HPadding("Padding") ]
 
-        # we pack objects of header's fields to the dict
-        fields = dict(zip(self._ordered_fields, fields_list))
+        # we call super.__init__ after prepared necessary data
         super(IP, self).__init__(fields, **kw)
-
-        # setting up passed fields
-        for field in kw:
-            self.__setattr__(field, kw[field])
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
