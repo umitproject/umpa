@@ -73,7 +73,7 @@ class Field(object):
         raise UMPAException, "value is not defined or _generate_value() \
                                             method is not implemented."
 
-    def fillout(self):
+    def fillout(self, *args):
         self._pre_fillout()
 
         # we have to clear self._value if it was not defined
@@ -113,11 +113,8 @@ class IPAddrField(AddrField):
         # convert list to tuple
         if type(value) is list:
             value = tuple(value)
-        # validation
-        if self._is_valid(value):
-            self._value = value
-        else:
-            raise UMPAAttributeException, value + ' not allowed'
+
+        super(IPAddrField, self).set(value)
 
     def _raw_value(self):
         if type(self._value) is str:
@@ -197,12 +194,10 @@ class Flags(Field):
         super(Flags, self).__init__(name, bits=len(names))
 
         self._ordered_fields = names
-        # we overwrite an attribute self._value
-        # because we need a list instead of simple var here
-        self._value = {}
-        for flag in self._ordered_fields:
-            self._value[flag] = BitField(flag)
-        #self._value = dict.fromkeys(self._ordered_fields, False)
+
+        # initialize of self._value...
+        # well we can call clear() to not duplicate the code
+        self.clear()
 
         # if **preset exists then we update values
         for name in preset:
@@ -221,8 +216,17 @@ class Flags(Field):
             else:
                 raise UMPAAttributeException, attr + ' not allowed'
 
+    def clear(self):
+        # we overwrite an attribute self._value
+        # because we need a list instead of simple var here
+        self._value = {}
+        for flag in self._ordered_fields:
+            self._value[flag] = BitField(flag)
+        #self._value = dict.fromkeys(self._ordered_fields, False)
+
     def set(self, *names):
         self._set_bit(names, True)
+        self._modified = True
 
     def unset(self, *names):
         self._set_bit(names, False)
@@ -331,14 +335,11 @@ class Protocol(object):
     protocol_id = None
 
     def __init__(self, fields, **kw):
-        #self._fields = {}
         super(Protocol, self).__setattr__('_fields', fields)
 
     def __setattr__(self, attr, val):
         """Set value of the field."""
 
-        # we can do the same without _is_valid() with just try/except section
-        # but Francesco asked me about this method
         if self._is_valid(attr):
             self._get_field(attr).set(val)
         else:
