@@ -141,7 +141,7 @@ class Protocol(object):
 
     def _is_valid(self, field):
         """Check if attribute is allowed."""
-        return self._fields.has_key(name)
+        return self._fields.has_key(field)
 
     def get_offset(self, field):
         """Return offset for the field.
