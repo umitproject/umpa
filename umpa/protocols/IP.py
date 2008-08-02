@@ -21,7 +21,7 @@
 
 import umpa.protocols._consts as const
 
-from umpa.protocols._ import *
+from umpa.protocols import *
 from umpa.utils import net
 
 class HVersion(IntField):

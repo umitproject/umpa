@@ -18,3 +18,12 @@
 # You should have received a copy of the GNU Lesser General Public License 
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
+from _protocols import *
+from _fields import *
+from _consts import *
+
+# TODO: we can add a simple collector of protocols lists
+# and import the files of protocols, so users could only do something like:
+# from umpa.protocols import IP
+# packet = IP()
