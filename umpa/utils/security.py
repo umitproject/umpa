@@ -20,7 +20,6 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-import pwd
 
 def drop_priviliges():
     """Some functions require root-privilegies and after we done them,
@@ -37,5 +36,6 @@ def drop_priviliges():
     if os.name != 'posix':
         return
 
+    import pwd
     nobody_id = pwd.getpwnam('nobody')[2]
     os.seteuid(nobody_id)
