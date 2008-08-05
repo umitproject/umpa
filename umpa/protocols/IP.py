@@ -190,6 +190,7 @@ datagrams. See RFC 791 for more.")
         self._get_field('_padding').set_doc("The internet header padding is \
 used to ensure that the internet header ends on a 32 bit boundary. \
 See RFC 791 for more.")
+
     def _raw(self, protocol_container, protocol_bits):
         bit = 0
         raw_value = 0
@@ -230,6 +231,7 @@ See RFC 791 for more.")
             x = self._get_field(field).fillout()
             raw_value |= x << bit
             bit += self._get_field(field).bits
+
         # Header Checksum
         # a checksum on the header only.
         cksum_offset = bit - self.get_offset('_header_checksum') - \

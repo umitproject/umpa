@@ -76,7 +76,7 @@ class Field(object):
 
         # we have to clear self._value if it was not defined
         # because of later usage
-        if not self._value:
+        if not self._value and self._value != 0:
             self._value = self._generate_value()
             raw = self._raw_value()
             self.clear()
