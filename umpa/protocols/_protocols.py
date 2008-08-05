@@ -124,14 +124,17 @@ class Protocol(object):
         else:
             raise UMPAAttributeException, "No Flags instance for " + name
 
-    def _get_raw(self, protolol_container, protocol_bits):
+    def _raw(self, *args):
+        raise NotImplementedError, "this is abstract class"
+
+    def _get_raw(self, protocol_container, protocol_bits):
         """Return raw bits of the protocol's object."""
 
         # The deal: we join all value's fields into one big number
         # (with taking care about amount of bits).
         # then we devide the number on byte-chunks
         # and pack it by struct.pack() function
-        raw_value, bit = self._raw(protolol_container, protocol_bits)
+        raw_value, bit = self._raw(protocol_container, protocol_bits)
 
         # protocol should return byte-compatible length
         if bit%BYTE != 0:
