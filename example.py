@@ -22,7 +22,7 @@
 # This an example of how to use UMPA
 
 import umpa
-from umpa.protocols import IP#, TCP
+from umpa.protocols import IP, TCP
 
 # create new IP object
 ip1 = IP.IP()
@@ -31,9 +31,9 @@ ip1.source_address = "127.0.0.1"
 ip1.destination_address = "156.17.17.157"
 
 # the same for TCP
-#tcp1 = TCP()
-#tcp1.src_port = 6544
-#tcp1.dst_port = 9494
+tcp1 = TCP.TCP()
+tcp1.source_port = 2958
+tcp1.destination_port = 0
 
 # also, SYN flag will be set up
 #tcp1.set_flags(syn=True)
@@ -41,7 +41,7 @@ ip1.destination_address = "156.17.17.157"
 # create a new packet and include one protocol (ip1)
 packet = umpa.Packet(ip1)
 # packing another protocol into our packet
-#packet.include(tcp1)
+packet.include(tcp1)
 
 # creating new socket connection
 sock = umpa.Socket()
