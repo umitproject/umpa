@@ -47,6 +47,8 @@ class Protocol(object):
         for field in kw:
             self.__setattr__(field, kw[field])
 
+        self.__dict__['payload'] = None
+
     def __setattr__(self, attr, val):
         """Set value of the field."""
 
