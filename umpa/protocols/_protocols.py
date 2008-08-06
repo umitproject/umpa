@@ -23,7 +23,7 @@ import struct
 
 from umpa import utils
 from umpa.protocols._consts import *
-from umpa.protocols._fields import Field
+from umpa.protocols._fields import Field, Flags
 from umpa.utils.my_exceptions import *
 
 class Protocol(object):
@@ -106,7 +106,7 @@ class Protocol(object):
         """
 
         # converting args list to the dict and update our kwargs
-        kw.update(util.dict_from_sequence(args))
+        kw.update(utils.dict_from_sequence(args))
 
         flag_field = self._get_field(name)
         if isinstance(flag_field, Flags):

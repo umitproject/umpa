@@ -28,7 +28,8 @@ from umpa.protocols import IP, TCP
 ip1 = IP.IP()
 # setting some fields
 ip1.source_address = "127.0.0.1"
-ip1.destination_address = "156.17.17.157"
+#ip1.destination_address = "127.0.0.1"
+ip1.destination_address = "67.205.14.183"
 
 # the same for TCP
 tcp1 = TCP.TCP()
@@ -36,7 +37,7 @@ tcp1.source_port = 2958
 tcp1.destination_port = 0
 
 # also, SYN flag will be set up
-#tcp1.set_flags(syn=True)
+tcp1.set_flags('control_bits',syn=True,ack=True)
 
 # create a new packet and include one protocol (ip1)
 packet = umpa.Packet(ip1)
