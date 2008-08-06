@@ -139,6 +139,8 @@ See RFC 793 for more.")
 number. See RFC 793 for more.")
         self._get_field('control_bits').set_doc("URG, ACK, PSH, RST, SYN, FIN \
 flags. See RFC 793 for more.")
+        self._get_field('_checksum').set_doc("Checksum of Pseudo Header, TCP \
+header and data. See RFC 793 for more.")
         self._get_field('options').set_doc("Options may occupy space at the \
 end of the TCP header and are a multiple of 8 bits in length. See RFC 793 \
 for more.")
