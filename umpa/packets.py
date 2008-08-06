@@ -83,7 +83,7 @@ class Packet(object):
 first layer %d, second %d." % (last_proto.layer, p.layer))
                     else:
                         strict_warn(last_proto.layer, p.layer)
-                last_proto.payload = p
+                last_proto.__dict__['payload'] = p
             self.protos.append(p)
 
     def get_raw(self):
