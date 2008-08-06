@@ -41,7 +41,8 @@ class Protocol(object):
         # we pack objects of header's fields to the dict
         fields = dict(zip(self._ordered_fields, fields_list))
 
-        super(Protocol, self).__setattr__('_fields', fields)
+        # because of overwritten __setattr__ we need to call super here
+        self.__dict__['_fields'] = fields
         # setting up passed fields
         for field in kw:
             self.__setattr__(field, kw[field])
