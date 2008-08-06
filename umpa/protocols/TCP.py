@@ -24,6 +24,7 @@ import umpa.protocols._consts as const
 from umpa.protocols import *
 from umpa.protocols._layer4 import *
 from umpa.utils import net
+from umpa.utils import bits
 
 class HSequenceNumber(IntField):
     """The sequence number of the first data octet in this segment (except
@@ -163,8 +164,12 @@ See RFC 793 for more.")
             raw_value |= x << bit
             bit += self._get_field(field).bits
 
-        cksum_offset = bit - self.get_offset('_checksum') - self._get_field('_checksum').bits
-        if (raw_value & (0xff << cksum_offset)) >> cksum_offset == 0:
+        # rev_offset it the offset from the right side
+        cksum_rev_offset = bit - self.get_offset('_checksum') - \
+                                            self._get_field('_checksum').bits
+        # checking if user not defined his own value of checksum
+        if bits.get_bits(raw_value, self._get_field('_checksum').bits,
+                                    cksum_rev_offset, rev_offset=True) == 0:
             cksum = 0
             offset = 0
             # TODO: payload is off. it should works but it's odd, we generate
@@ -210,7 +215,7 @@ See RFC 793 for more.")
 
             # finally, calcute and apply checksum
             raw_cksum = net.in_cksum(cksum)
-            raw_value |= raw_cksum << cksum_offset
+            raw_value |= raw_cksum << cksum_rev_offset
 
         return raw_value, bit
 

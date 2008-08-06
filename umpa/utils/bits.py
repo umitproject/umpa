@@ -29,3 +29,16 @@ def split_into_chunks(number, number_length, chunks_size=BYTE):
     bytes = number_length / chunks_size
     return [ (number & (mask << (chunks_size*i))) >> chunks_size*i
                                     for i in reversed(xrange(bytes)) ]
+
+def get_bits(number, bits, offset=0, rev_offset=False):
+    """Return n bits from the number ragarding to offset.
+    
+    By default offset is from the left side.
+    It is recommended to use right side offset (works much faster).
+    """
+    if not rev_offset:
+        length = 0
+        while number >= 2**length:
+            length += 1
+        offset = length - offset - bits
+    return (number & (2**bits-1 << offset)) >> offset

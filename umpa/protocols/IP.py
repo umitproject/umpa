@@ -23,6 +23,7 @@ import umpa.protocols._consts as const
 
 from umpa.protocols import *
 from umpa.utils import net
+from umpa.utils import bits
 
 class HVersion(IntField):
     """The Version field indicates the format of the internet header.
@@ -209,7 +210,7 @@ See RFC 791 for more.")
         # Total Length
         # we sum length of upper layers and IP layer
         self._get_field('_total_length')._tmp_value = \
-            self._get_field('_ihl')._generate_value()*32 + protocol_bits
+            self._get_field('_ihl').fillout()*32 + protocol_bits
 
         # Protocol
         # field indicates the next level protocol used in the data
@@ -237,7 +238,8 @@ See RFC 791 for more.")
         cksum_offset = bit - self.get_offset('_header_checksum') - \
                             self._get_field('_header_checksum').bits
         # check if user doesn't provide own values of bits
-        if (raw_value & (0xff << cksum_offset)) >> cksum_offset == 0:
+        if bits.get_bits(raw_value, self._get_field('_header_checksum').bits,
+                                        cksum_offset, rev_offset=True) == 0:
             # calculate and add checksum to the raw_value
             cksum = net.in_cksum(raw_value)
             raw_value |= cksum << cksum_offset
