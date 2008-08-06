@@ -27,3 +27,6 @@ class UMPAException(Exception):
 
 class UMPAAttributeException(UMPAException):
     pass
+
+class UMPAStrictException(UMPAException):
+    pass
