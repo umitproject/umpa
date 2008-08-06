@@ -93,7 +93,7 @@ first layer %d, second %d." % (last_proto.layer, p.layer))
         self.bits = 0
         proto_id = 0
         for proto in reversed(self.protos):
-            # unfortunately we must pass list of prototocols to every protocol
+            # unfortunately we must pass list of protocols to every protocol
             # because some fields handle with other protocols, so they need
             # an access to them
             raw_proto, bit_proto = proto._get_raw(tuple(self.protos),
