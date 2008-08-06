@@ -66,7 +66,8 @@ class Packet(object):
             # unfortunately we must pass list of prototocols to every protocol
             # because some fields handle with other protocols, so they need
             # an access to them
-            raw_proto, bit_proto = proto._get_raw(tuple(self.protos), self.bits)
+            raw_proto, bit_proto = proto._get_raw(tuple(self.protos),
+                                                                    self.bits)
             self.raw |= raw_proto << self.bits
             self.bits += bit_proto
         # split into chunks
