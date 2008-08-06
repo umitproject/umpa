@@ -20,19 +20,40 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import struct
+import warnings
 
 import umpa.utils.bits
 from umpa.protocols._consts import BYTE
+from umpa.utils.my_exceptions import UMPAStrictException
+
+class StrictWarning(Warning):
+    pass
+
+def strict_warn(layer_a, layer_b):
+    msg = "bad protocols ordering. first layer %d, second %d." % (layer_a,
+                                                                    layer_b)
+    warnings.warn(msg, StrictWarning, stacklevel=3)
 
 class Packet(object):
     """You have to use this class to build a completely packets.
     An instance of the class should contains protocols which
     you want to send."""
 
-    def __init__(self, *protos):
+    def __init__(self, *protos, **kwds):
         """You can include some protocols objects in construtor
         or use include() method later.
         """
+        
+        if kwds.has_key('strict'):
+            self.strict = kwds['strict']
+        else:
+            self.strict = True      # default value
+            
+        if kwds.has_key('warn'):
+            self.warn = kwds['warn']
+        else:
+            self.warn = True        # default value
+
         self.protos = []
         self._add_new_protocols(protos)
         self.raw = None
@@ -54,6 +75,14 @@ class Packet(object):
 
     def _add_new_protocols(self, protos):
         for p in protos:
+            if len(self.protos) > 0:
+                last_proto = self.protos[-1]
+                if p.layer - last_proto.layer != 1: # FIXME: should allow only this?
+                    if self.strict:
+                        raise UMPAStrictException("bad protocols ordering. \
+first layer %d, second %d." % (last_proto.layer, p.layer))
+                    else:
+                        strict_warn(last_proto.layer, p.layer)
             self.protos.append(p)
 
     def get_raw(self):
@@ -75,3 +104,15 @@ class Packet(object):
         # so after that we pack it by struct module.pack()
         byte_chunks = umpa.utils.bits.split_into_chunks(self.raw, self.bits)
         return struct.pack('!' + 'B'*(self.bits/BYTE), *byte_chunks)
+
+    def _getwarn(self):
+        return self._warn
+
+    def _setwarn(self, val):
+        self._warn = val
+        if self._warn:
+            warnings.simplefilter('always', StrictWarning)
+        else:
+            warnings.simplefilter('ignore', StrictWarning)
+
+    warn = property(_getwarn, _setwarn)
