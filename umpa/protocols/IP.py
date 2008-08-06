@@ -212,17 +212,11 @@ See RFC 791 for more.")
         # Protocol
         # field indicates the next level protocol used in the data
         # portion of the internet datagram.
-        it = iter(protocol_container)
-        for proto in it:
-            if proto is self:
-                break
-        try:
-            proto = it.next()
-            proto_id = proto.protocol_id
-        except StopIteration:
+        if self.payload:
+            proto_id = self.payload.protocol_id
+        else:
             proto_id = 0 # FIXME: what's the default value for non-upper layer?
-        finally:
-            self._get_field('_protocol')._tmp_value = proto_id
+        self._get_field('_protocol')._tmp_value = proto_id
 
         return raw_value, bit
 
