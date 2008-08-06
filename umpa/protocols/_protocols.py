@@ -48,6 +48,7 @@ class Protocol(object):
             self.__setattr__(field, kw[field])
 
         self.__dict__['payload'] = None
+        self.__dict__['_raw'] = None
 
     def __setattr__(self, attr, val):
         """Set value of the field."""
@@ -170,6 +171,7 @@ class Protocol(object):
         if bit%BYTE != 0:
             raise UMPAException, 'odd number of bits in ' + self.__name__
 
+        self.__dict__['_raw'] = raw_value
         return raw_value, bit
 
     def _is_valid(self, field):

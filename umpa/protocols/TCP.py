@@ -166,27 +166,12 @@ See RFC 793 for more.")
         # checking if user not defined his own value of checksum
         if bits.get_bits(raw_value, self._get_field('_checksum').bits,
                                     cksum_rev_offset, rev_offset=True) == 0:
-            cksum = 0
-            offset = 0
-            # TODO: payload is off. it should works but it's odd, we generate
-            # bits by calling get_raw for payload. completely but.
-            # also because of some new suggestions about look after of payload
-            # very very soon, should be reorgnized payload issue
-            # and this issue also
-            #
             # Payload
-            #it = iter(protocol_container)
-            #for proto in it:
-            #    if proto is self:
-            #        break
-            #try:
-            #    proto = it.next()
-            #    payload = proto._get_raw(protocol_container, protocol_bits)
-            #except StopIteration:
-            #    payload = 0
-
-            #cksum = payload
-            #offset = protocol_bits
+            if self.payload:
+                cksum = self.payload._raw
+            else:
+                cksum = 0
+            offset = protocol_bits
 
             # TCP Header
             cksum |= raw_value << offset
