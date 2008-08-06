@@ -22,7 +22,7 @@
 # This an example of how to use UMPA
 
 import umpa
-from umpa.protocols import IP, TCP
+from umpa.protocols import IP, TCP, UDP
 
 # create new IP object
 ip1 = IP.IP()
@@ -49,3 +49,11 @@ sock = umpa.Socket()
 
 # sending packet
 sock.send(packet)
+
+
+# UDP example
+udp1 = UDP.UDP()
+udp1.source_port = 0
+udp1.destination_port = 7
+packet2 = umpa.Packet(ip1, udp1)
+sock.send(packet2)
