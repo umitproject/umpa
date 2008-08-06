@@ -51,13 +51,17 @@ class PseudoHeader(Protocol):
         super(PseudoHeader, self).__init__(fields_list)
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        # we assign first 0 becuase if there is not IP instance
+        # than better 0 than nothing (for nonstrict users)
+        self.source_address = 0
+        self.destination_address = 0
         # grabbing informations from IP's header
         it = iter(protocol_container)
         for proto in it:
             if isinstance(proto,IP):
+                self.source_address = proto.source_address
+                self.destination_address = proto.destination_address
                 break
-        self.source_address = proto.source_address
-        self.destination_address = proto.destination_address
 
         return raw_value, bit
 
