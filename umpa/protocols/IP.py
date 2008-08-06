@@ -192,10 +192,7 @@ datagrams. See RFC 791 for more.")
 used to ensure that the internet header ends on a 32 bit boundary. \
 See RFC 791 for more.")
 
-    def _raw(self, protocol_container, protocol_bits):
-        bit = 0
-        raw_value = 0
-
+    def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         # Padding
         self._get_field('_padding')._tmp_value = \
                                                 self._get_field('options').bits
@@ -227,19 +224,18 @@ See RFC 791 for more.")
         finally:
             self._get_field('_protocol')._tmp_value = proto_id
 
-        # so we make a big number with bits of every fields of the protocol
-        for field in reversed(self._ordered_fields):
-            x = self._get_field(field).fillout()
-            raw_value |= x << bit
-            bit += self._get_field(field).bits
+        return raw_value, bit
 
+    def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
         # Header Checksum
         # a checksum on the header only.
         cksum_offset = bit - self.get_offset('_header_checksum') - \
-                            self._get_field('_header_checksum').bits
+                                    self._get_field('_header_checksum').bits
         # check if user doesn't provide own values of bits
-        if bits.get_bits(raw_value, self._get_field('_header_checksum').bits,
-                                        cksum_offset, rev_offset=True) == 0:
+        if bits.get_bits(raw_value,
+                        self._get_field('_header_checksum').bits,
+                        cksum_offset,
+                        rev_offset=True) == 0:
             # calculate and add checksum to the raw_value
             cksum = net.in_cksum(raw_value)
             raw_value |= cksum << cksum_offset

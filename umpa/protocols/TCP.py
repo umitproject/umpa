@@ -146,10 +146,7 @@ for more.")
 to ensure that the TCP header ends and data begins on a 32 bit boundary. \
 See RFC 793 for more.")
 
-    def _raw(self, protocol_container, protocol_bits):
-        bit = 0
-        raw_value = 0
-
+    def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         # Padding
         self._get_field('_padding')._tmp_value = \
                                                 self._get_field('options').bits
@@ -158,12 +155,9 @@ See RFC 793 for more.")
         self._get_field('_data_offset')._tmp_value = \
             self._get_field('options').bits + self._get_field('_padding').bits
 
-        # so we make a big number with bits of every fields of the protocol
-        for field in reversed(self._ordered_fields):
-            x = self._get_field(field).fillout()
-            raw_value |= x << bit
-            bit += self._get_field(field).bits
+        return raw_value, bit
 
+    def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
         # rev_offset it the offset from the right side
         cksum_rev_offset = bit - self.get_offset('_checksum') - \
                                             self._get_field('_checksum').bits
@@ -209,7 +203,7 @@ See RFC 793 for more.")
             pheader = PseudoHeader(self.protocol_id, total_length)
             # generate raw value of it
             pheader_bits = pheader._get_raw(protocol_container,
-                                                            protocol_bits)[0]
+                                                        protocol_bits)[0]
             # added pseudo header bits to cksum value
             cksum |= pheader_bits << offset
 

@@ -124,17 +124,44 @@ class Protocol(object):
         else:
             raise UMPAAttributeException, "No Flags instance for " + name
 
-    def _raw(self, *args):
+    def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        raise NotImplementedError, "this is abstract class"
+
+    def _raw(self, raw_value, bit, protocol_container, protocol_bits):
+        raw_value = 0
+        bit = 0
+        # because of some protocols implementation, there are some tasks before
+        # we call fillout() for fields
+        raw_value, bit = self._pre_raw(raw_value, bit, protocol_container,
+                                                                protocol_bits)
+
+        # so we make a big number with bits of every fields of the protocol
+        for field in reversed(self._ordered_fields):
+            x = self._get_field(field).fillout()
+            raw_value |= x << bit
+            bit += self._get_field(field).bits
+
+        # because of some protocols implementation, there are some tasks after
+        # we call fillout() for fields
+        raw_value, bit = self._post_raw(raw_value, bit, protocol_container,
+                                                                protocol_bits)
+
+        return raw_value, bit
+
+    def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
         raise NotImplementedError, "this is abstract class"
 
     def _get_raw(self, protocol_container, protocol_bits):
         """Return raw bits of the protocol's object."""
 
+        raw_value = 0
+        bit = 0
         # The deal: we join all value's fields into one big number
         # (with taking care about amount of bits).
         # then we devide the number on byte-chunks
         # and pack it by struct.pack() function
-        raw_value, bit = self._raw(protocol_container, protocol_bits)
+        raw_value, bit = self._raw(raw_value, bit, protocol_container,
+                                                                protocol_bits)
 
         # protocol should return byte-compatible length
         if bit%BYTE != 0:

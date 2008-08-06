@@ -50,10 +50,7 @@ class PseudoHeader(Protocol):
                         IntField("Total Length", total_length, bits=16) ]
         super(PseudoHeader, self).__init__(fields_list)
 
-    def _raw(self, protocol_container, protocol_bits):
-        bit = 0
-        raw_value = 0
-
+    def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         # grabbing informations from IP's header
         it = iter(protocol_container)
         for proto in it:
@@ -62,11 +59,7 @@ class PseudoHeader(Protocol):
         self.source_address = proto.source_address
         self.destination_address = proto.destination_address
 
-        # so we make a big number with bits of every fields of the protocol
-        for field in reversed(self._ordered_fields):
-            x = self._get_field(field).fillout()
-            raw_value |= x << bit
-            bit += self._get_field(field).bits
-
         return raw_value, bit
 
+    def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        return raw_value, bit
