@@ -34,10 +34,10 @@ class Field(object):
     auto = False
     def __init__(self, name, value=None, bits=None, auto=None):
         self.name = name
-        if auto:
+        if auto != None:
             self.auto = auto
-        elif value:
-            self.auto = True    # if there's default value, auto should be True
+        else:
+            self.auto = self.__class__.auto
 
         if bits:
             self.bits = bits
