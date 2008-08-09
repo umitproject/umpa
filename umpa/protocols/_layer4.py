@@ -23,10 +23,6 @@ from umpa.protocols._protocols import Protocol
 from umpa.protocols.IP import IP
 from umpa.protocols._fields import *
 
-class PortField(IntField):
-    bits = 16
-    auto = False
-
 class Layer4ChecksumField(IntField):
     bits = 16
     auto = True

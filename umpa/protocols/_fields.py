@@ -118,7 +118,7 @@ class SpecialIntField(IntField):
     _tmp_value = property(get_tmpvalue, set_tmpvalue, clear_tmpvalue)
 
 class EnumField(IntField):
-    """Useful class for enumarable fields.
+    """Useful class for enumerable fields.
     """
 
     enumerable = {}
