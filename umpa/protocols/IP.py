@@ -25,13 +25,20 @@ from umpa.protocols import *
 from umpa.utils import net
 from umpa.utils import bits
 
-class HVersion(IntField):
+class HVersion(EnumField):
     """The Version field indicates the format of the internet header.
     
     See RFC 791 for more.
     """
     bits = 4
     auto = True
+    enumerable = {
+        "Reserved (0)"      : const.IPVERSION_RESERVED0,
+        "Internet Protocol" : const.IPVERSION_4,
+        "ST Datagram Mode"  : const.IPVERSION_ST_DATAGRAM_MODE,
+        "Reserved (15)"     : const.IPVERSION_RESERVED15
+    }
+
     def _generate_value(self):
         return const.IPVERSION_4
 
@@ -109,7 +116,7 @@ class HTTL(IntField):
             name = "TTL_" + name
         self._value = getattr(const, name)
 
-class HProtocol(SpecialIntField):
+class HProtocol(SpecialIntField, EnumField):
     """This field indicates the next level protocol used in the data portion
     of the internet datagram.
     
@@ -117,6 +124,37 @@ class HProtocol(SpecialIntField):
     """
     bits = 8
     auto = True
+    enumerable = {
+        "Reserved (0)"                    : const.PROTOCOL_RESERVED0,
+        "ICMP"                            : const.PROTOCOL_ICMP,
+        "Gateway-to-Gateway"              : const.PROTOCOL_GATEWAY_TO_GATEWAY,
+        "CMCC Gateway Monitoring Message" : const.PROTOCOL_CMCC,
+        "ST"                              : const.PROTOCOL_ST,
+        "TCP"                             : const.PROTOCOL_TCP,
+        "UCL"                             : const.PROTOCOL_UCL,
+        "Secure"                          : const.PROTOCOL_SECURE,
+        "BBN RCC Monitoring"              : const.PROTOCOL_BBN_RCC_MONITORING,
+        "NVP"                             : const.PROTOCOL_NVP,
+        "PUP"                             : const.PROTOCOL_PUP,
+        "Pluribus"                        : const.PROTOCOL_PLURIBUS,
+        "Telenet"                         : const.PROTOCOL_TELENET,
+        "XNET"                            : const.PROTOCOL_XNET,
+        "Chaos"                           : const.PROTOCOL_CHAOS,
+        "UDP"                             : const.PROTOCOL_UDP,
+        "Multiplexing"                    : const.PROTOCOL_MULTIPLEXING,
+        "DCN"                             : const.PROTOCOL_DCN,
+        "TAC Monitoring"                  : const.PROTOCOL_TAC_MONITORING,
+        "any local network"               : const.PROTOCOL_ANY,
+        "SATNET and Backroom EXPAK"       : const.PROTOCOL_SATNET_BACKROOM_EXPAK,
+        "MIT Subnet Support"              : const.PROTOCOL_MIT_SUBNET_SUPPORT,
+        "SATNET Monitoring"               : const.PROTOCOL_SATNET_MONITORING,
+        "Internet Packet Core Utility"    : const.PROTOCOL_INTERNET_PACKET_CORE_UTILITY,
+        "Backroom SATNET Monitoring"      : const.PROTOCOL_BACKROOM_SATNET_MONITORING,
+        "WIDEBAND Monitoring"             : const.PROTOCOL_WIDEBAND_MONITORING,
+        "WIDEBAND EXPAK"                  : const.PROTOCOL_WIDEBAND_EXPAK,
+        "Reserved (255)"                  : const.PROTOCOL_RESERVED255
+    }
+
     def _generate_value(self):
         return self._tmp_value
 

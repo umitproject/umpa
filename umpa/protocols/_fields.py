@@ -117,6 +117,28 @@ class SpecialIntField(IntField):
 
     _tmp_value = property(get_tmpvalue, set_tmpvalue, clear_tmpvalue)
 
+class EnumField(IntField):
+    """Useful class for enumarable fields.
+    """
+
+    enumerable = {}
+
+    def get(self, human=False):
+        value = super(EnumField, self).get()
+        if human:
+            for k,v in self.enumerable.items():
+                if v == value:
+                    return k
+        return value
+
+    def set(self, value):
+        # we try to use value as a "human" value
+        # if doesn't work, then as a normal one
+        try:
+            super(EnumField, self).set(self.enumerable[value])
+        except KeyError:
+            super(EnumField, self).set(value)
+
 class AddrField(Field):
     pass
 
