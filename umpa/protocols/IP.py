@@ -176,6 +176,7 @@ class IP(Protocol):
     """
     layer = 3      # layer of OSI
     protocol_id = const.ETHERTYPE_IP
+    name = "IP"
 
     _ordered_fields = ('_version', '_ihl', 'type_of_service', '_total_length',
                     '_identification', 'flags', '_fragment_offset',

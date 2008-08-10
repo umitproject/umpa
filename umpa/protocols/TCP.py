@@ -403,6 +403,7 @@ class TCP(Protocol):
     """
     layer = 4       # layer of the OSI
     protocol_id = const.PROTOCOL_TCP
+    name = "TCP"
 
     _ordered_fields = ('source_port', 'destination_port', '_sequence_number',
                     '_acknowledgment_number', '_data_offset', '_reserved',

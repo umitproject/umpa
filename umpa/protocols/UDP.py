@@ -260,6 +260,7 @@ class UDP(Protocol):
     """
     layer = 4
     protocol_id = const.PROTOCOL_UDP
+    name = "UDP"
 
     _ordered_fields = ('source_port', 'destination_port', '_length',
                                                             '_checksum')
