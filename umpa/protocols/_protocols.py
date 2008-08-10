@@ -36,6 +36,7 @@ class Protocol(object):
     _ordered_fields = ()
     layer = None
     protocol_id = None
+    name = None
 
     def __init__(self, fields_list, **kw):
         # we pack objects of header's fields to the dict
@@ -70,8 +71,8 @@ class Protocol(object):
         for field in self._ordered_fields:
             yield self._get_field(field)
 
-    @staticmethod
-    def get_fields_keys():
+    @classmethod
+    def get_fields_keys(cname):
         """Generator for ordered names (keys) of header's fields.
         
         I don't see any reason to use this method but
@@ -79,7 +80,7 @@ class Protocol(object):
 
         NOTE: You should use get_fields() method instead.
         """
-        for field in Protocol._ordered_fields:
+        for field in cname._ordered_fields:
             yield field
     
     def _get_field(self, keyname):
