@@ -20,42 +20,100 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 
+import re
 import xml.dom.minidom
 
+import umpa
 from umpa.protocols._fields import Flags
 
-def write(filename, *packets):
-    # no packets? 
-    if not packets:
-        return
+def write(filename, packets):
+    # for parsing python-object strings like <.... 'xxxx'>
+    parse_str = re.compile(r"^.*'([\w\.]+)'>$")
 
     doc = xml.dom.minidom.Document()
-    root = doc.createElementNS(None, 'UMPA')
+    root = doc.createElement('UMPA')
     doc.appendChild(root)
-
     for i, packet in enumerate(packets):
-        pa = doc.createElementNS(None, 'packet')
-        pa.setAttributeNS(None, "id", str(i))
+        pa = doc.createElement('packet')
+        pa.setAttribute("id", str(i))
+        pa.setAttribute("strict", str(packet.strict))
         root.appendChild(pa)
+
         for proto in packet.protos:
-            pr = doc.createElementNS(None, 'protocol')
-            pr.setAttributeNS(None, "type", proto.name)
+            pr = doc.createElement('protocol')
+            classname = parse_str.match(str(proto.__class__)).group(1)
+            pr.setAttribute("class", classname)
             pa.appendChild(pr)
 
             for field in proto.get_fields_keys():
-                f = doc.createElementNS(None, field)
+                f = doc.createElement(field)
                 pr.appendChild(f)
                 # if Flags...we need care about BitFlags objects
                 if isinstance(proto._get_field(field), Flags):
+                    f.setAttribute("type", "bits")
                     for flag in proto._get_field(field).get():
-                        b = doc.createElementNS(None, flag)
+                        b = doc.createElement(flag)
                         f.appendChild(b)
-                        b.appendChild(doc.createTextNode(
-                            str(proto._get_field(field)._value[flag].get())))
+                        value = proto._get_field(field)._value[flag].get()
+                        b.appendChild(doc.createTextNode(str(value)))
+                        b.setAttribute("type",
+                            parse_str.match(str(type(value))).group(1))
                 else:
                     f.appendChild(doc.createTextNode(
                         str(proto._get_field(field).get())))
-    print doc.toprettyxml()
+                    f.setAttribute("type", parse_str.match(
+                        str(type(proto._get_field(field).get()))).group(1))
+    #print doc.toprettyxml()
     open(filename, "w").write(doc.toprettyxml())
 
+def read(filename):
+    doc = xml.dom.minidom.parse(filename)
 
+    # useful if you have type in string and need to cast it
+    typemap = dict(float=float, int=int, str=str, bool=bool)
+
+    packets = []
+    for pa in doc.getElementsByTagName("packet"):
+        is_true = (pa.getAttribute("strict") != "False")
+        packet = umpa.Packet(strict=is_true)
+        for pr in pa.getElementsByTagName("protocol"):
+            # dealing with class of protocol
+            protocol_name = pr.getAttribute("class").split(".")
+            # we need to import proper class
+            mname = '.'.join(protocol_name[:-1])
+            cname = protocol_name[-1]
+            mod = __import__(mname, fromlist=[None])
+            # and create an instance
+            clss = getattr(mod, cname)
+            protocol = clss()
+            
+            for node in pr.childNodes:
+                # because of pretty-style of XML files
+                # we need to check if nodes are necessary
+                if node.nodeType == node.ELEMENT_NODE:
+                    field_name = node.localName
+
+                    # checking if not Flags
+                    type_node = node.getAttribute("type")
+                    if type_node != "bits":
+                        value = node.childNodes[0].nodeValue.strip()
+                        if type_node == "NoneType":
+                            value = None
+                        else:
+                            value = typemap[type_node](value)
+                        protocol._get_field(field_name).set(value)
+                    # Flags
+                    else:
+                        for bits in node.childNodes:
+                            if bits.nodeType == node.ELEMENT_NODE:
+                                bit_value = bits.localName
+                                is_true = (bit_value == "True")
+                                if is_true:
+                                    protocol._get_field(field_name).set(
+                                                                    bit_value)
+                                else:
+                                    protocol._get_field(field_name).unset(
+                                                                    bit_value)
+            packet.include(protocol)
+    packets.append(packet)
+    return packets
