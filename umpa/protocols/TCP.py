@@ -465,7 +465,7 @@ See RFC 793 for more.")
                                     cksum_rev_offset, rev_offset=True) == 0:
             # Payload
             if self.payload:
-                cksum = self.payload.__raw_value
+                cksum = self.payload.__dict__['__raw_value']
             else:
                 cksum = 0
             offset = protocol_bits

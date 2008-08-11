@@ -133,8 +133,6 @@ class Protocol(object):
         raise NotImplementedError, "this is abstract class"
 
     def _raw(self, raw_value, bit, protocol_container, protocol_bits):
-        raw_value = 0
-        bit = 0
         # because of some protocols implementation, there are some tasks before
         # we call fillout() for fields
         raw_value, bit = self._pre_raw(raw_value, bit, protocol_container,
