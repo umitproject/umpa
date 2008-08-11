@@ -26,7 +26,7 @@ import xml.dom.minidom
 import umpa
 from umpa.protocols._fields import Flags
 
-def write(filename, packets):
+def save(filename, packets):
     # for parsing python-object strings like <.... 'xxxx'>
     parse_str = re.compile(r"^.*'([\w\.]+)'>$")
 
@@ -66,7 +66,7 @@ def write(filename, packets):
     #print doc.toprettyxml()
     open(filename, "w").write(doc.toprettyxml())
 
-def read(filename):
+def load(filename, proto_only=False):
     doc = xml.dom.minidom.parse(filename)
 
     # useful if you have type in string and need to cast it
@@ -115,5 +115,18 @@ def read(filename):
                                     protocol._get_field(field_name).unset(
                                                                     bit_value)
             packet.include(protocol)
+
+        # we load lonly first packet in the file and return list of protocols..
+        if proto_only:
+            return packet.protos
     packets.append(packet)
     return packets
+
+def save_xml(self, filename):
+    save(filename, [self,])
+
+def load_xml(self, filename):
+    self.protos = load(filename, proto_only=True)
+
+umpa.Packet.save_xml = save_xml
+umpa.Packet.load_xml = load_xml
