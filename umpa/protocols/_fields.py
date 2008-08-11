@@ -210,7 +210,7 @@ class PaddingField(SpecialIntField):
 
     def __init__(self, name, word=32, *args, **kwds):
         self._word = word
-        super(PaddingField, self).__init__(name, *args, **kwds)
+        super(PaddingField, self).__init__(name, 0, *args, **kwds)
 
     def _is_valid(self, val):
         if isinstance(val, int):
