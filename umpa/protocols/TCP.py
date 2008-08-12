@@ -486,10 +486,10 @@ See RFC 793 for more.")
             # create pseudo header object
             pheader = PseudoHeader(self.protocol_id, total_length)
             # generate raw value of it
-            pheader_bits = pheader._get_raw(protocol_container,
+            pheader_raw = pheader._get_raw(protocol_container,
                                                         protocol_bits)[0]
             # added pseudo header bits to cksum value
-            cksum |= pheader_bits << offset
+            cksum |= pheader_raw << offset
 
             # finally, calcute and apply checksum
             raw_cksum = net.in_cksum(cksum)
