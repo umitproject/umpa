@@ -258,7 +258,7 @@ class Flags(Field):
                 self.unset(name)
 
     def _is_valid(self, name):
-        return self._value.has_key(name)
+        return name in self._value
 
     def _set_bit(self, names, value):
         for flag_name in names:

@@ -44,12 +44,12 @@ class Packet(object):
         or use include() method later.
         """
         
-        if kwds.has_key('strict'):
+        if 'strict' in kwds:
             self.strict = kwds['strict']
         else:
             self.strict = True      # default value
             
-        if kwds.has_key('warn'):
+        if 'warn' in kwds:
             self.warn = kwds['warn']
         else:
             self.warn = True        # default value
