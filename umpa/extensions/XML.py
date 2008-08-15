@@ -122,11 +122,11 @@ def load(filename, proto_only=False):
     packets.append(packet)
     return packets
 
-def save_xml(self, filename):
+def _save_xml(self, filename):
     save(filename, [self,])
 
-def load_xml(self, filename):
+def _load_xml(self, filename):
     self.protos = load(filename, proto_only=True)
 
-umpa.Packet.save_xml = save_xml
-umpa.Packet.load_xml = load_xml
+umpa.Packet.save_xml = _save_xml
+umpa.Packet.load_xml = _load_xml
