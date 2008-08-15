@@ -39,9 +39,9 @@ class Socket(object):
         # TODO: before raising UMPAException, we can try
         # to switch EUID into root and recall socket()
         try:
-            self._sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)
-            # dropping root-priviliges
-            umpa.utils.security.drop_priviliges()
+            # to create socket object we need root priviligies
+            self._sock = umpa.utils.security.super_priviliges(socket,
+                                                AF_INET, SOCK_RAW, IPPROTO_RAW)
         except error, msg:
             raise UMPAException(msg)
         # to build own headers of IP
@@ -62,7 +62,7 @@ class Socket(object):
         return sent_bits
 
     def _get_address(self, packet):
-        """Because of ARP issue (described in send() method,
+        """Because of Ethernet issue (described in send() method,
         we have to parse packets for destination addresses.
         """
         for p in packet.protos:

@@ -39,3 +39,19 @@ def drop_priviliges():
     import pwd
     nobody_id = pwd.getpwnam('nobody')[2]
     os.seteuid(nobody_id)
+
+def super_priviliges(fun=None, *fargs):
+    """
+    Request for root-priviliges.
+    We can pass function then after call the function we drop priviliges again.
+    """
+
+    if os.name != 'posix':
+        return
+
+    import pwd
+    os.seteuid(0)
+    if fun:
+        result = fun(*fargs)
+        drop_priviliges()
+        return result
