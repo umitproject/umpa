@@ -55,6 +55,9 @@ tcp.set_flags('control_bits', syn=True, ack=True)
 packet = umpa.Packet(strict=False)
 # packing protocols into our packet
 # NOTE: the order of the protocols are abnormal
+# you will get the warning.
+# you can switch off warnings if needed: packet.warn = False
+
 packet.include(tcp, ip)
 
 # creating new socket connection
