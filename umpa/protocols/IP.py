@@ -19,14 +19,13 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import umpa.protocols._consts as const
+from umpa.protocols import _consts
+from umpa.protocols import _fields
+from umpa.protocols import _protocols
+import umpa.utils.net as _net
+import umpa.utils.bits as _bits
 
-from umpa.protocols._fields import *
-from umpa.protocols._protocols import *
-from umpa.utils import net
-from umpa.utils import bits
-
-class HVersion(EnumField):
+class _HVersion(_fields.EnumField):
     """The Version field indicates the format of the internet header.
     
     See RFC 791 for more.
@@ -34,16 +33,16 @@ class HVersion(EnumField):
     bits = 4
     auto = True
     enumerable = {
-        "Reserved (0)"      : const.IPVERSION_RESERVED0,
-        "Internet Protocol" : const.IPVERSION_4,
-        "ST Datagram Mode"  : const.IPVERSION_ST_DATAGRAM_MODE,
-        "Reserved (15)"     : const.IPVERSION_RESERVED15
+        "Reserved (0)"      : _consts.IPVERSION_RESERVED0,
+        "Internet Protocol" : _consts.IPVERSION_4,
+        "ST Datagram Mode"  : _consts.IPVERSION_ST_DATAGRAM_MODE,
+        "Reserved (15)"     : _consts.IPVERSION_RESERVED15
     }
 
     def _generate_value(self):
-        return const.IPVERSION_4
+        return _consts.IPVERSION_4
 
-class HIHL(SpecialIntField):
+class _HIHL(_fields.SpecialIntField):
     """Internet Header Length is the length of the internet header in 32 bit
     words, and thus points to the beginning of the data.
     
@@ -54,7 +53,7 @@ class HIHL(SpecialIntField):
     def _generate_value(self):
         return 5 + self._tmp_value / 32 # 5 is a minimum value (see RFC 791)
 
-class HTotalLength(SpecialIntField):
+class _HTotalLength(_fields.SpecialIntField):
     """Total Length is the length of the datagram, measured in octets,
     including internet header and data.
 
@@ -63,9 +62,9 @@ class HTotalLength(SpecialIntField):
     bits = 16
     auto = True
     def _generate_value(self):
-        return self._tmp_value / const.BYTE
+        return self._tmp_value / _consts.BYTE
 
-class HIdentification(IntField):
+class _HIdentification(_fields.IntField):
     """An identifying value assigned by the sender to aid in assembling the
     fragments of a datagram.
 
@@ -78,7 +77,7 @@ class HIdentification(IntField):
         # otherwise we can simple return 0 ;-)
         return 0
 
-class HFragmentOffset(IntField):
+class _HFragmentOffset(_fields.IntField):
     """This field indicates where in the datagram this fragment belongs.
     
     See RFC 791 for more.
@@ -90,7 +89,7 @@ class HFragmentOffset(IntField):
         # otherwise we can simple return 0 ;-)
         return 0
 
-class HTTL(IntField):
+class _HTTL(_fields.IntField):
     """This field indicates the maximum time the datagram is allowed to
     remain in the internet system.
     
@@ -103,7 +102,7 @@ class HTTL(IntField):
         # unfortunately, there isn't any official document which described
         # list of returns from sys.platform
         # also, there is some changes in Python 2.6 about sys.platform
-        return const.TTL_LINUX
+        return _consts.TTL_LINUX
 
     def ttl(self, name):
         """To set correct value of TTL for following platforms:
@@ -117,7 +116,7 @@ class HTTL(IntField):
             name = "TTL_" + name
         self._value = getattr(const, name)
 
-class HProtocol(SpecialIntField, EnumField):
+class _HProtocol(_fields.SpecialIntField, _fields.EnumField):
     """This field indicates the next level protocol used in the data portion
     of the internet datagram.
     
@@ -126,40 +125,40 @@ class HProtocol(SpecialIntField, EnumField):
     bits = 8
     auto = True
     enumerable = {
-        "Reserved (0)"                    : const.PROTOCOL_RESERVED0,
-        "ICMP"                            : const.PROTOCOL_ICMP,
-        "Gateway-to-Gateway"              : const.PROTOCOL_GATEWAY_TO_GATEWAY,
-        "CMCC Gateway Monitoring Message" : const.PROTOCOL_CMCC,
-        "ST"                              : const.PROTOCOL_ST,
-        "TCP"                             : const.PROTOCOL_TCP,
-        "UCL"                             : const.PROTOCOL_UCL,
-        "Secure"                          : const.PROTOCOL_SECURE,
-        "BBN RCC Monitoring"              : const.PROTOCOL_BBN_RCC_MONITORING,
-        "NVP"                             : const.PROTOCOL_NVP,
-        "PUP"                             : const.PROTOCOL_PUP,
-        "Pluribus"                        : const.PROTOCOL_PLURIBUS,
-        "Telenet"                         : const.PROTOCOL_TELENET,
-        "XNET"                            : const.PROTOCOL_XNET,
-        "Chaos"                           : const.PROTOCOL_CHAOS,
-        "UDP"                             : const.PROTOCOL_UDP,
-        "Multiplexing"                    : const.PROTOCOL_MULTIPLEXING,
-        "DCN"                             : const.PROTOCOL_DCN,
-        "TAC Monitoring"                  : const.PROTOCOL_TAC_MONITORING,
-        "any local network"               : const.PROTOCOL_ANY,
-        "SATNET and Backroom EXPAK"       : const.PROTOCOL_SATNET_BACKROOM_EXPAK,
-        "MIT Subnet Support"              : const.PROTOCOL_MIT_SUBNET_SUPPORT,
-        "SATNET Monitoring"               : const.PROTOCOL_SATNET_MONITORING,
-        "Internet Packet Core Utility"    : const.PROTOCOL_INTERNET_PACKET_CORE_UTILITY,
-        "Backroom SATNET Monitoring"      : const.PROTOCOL_BACKROOM_SATNET_MONITORING,
-        "WIDEBAND Monitoring"             : const.PROTOCOL_WIDEBAND_MONITORING,
-        "WIDEBAND EXPAK"                  : const.PROTOCOL_WIDEBAND_EXPAK,
-        "Reserved (255)"                  : const.PROTOCOL_RESERVED255
+        "Reserved (0)"                    : _consts.PROTOCOL_RESERVED0,
+        "ICMP"                            : _consts.PROTOCOL_ICMP,
+        "Gateway-to-Gateway"              : _consts.PROTOCOL_GATEWAY_TO_GATEWAY,
+        "CMCC Gateway Monitoring Message" : _consts.PROTOCOL_CMCC,
+        "ST"                              : _consts.PROTOCOL_ST,
+        "TCP"                             : _consts.PROTOCOL_TCP,
+        "UCL"                             : _consts.PROTOCOL_UCL,
+        "Secure"                          : _consts.PROTOCOL_SECURE,
+        "BBN RCC Monitoring"              : _consts.PROTOCOL_BBN_RCC_MONITORING,
+        "NVP"                             : _consts.PROTOCOL_NVP,
+        "PUP"                             : _consts.PROTOCOL_PUP,
+        "Pluribus"                        : _consts.PROTOCOL_PLURIBUS,
+        "Telenet"                         : _consts.PROTOCOL_TELENET,
+        "XNET"                            : _consts.PROTOCOL_XNET,
+        "Chaos"                           : _consts.PROTOCOL_CHAOS,
+        "UDP"                             : _consts.PROTOCOL_UDP,
+        "Multiplexing"                    : _consts.PROTOCOL_MULTIPLEXING,
+        "DCN"                             : _consts.PROTOCOL_DCN,
+        "TAC Monitoring"                  : _consts.PROTOCOL_TAC_MONITORING,
+        "any local network"               : _consts.PROTOCOL_ANY,
+        "SATNET and Backroom EXPAK"       : _consts.PROTOCOL_SATNET_BACKROOM_EXPAK,
+        "MIT Subnet Support"              : _consts.PROTOCOL_MIT_SUBNET_SUPPORT,
+        "SATNET Monitoring"               : _consts.PROTOCOL_SATNET_MONITORING,
+        "Internet Packet Core Utility"    : _consts.PROTOCOL_INTERNET_PACKET_CORE_UTILITY,
+        "Backroom SATNET Monitoring"      : _consts.PROTOCOL_BACKROOM_SATNET_MONITORING,
+        "WIDEBAND Monitoring"             : _consts.PROTOCOL_WIDEBAND_MONITORING,
+        "WIDEBAND EXPAK"                  : _consts.PROTOCOL_WIDEBAND_EXPAK,
+        "Reserved (255)"                  : _consts.PROTOCOL_RESERVED255
     }
 
     def _generate_value(self):
         return self._tmp_value
 
-class HHeaderChecksum(IntField):
+class _HHeaderChecksum(_fields.IntField):
     """A checksum on the header only.
     
     See RFC 791 for more.
@@ -171,12 +170,12 @@ class HHeaderChecksum(IntField):
 
 # main IP class
 
-class IP(Protocol):
+class IP(_protocols.Protocol):
     """This is Internet Protocol.
     The main protocol in third layer of OSI model.
     """
     layer = 3      # layer of OSI
-    protocol_id = const.ETHERTYPE_IP
+    protocol_id = _consts.ETHERTYPE_IP
     name = "IP"
 
     _ordered_fields = ('_version', '_ihl', 'type_of_service', '_total_length',
@@ -200,17 +199,21 @@ class IP(Protocol):
         #   - checking platform for TTL value
         #       to be more reliable we should generate default value depends on
         #       user platform. does anyone know every values of sys.platform? :)
-        fields_list = [ HVersion("Version", 4), HIHL("IHL"),
-                        Flags("TOS", tos, **tos_predefined),
-                        HTotalLength("Total Length"),
-                        HIdentification("Identification", 0),
-                        Flags("Flags", flags, **flags_predefined),
-                        HFragmentOffset("Fragment Offset", 0),
-                        HTTL("TTL", const.TTL_LINUX), HProtocol("Protocol"),
-                        HHeaderChecksum("Header Checksum", 0),
-                        IPv4AddrField("Source Address", "127.0.0.1"),
-                        IPv4AddrField("Destination Address", "127.0.0.1"),
-                        Flags("Options", ()), PaddingField("Padding") ]
+        fields_list = [ _HVersion("Version", 4),
+                        _HIHL("IHL"),
+                        _fields.Flags("TOS", tos, **tos_predefined),
+                        _HTotalLength("Total Length"),
+                        _HIdentification("Identification", 0),
+                        _fields.Flags("Flags", flags, **flags_predefined),
+                        _HFragmentOffset("Fragment Offset", 0),
+                        _HTTL("TTL", _consts.TTL_LINUX),
+                        _HProtocol("Protocol"),
+                        _HHeaderChecksum("_Header Checksum", 0),
+                        _fields.IPv4AddrField("Source Address", "127.0.0.1"),
+                        _fields.IPv4AddrField("Destination Address",
+                                                                "127.0.0.1"),
+                        _fields.Flags("Options", ()),
+                        _fields.PaddingField("Padding") ]
 
         # we call super.__init__ after prepared necessary data
         super(IP, self).__init__(fields_list, **kw)
@@ -266,14 +269,15 @@ See RFC 791 for more.")
         cksum_offset = bit - self.get_offset('_header_checksum') - \
                                     self._get_field('_header_checksum').bits
         # check if user doesn't provide own values of bits
-        if bits.get_bits(raw_value,
+        if _bits.get_bits(raw_value,
                         self._get_field('_header_checksum').bits,
                         cksum_offset,
                         rev_offset=True) == 0:
             # calculate and add checksum to the raw_value
-            cksum = net.in_cksum(raw_value)
+            cksum = _net.in_cksum(raw_value)
             raw_value |= cksum << cksum_offset
 
         return raw_value, bit
 
 protocols = [ IP, ]
+__all__ = [ "IP", ]

@@ -19,12 +19,11 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import umpa.protocols._consts as const
+from umpa.protocols import _consts
+from umpa.protocols import _fields
+from umpa.protocols import _protocols
 
-from umpa.protocols._fields import *
-from umpa.protocols._protocols import *
-
-class HType(EnumIntField):
+class _HType(_fields.EnumIntField):
     bits = 8
     auto = False
     enumerable = {
@@ -277,20 +276,20 @@ class HType(EnumIntField):
         "Reserved (255)"	: const.ICMP_TYPE_RESERVED255 = 255,
     }
 
-class HCode(IntField):
+class _HCode(_fields.IntField):
     bits = 8
     auto = False
 
-class HChecksum(IntField):
+class _HChecksum(_fields.IntField):
     bits = 16
     auto = True
     def _generate_value(self):
         return 0
 
-class HExtraData(Field):
+class _HExtraData(_fields.Field):
     pass
 
-class ICMP(Protocol):
+class ICMP(_protocols.Protocol):
     layer = 4
     protocol_id = const.PROTOCOL_ICMP
     name = "ICMP"
@@ -299,8 +298,10 @@ class ICMP(Protocol):
 
     def __init__(self, **kw):
         raise NotImplementedError("not finished yet")
-        fields_list = [ HType("Type"), HCode("Code"), HChecksum("Checksum"), 
-                        HExtraData("Extra Data"), ]
+        fields_list = [ _HType("Type"),
+                        _HCode("Code"),
+                        _HChecksum("Checksum"), 
+                        _HExtraData("Extra Data"), ]
 
         super(ICMP, self).__init__(fields_list, **kw)
 
@@ -311,3 +312,4 @@ class ICMP(Protocol):
         return raw_value, bit
 
 protocols = [ ICMP, ]
+__all__ = [ "ICMP", ]
