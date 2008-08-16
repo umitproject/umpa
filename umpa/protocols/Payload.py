@@ -19,7 +19,8 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-from umpa.protocols import *
+from umpa.protocols._fields import Field
+from umpa.protocols._protocols import Protocol
 from umpa.protocols._consts import BYTE
 
 class HData(Field): # FIXME: should we move it to _fields.py as a common field?
@@ -72,3 +73,4 @@ class Payload(Protocol):
         return raw_value, bit
 
 protocols = [ Payload, ]
+__all__ = [ "Payload", ]
