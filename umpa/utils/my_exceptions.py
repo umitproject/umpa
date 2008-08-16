@@ -30,3 +30,7 @@ class UMPAAttributeException(UMPAException):
 
 class UMPAStrictException(UMPAException):
     pass
+
+class UMPANotPermittedException(UMPAException):
+    def __str__(self):
+        return repr(self.msg) + "\n\tRecommended to use umpa.utils.security module to avoid the exception."
