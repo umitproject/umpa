@@ -56,7 +56,7 @@ def super_priviliges(fun=None, *fargs, **kwargs):
 
     import pwd
     try:
-        os.seteuid(nobody_id)
+        os.seteuid(0)
     except OSError:
         print >> sys.stderr, "Run the program with root-priviliges.\n"
         raise
