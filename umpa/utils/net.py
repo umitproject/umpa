@@ -44,12 +44,12 @@ def in_cksum(data, cksum=0):
     """
 
     pieces = _pieces_of_number(data)
+    if len(pieces)%2 == 1:
+        pieces.append(0)
+
     for i in xrange(0, len(pieces), 2):
-        if i + 1 == len(pieces):
-            cksum += pieces[i] & 0xff
-        else:
-            x = ((pieces[i] << 8) & 0xff00) + (pieces[i+1] & 0xff)
-            cksum += x
+        x = ((pieces[i] << 8) & 0xff00) + (pieces[i+1] & 0xff)
+        cksum += x
 
     while cksum >> 16:
         cksum = (cksum & 0xffff) + (cksum >> 16)
