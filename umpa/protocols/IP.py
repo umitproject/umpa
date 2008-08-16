@@ -21,7 +21,8 @@
 
 import umpa.protocols._consts as const
 
-from umpa.protocols import *
+from umpa.protocols._fields import *
+from umpa.protocols._protocols import *
 from umpa.utils import net
 from umpa.utils import bits
 

@@ -19,7 +19,7 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-from umpa.protocols._consts import BYTE
+BYTE = 8
 
 def split_into_chunks(number, number_length, chunks_size=BYTE):
     """Split the big number into small chunks (default BYTE size).

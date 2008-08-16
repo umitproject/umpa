@@ -23,8 +23,9 @@ import struct
 import warnings
 
 import umpa.utils.bits
-from umpa.protocols._consts import BYTE
 from umpa.utils.my_exceptions import UMPAStrictException
+
+BYTE = 8
 
 class StrictWarning(Warning):
     pass

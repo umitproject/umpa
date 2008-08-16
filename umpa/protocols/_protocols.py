@@ -22,7 +22,7 @@
 import struct
 
 from umpa import utils
-from umpa.protocols._consts import *
+from umpa.protocols._consts import BYTE
 from umpa.protocols._fields import Field, Flags
 from umpa.utils.my_exceptions import *
 
