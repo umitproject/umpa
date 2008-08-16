@@ -20,6 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+import sys
 
 def drop_priviliges():
     """Some functions require root-privilegies and after we done them,
@@ -38,8 +39,12 @@ def drop_priviliges():
 
     import pwd
     nobody_id = pwd.getpwnam('nobody')[2]
-    os.seteuid(nobody_id)
-
+    try:
+        os.seteuid(nobody_id)
+    except OSError:
+        print >> sys.stderr, "Run the program with root-priviliges.\n"
+        raise
+        
 def super_priviliges(fun=None, *fargs, **kwargs):
     """
     Request for root-priviliges.
@@ -50,7 +55,11 @@ def super_priviliges(fun=None, *fargs, **kwargs):
         return
 
     import pwd
-    os.seteuid(0)
+    try:
+        os.seteuid(nobody_id)
+    except OSError:
+        print >> sys.stderr, "Run the program with root-priviliges.\n"
+        raise
     if fun:
         result = fun(*fargs, **kwargs)
         drop_priviliges()
