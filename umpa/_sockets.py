@@ -22,7 +22,7 @@
 import sys
 from socket import *
 
-from umpa.utils import UMPANotPermittedException
+from umpa.utils.exceptions import UMPANotPermittedException
 
 class Socket(object):
     """To send built packets your need to create a socket.

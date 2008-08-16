@@ -18,3 +18,13 @@
 # You should have received a copy of the GNU Lesser General Public License 
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
+def _pairwise(iterable):
+    itnext = iter(iterable).next
+    while True:
+        yield itnext(), itnext()
+
+def dict_from_sequence(seq):
+    """Return a dictionary based on a sequence."""
+    return dict(_pairwise(seq))
+

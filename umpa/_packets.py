@@ -23,7 +23,7 @@ import struct
 import warnings
 
 import umpa.utils.bits
-from umpa.utils.my_exceptions import UMPAStrictException
+from umpa.utils.exceptions import UMPAStrictException
 
 BYTE = 8
 

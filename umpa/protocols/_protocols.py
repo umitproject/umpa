@@ -21,10 +21,10 @@
 
 import struct
 
-from umpa import utils
 from umpa.protocols._consts import BYTE
 from umpa.protocols._fields import Field, Flags
-from umpa.utils.my_exceptions import *
+from umpa.utils import tools
+from umpa.utils.exceptions import *
 
 class Protocol(object):
     """Superclass for protocols.
@@ -94,7 +94,7 @@ class Protocol(object):
         There are 2 ways to do that with using tuple or dict-style.
         """
         # converting args list to the dict and update our kwargs
-        kwargs.update(utils.dict_from_sequence(args))
+        kwargs.update(tools.dict_from_sequence(args))
 
         for key in kwargs:
             if self._is_valid(key):
@@ -110,7 +110,7 @@ class Protocol(object):
         """
 
         # converting args list to the dict and update our kwargs
-        kw.update(utils.dict_from_sequence(args))
+        kw.update(tools.dict_from_sequence(args))
 
         flag_field = self._get_field(name)
         if isinstance(flag_field, Flags):

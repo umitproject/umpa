@@ -21,7 +21,7 @@
 
 import struct
 
-from umpa.utils.my_exceptions import *
+from umpa.utils.exceptions import *
 
 class Field(object):
     """Superclass for fields.
