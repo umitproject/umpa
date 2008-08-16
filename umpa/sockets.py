@@ -22,8 +22,7 @@
 import sys
 from socket import *
 
-import umpa.utils.security
-from umpa.utils import UMPAException
+from umpa.utils import UMPANotPermittedException
 
 class Socket(object):
     """To send built packets your need to create a socket.
@@ -35,15 +34,14 @@ class Socket(object):
         """This is a default constructor for Socket's class.
         Just use it in any doubts.
         """
-        # XXX: if non-root EUID, then exception is raised
-        # TODO: before raising UMPAException, we can try
-        # to switch EUID into root and recall socket()
+        # if non-root EUID, then exception is raised
+        # use umpa.utils.security.super_priviliges() to avoid exception
+        # we new Socket object is created
         try:
             # to create socket object we need root priviligies
-            self._sock = umpa.utils.security.super_priviliges(socket,
-                                                AF_INET, SOCK_RAW, IPPROTO_RAW)
+            self._sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)
         except error, msg:
-            raise UMPAException(msg)
+            raise UMPANotPermittedException(msg)
         # to build own headers of IP
         self._sock.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
 

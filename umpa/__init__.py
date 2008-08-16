@@ -21,9 +21,3 @@
 
 from packets import *
 from sockets import *
-
-import utils.security
-
-# we dropping our priviliges bacause we don't need them
-# if we would need, we will ask for them
-utils.security.drop_priviliges()
