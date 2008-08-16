@@ -23,7 +23,7 @@ from umpa.protocols._fields import Field
 from umpa.protocols._protocols import Protocol
 from umpa.protocols._consts import BYTE
 
-class HData(Field): # FIXME: should we move it to _fields.py as a common field?
+class _HData(Field): # FIXME: should we move it to _fields.py as a common field?
     """Data as a strings.
     """
     bits = 0
@@ -62,7 +62,7 @@ class Payload(Protocol):
     _ordered_fields = ('data',)
 
     def __init__(self, **kw):
-        fields_list = [ HData("Data"), ]
+        fields_list = [ _HData("Data"), ]
 
         super(Payload, self).__init__(fields_list, **kw)
 
