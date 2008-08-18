@@ -19,10 +19,17 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import os
 import sys
-import os.path
 
 from _packets import Packet
 from _sockets import Socket
 
-sys.path.append(os.path.join(os.path.expanduser('~'), '.umpa'))
+local_path = os.path.join(os.path.expanduser('~'), '.umpa')
+# checking if local directory exists
+if not os.path.isdir(local_path):
+    os.makedirs(os.path.join(local_path,'umpa_plugins','protocols'))
+    os.mkdir(os.path.join(local_path,'umpa_plugins','extensions'))
+
+sys.path.append(local_path)
+del local_path
