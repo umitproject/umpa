@@ -27,7 +27,7 @@ UMPA_VERSION = '0.1'
 
 setup(  name            = "UMPA",
         version         = UMPA_VERSION,
-        description     = "Umit Manipulation of Packets Art",
+        description     = "Umit's Manipulations of Packets Art",
         author          = "Bartosz SKOWRON",
         author_email    = "getxsick@gmail.com",
         url     = "http://trac.umitproject.org/wiki/PacketManipulator/BackEnd",
