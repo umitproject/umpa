@@ -66,6 +66,11 @@ class Protocol(object):
         else:
             raise UMPAAttributeException, attr + ' not allowed'
 
+    def __str__(self):
+        for field in self.get_fields():
+            print field
+        return "<< %s >> contains %d fields." % (self.name, len(self._fields))
+
     def get_fields(self):
         """Generator for ordered fields."""
         for field in self._ordered_fields:
