@@ -24,8 +24,10 @@ import os.path
 
 # loading global protocols
 from IP import IP
+# from ICMP import ICMP
 from TCP import TCP
 from UDP import UDP
+from Payload import Payload
 
 def _load_local_protocols():
     path = os.path.join(os.path.expanduser('~'), '.umpa', 'umpa_plugins',
