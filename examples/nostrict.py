@@ -36,13 +36,13 @@ from umpa.protocols import IP, TCP
 umpa.utils.security.drop_priviliges()
 
 # create new IP object
-ip = IP.IP()
+ip = IP()
 # setting some fields
 ip.source_address = "127.0.0.1"
 ip.destination_address = "67.205.14.183"
 
 # the same for TCP
-tcp = TCP.TCP()
+tcp = TCP()
 # setting some fields
 tcp.source_port = 2958
 tcp.destination_port = 0

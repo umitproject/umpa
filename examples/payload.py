@@ -37,13 +37,13 @@ from umpa.protocols import IP, TCP, Payload
 umpa.utils.security.drop_priviliges()
 
 # create new IP object
-ip = IP.IP()
+ip = IP()
 # setting some fields
 ip.source_address = "127.0.0.1"
 ip.destination_address = "67.205.14.183"
 
 # the same for TCP
-tcp = TCP.TCP()
+tcp = TCP()
 # setting some fields
 tcp.source_port = 2958
 tcp.destination_port = 0
@@ -52,7 +52,7 @@ tcp.destination_port = 0
 tcp.set_flags('control_bits', syn=True)
 
 # create payload object and set the data while calling constructor
-payload = Payload.Payload(data="something here")
+payload = Payload(data="something here")
 
 # create a new packet and include one protocol (ip)
 packet = umpa.Packet(ip)
