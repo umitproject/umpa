@@ -18,3 +18,21 @@
 # You should have received a copy of the GNU Lesser General Public License 
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
+import sys
+import os.path
+
+def load_extension(name):
+    if os.path.isfile(os.path.join(os.path.expanduser('~'), '.umpa',
+                            'umpa_plugins', 'extensions', name+'.py')):
+        module_path = "umpa_plugins.extensions.%s" % name
+    else:
+        module_path = "umpa.extensions.%s" % name
+
+    try:
+        module = __import__(module_path, fromlist=[None])
+        globals()[name] = module
+    except Exception, err:
+        print >> sys.stderr, "Can't load the extension."
+        print >> sys.stderr, err
+        print >> sys.stderr, "..ignoring."

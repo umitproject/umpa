@@ -19,5 +19,10 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import sys
+import os.path
+
 from _packets import Packet
 from _sockets import Socket
+
+sys.path.append(os.path.join(os.path.expanduser('~'), '.umpa'))

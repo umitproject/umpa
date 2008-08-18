@@ -27,4 +27,3 @@ def _pairwise(iterable):
 def dict_from_sequence(seq):
     """Return a dictionary based on a sequence."""
     return dict(_pairwise(seq))
-

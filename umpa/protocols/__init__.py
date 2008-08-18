@@ -19,7 +19,32 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-# TODO: we can add a simple collector of protocols lists
-# and import the files of protocols, so users could only do something like:
-# from umpa.protocols import IP
-# packet = IP()
+import sys
+import os.path
+
+# loading global protocols
+from IP import IP
+from TCP import TCP
+from UDP import UDP
+
+def _load_local_protocols():
+    path = os.path.join(os.path.expanduser('~'), '.umpa', 'umpa_plugins',
+                                                                'protocols')
+    for fname in os.listdir(path):
+        if not fname.lower().endswith(".py") or fname.startswith("_"):
+            continue
+
+        try:
+            module = __import__(
+                    "umpa_plugins.protocols.%s"  % fname.replace(".py",""),
+                    fromlist=[None])
+
+            for proto in module.protocols:
+                globals()[proto.__name__] = proto
+        except Exception, err:
+            print >> sys.stderr, "Can't load local plugins."
+            print >> sys.stderr, err
+            print >> sys.stderr, "..ignoring."
+
+# loading local protocols (from $HOME/.umpa/umpa_plugins/protocols)
+_load_local_protocols()
