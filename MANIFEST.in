@@ -1,0 +1,3 @@
+include README AUTHORS COPYING 
+
+recursive-include examples *.py
