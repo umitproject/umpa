@@ -62,9 +62,10 @@ class Packet(object):
 
     def __str__(self):
         """Print in human-readable style a content of the packet."""
+        print "Packet contains %d protocols" % len(self.protos)
         for proto in self.protos:
             print proto
-        return "Packet contains %d protocols." % len(self.protos)
+        return super(Packet, self).__str__()
 
     def print_protocols(self):
         """Print all included protocols into the packet."""

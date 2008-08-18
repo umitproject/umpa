@@ -45,9 +45,9 @@ class Field(object):
 
     def __str__(self):
         if self.auto:
-            return "[ %s ] %s (auto - %s)" % (self.name, str(self._value), str(self.fillout()))
+            return "| +-[ %-25s ]\t\t%s (auto - %s)" % (self.name, str(self._value), str(self.fillout()))
         else:
-            return "[ %s ] %s" % (self.name, str(self._value))
+            return "| +-[ %-25s ]\t\t%s" % (self.name, str(self._value))
     def set(self, value):
         if self._is_valid(value):
             self._value = value
@@ -263,11 +263,12 @@ class Flags(Field):
                 self.unset(name)
 
     def __str__(self):
-        print "[ %s ]" % self.name
+        print "| +-[ %-25s ]" % self.name
+        print "| | \\"
         for bit in self._ordered_fields:
-            print " ....",
             print self._value[bit]
-        return "[ %s ] contains %d bit flags." % (self.name, len(self._ordered_fields))
+        print "| | /"
+        return "| \\-[ %-25s ]\t\tcontains %d bit flags" % (self.name, len(self._ordered_fields))
 
     def _is_valid(self, name):
         return name in self._value
@@ -330,7 +331,7 @@ class BitField(Field):
             self.auto = True
 
     def __str__(self):
-        return "| %s | %d" % (self.name, int(self._value))
+        return "| |  -{ %-23s }\t\t%d" % (self.name, int(self._value))
     def _is_valid(self, val):
         # always True because it's bool type
         return True
