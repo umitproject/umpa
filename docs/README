@@ -1,0 +1,83 @@
+UMPA - Umit's Manipulations of Packets Art
+==========================================
+
+  Copyright (C) 2008 Adriano Monteiro Marques <py.adriano at gmail dot com>
+
+  Author: Bartosz SKOWRON <getxsick at gmail dot com>
+
+  All rights reserved, see docs/COPYING for details.
+
+  This library is free software; you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published 
+  by the Free Software Foundation; either version 2.1 of the License, or 
+  (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful, but 
+  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+  License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License 
+  along with this library; if not, write to the Free Software Foundation, 
+  Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
+Introduction
+============
+
+  UMPA is a packet manipulations library.
+
+  UMPA is developed in the Python programming language.
+
+  Packet manipulation library aims to provide easy to use system
+  to manipulate packets of every OSI model layers.
+
+  Many features is supported like: auto-generating packets, high-level
+  editing header fields, auto-filling, interaction system (with libpcap
+  capturing support) - it's not released yet, etc.
+
+  The goal of project is to get a powerful, easy to use for pro and newbies
+  and intelligent tool for packet manipulation.
+
+  Check docs/* for additional informations.
+
+Documentation
+=============
+
+  On the Web:
+
+  http://trac.umitproject.org/wiki/PacketManipulator/BackEnd
+
+  This page also points to support resources and informations about UMPA
+  development status and plans.
+
+  Local:
+
+  See docs/*                    from the sources package tarball
+  See /usr/share/doc/umpa       if you have already installed the library
+
+Dependencies
+============
+
+  * [1] Python programming language
+
+Acknowledgements
+================
+
+  I would like to thank for a several people, who help and support me with the
+  library, sending patches, testing it and giving ideas:
+
+   * Adriano Monteiro Marques
+   * Francesco Piccinno
+   * Luís António Bastião Silva
+   * Guilherme Henrique Polo Gonçalves
+
+Authors
+=======
+
+  * Bartosz SKOWRON <getxsick at gmail dot com>
+
+Links
+=====
+
+  [0] UMPA wiki - http://trac.umitproject.org/wiki/PacketManipulator/BackEnd
+  [1] Python official website - http://www.python.org
