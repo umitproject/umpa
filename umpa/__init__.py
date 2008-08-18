@@ -25,6 +25,7 @@ import sys
 from _packets import Packet
 from _sockets import Socket
 
+# FIXME: does it work under windows?
 local_path = os.path.join(os.path.expanduser('~'), '.umpa')
 # checking if local directory exists
 if not os.path.isdir(local_path):
