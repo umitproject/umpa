@@ -25,12 +25,20 @@ import sys
 from _packets import Packet
 from _sockets import Socket
 
-# FIXME: does it work under windows?
 local_path = os.path.join(os.path.expanduser('~'), '.umpa')
+
+# UMPA handles with local directory $HOME/.umpa
+# we need to check necessary hierarchy of dirs exists
+# if not, then create it
+
 # checking if local directory exists
 if not os.path.isdir(local_path):
     os.makedirs(os.path.join(local_path,'umpa_plugins','protocols'))
     os.mkdir(os.path.join(local_path,'umpa_plugins','extensions'))
 
+# to allow things like: from umpa_plugins.extensions import something
+# we need to add the local_path to the PYTHONPATH
 sys.path.append(local_path)
+
+# delete unnecessary vars
 del local_path
