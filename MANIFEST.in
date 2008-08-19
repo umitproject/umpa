@@ -1,4 +1,6 @@
 include README AUTHORS COPYING 
 
 include install_scripts/uninstall_linux.sh
-recursive-include examples *.py
+
+recursive-include examples *
+recursive-include docs *
