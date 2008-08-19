@@ -44,5 +44,7 @@ setup(  name            = "UMPA",
                             glob.glob(os.path.join('install_scripts','*.sh'))),
                         (os.path.join('share','doc','umpa'),
                             glob.glob(os.path.join('docs','*'))),
+                        (os.path.join('share','doc','umpa'),
+                            ('COPYING', 'AUTHORS', )),
                     ]
 )
