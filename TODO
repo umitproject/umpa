@@ -1,0 +1,14 @@
+== before next release ==
+- docstrings
+- more comments
+- clean code
+- tests
+- documantation
+
+== after next release ==
+- ICMP implementation
+- Blank Protocol
+- Ethernet layer support
+- asynchronous system
+- sniffing
+- template system

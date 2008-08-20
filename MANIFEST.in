@@ -1,4 +1,4 @@
-include README AUTHORS COPYING 
+include README AUTHORS COPYING TODO
 
 include install_scripts/uninstall_linux.sh
 

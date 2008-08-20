@@ -45,6 +45,6 @@ setup(  name            = "UMPA",
                         (os.path.join('share','doc','umpa'),
                             glob.glob(os.path.join('docs','*'))),
                         (os.path.join('share','doc','umpa'),
-                            ('COPYING', 'AUTHORS', )),
+                            ('COPYING', 'AUTHORS', 'TODO')),
                     ]
 )
