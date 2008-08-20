@@ -19,21 +19,37 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module manages with socket connection.
+
+It contains Socket class which should be used instead of
+socket.socket() directly from the standard library.
+
+But it's correctly to use socket module directly if needed.
+"""
+
 import sys
 from socket import *
 
 from umpa.utils.exceptions import UMPANotPermittedException
 
 class Socket(object):
-    """To send built packets your need to create a socket.
+    """
+    This class handles with sockets.
+
+    To send built packets your need to create a socket.
     You can use socket module from Python Standard Library directly
     but it's recommended to use this class instead.
-    That is because there is some other features, and for some security issues.
+
+    That is because there are some other features,
+    and for some security issues.
     """
+
     def __init__(self):
-        """This is a default constructor for Socket's class.
-        Just use it in any doubts.
         """
+        Create a new Socket().
+        """
+
         # if non-root EUID, then exception is raised
         # use umpa.utils.security.super_priviliges() to avoid exception
         # we new Socket object is created
@@ -46,7 +62,12 @@ class Socket(object):
         self._sock.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
 
     def send(self, *packets):
-        """Sending your packets"""
+        """
+        Send packets in to the network.
+
+        @type *packets: C{Packet}
+        @param *packets: packets which were built by umpa.Packet objects.
+        """
 
         sent_bits = []
         for packet in packets:
@@ -60,8 +81,13 @@ class Socket(object):
         return sent_bits
 
     def _get_address(self, packet):
-        """Because of Ethernet issue (described in send() method,
-        we have to parse packets for destination addresses.
+        """
+        Pick out the destination address from 3rd layer.
+
+        Because of the Ethernet issue (check the comments in send() method for
+        more), we have to parse packets for destination addresses.
+
+        @return: destination address from 3rd layer of OSI model.
         """
         for p in packet.protos:
             if p.layer == 3:    # XXX: if we included more than one protocol
