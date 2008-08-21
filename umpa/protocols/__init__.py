@@ -19,6 +19,16 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This package contains already implemented protocols
+and API to implement another.
+
+Modules which names start with '_' prefix are for developers
+and they are useful to implement new protocols.
+
+Available protocols are in modules without '_' prefix.
+"""
+
 import sys
 import os.path
 
@@ -30,13 +40,36 @@ from UDP import UDP
 from Payload import Payload
 
 def get_locals():
+    """
+    Return local protocols.
+
+    Local protocols are the ones which are located in the user home directory.
+    Usually it's $HOME/.umpa/umpa_plugins/protocols/.
+
+    @return: local protocols.
+    """
     return _lproto
 
 def get_globals():
+    """
+    Return global protocols.
+
+    Global protocols are the ones which are located
+    in the umpa.protocols package.
+
+    @return: global protocols.
+    """
     return _gproto
 
 # loading local protocols (from $HOME/.umpa/umpa_plugins/protocols)
 def _load_local_protocols():
+    """
+    Load local protocols.
+
+    Load protocols from $HOME/.umpa/umpa_plugins/protocols directory.
+
+    @return: list of protocols' classes.
+    """
     path = os.path.join(os.path.expanduser('~'), '.umpa', 'umpa_plugins',
                                                                 'protocols')
     items = []
@@ -59,6 +92,16 @@ def _load_local_protocols():
     return items
 
 def _dict_protos(protos_list):
+    """
+    Create a dictionary from the protocol's list.
+
+    Keys are names of protocols.
+    Values are protocols' classes.
+
+    @param protos_list: protocol's list
+
+    @return: a dictionary of protocols' classes.
+    """
     protos_dict = {}
     for proto in protos_list:
         protos_dict[proto.name] = proto

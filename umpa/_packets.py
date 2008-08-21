@@ -128,7 +128,6 @@ class Packet(object):
         Check the strict attribute and
         raise UMPAStrictException or issues warnings if needed.
 
-        @type protos: C{Protocol}
         @param protos: protocols which will be included into the packet.
         """
 

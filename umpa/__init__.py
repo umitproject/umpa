@@ -26,7 +26,7 @@ It is a packet manipulations library.
 Packet manipulation library aims to provide easy to use system
 to manipulate packets of every OSI model layers.
 
-Available modules:
+Available packages/modules:
     - protocols
     - extensions
     - utils
