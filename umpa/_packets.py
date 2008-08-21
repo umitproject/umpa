@@ -111,13 +111,6 @@ class Packet(object):
             print proto
         return super(Packet, self).__str__()
 
-    def print_protocols(self):
-        """
-        Print all included protocols into the packet.
-        """
-        for p in self.protos:
-            print p
-
     def include(self, *protos):
         """
         Add protocols into packet.
