@@ -48,6 +48,7 @@ def get_locals():
 
     @return: local protocols.
     """
+
     return _lproto
 
 def get_globals():
@@ -59,6 +60,7 @@ def get_globals():
 
     @return: global protocols.
     """
+
     return _gproto
 
 # loading local protocols (from $HOME/.umpa/umpa_plugins/protocols)
@@ -70,6 +72,7 @@ def _load_local_protocols():
 
     @return: list of protocols' classes.
     """
+
     path = os.path.join(os.path.expanduser('~'), '.umpa', 'umpa_plugins',
                                                                 'protocols')
     items = []
@@ -102,6 +105,7 @@ def _dict_protos(protos_list):
 
     @return: a dictionary of protocols' classes.
     """
+
     protos_dict = {}
     for proto in protos_list:
         protos_dict[proto.name] = proto

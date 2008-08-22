@@ -19,20 +19,52 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains a generic Field classes.
+
+Protocols' headers contain fields. Each field's objects should be an instance
+of a Field class or of a subclass thereof (especially some generic subclasses
+provided by this module).
+
+Use these fields' classes to create new implementation of any protocols.
+"""
+
 import struct
 
 from umpa.utils.exceptions import *
 
 class Field(object):
-    """Superclass for fields.
-    To implement new fields, create subclass of this.
+    """
+    Superclass for any fields.
+
+    Protocols' headers contain there fields.
+
+    To implement new fields, create subclass of this class or any other
+    common classes included in this module.
 
     IMPORTANT: You should overwrite this __doc__ to get hints in some frontends
     like the one provided by Umit Project.
     """
+
     bits = 0
     auto = False
     def __init__(self, name, value=None, bits=None, auto=None):
+        """
+        Create a new Field().
+
+        @type name: C{str}
+        @param name: name of the field.
+
+        @type value: Optional
+        @param value: predefined value of the field.
+
+        @type bits: Optional C{int}
+        @param bits: length of the field.
+
+        @type auto: Optional C{bool}
+        @param auto: information for users if the field can be auto-filling
+        """
+
         self.name = name
         if auto != None:
             self.auto = auto
@@ -44,39 +76,126 @@ class Field(object):
         self._value = value
 
     def __str__(self):
+        """
+        Print in human-readable tree-style a content of the field.
+
+        @return: the part of the whole tree which accords to the field.
+        """
+
         if self.auto:
             return "| +-[ %-25s ]\t\t%s (auto - %s)" % (self.name, str(self._value), str(self.fillout()))
         else:
             return "| +-[ %-25s ]\t\t%s" % (self.name, str(self._value))
     def set(self, value):
+        """
+        Set a value for the field.
+
+        The new value is validing before assigment.
+
+        @param value: new value for the field.
+        """
+
         if self._is_valid(value):
             self._value = value
         else:
             raise UMPAAttributeException, str(value) + ' not allowed'
 
     def get(self):
+        """
+        Return the current value of the field.
+
+        Don't generate the value if the is not saved any but auto-filling
+        is possible. In this case, just return None.
+
+        @return: the current value of the field.
+        """
+
         return self._value
 
     def clear(self):
+        """
+        Clear the current value of the field.
+        """
+
         self._value = None
 
     def set_doc(self, text):
+        """
+        Set the pydocs of the field.
+
+        It's important for new subclasses of the Field.
+        Some GUIs use this information in hints etc.
+
+        @type text: C{str}
+        @param text: new pydoc for the field.
+        """
+
         self.__doc__ = text
 
     def _is_valid(self, val):
+        """
+        Validate the new value.
+
+        This method is an abstract. You HAVE TO override it.
+
+        @param val: the new value
+
+        @rtype: C{bool}
+        @return: result of the validation.
+        """
+
         raise NotImplementedError, "this is abstract class"
 
     def _pre_fillout(self):
+        """
+        remove this method
+        """
+
         pass
 
     def _raw_value(self):
+        """
+        Convert the value to the raw mode.
+
+        Raw value is a number type. It has to be in big-endian order.
+        The bits of the result of this method are inserted into the raw number
+        of the whole protocol.
+
+        This method is an abstract. You HAVE TO override it.
+        You need to implement a conversion of the value here.
+        E.g. for IntField is just return the value. But for some strings-fields
+        you need to convert characters in the specific way.
+
+        @rtype: C{number}
+        @return: raw value of the field.
+        """
+
         raise NotImplementedError, "this is abstract class"
 
     def _generate_value(self):
+        """
+        Generate value for undefined yet field.
+
+        This is auto-filling feature. If you implement this method, propably
+        you should set the auto attribute to True for the class. It means that
+        user doesn't need to set the value of the field.
+
+        @return: auto-generated value of the field.
+        """
+
         raise UMPAException, "value is not defined or _generate_value() \
                                             method is not implemented."
 
     def fillout(self, *args):
+        """
+        Fillout the field.
+
+        Generate the value if undefined and convert the result
+        to the big-endian representation.
+
+        @return: bits of the field for the (generated) value.
+        """
+
         self._pre_fillout()
 
         # we have to clear self._value if it was not defined
@@ -91,11 +210,40 @@ class Field(object):
         return raw
 
 class IntField(Field):
+    """
+    Superclass for number-type fields.
+
+    This class implemented _raw_value() and _is_valid() methods.
+    You need to implement _generate_value() method if needed.
+
+    IMPORTANT: You should overwrite this __doc__ to get hints in some frontends
+    like the one provided by Umit Project.
+    """
+
     def _raw_value(self):
+        """
+        Convert the value to the raw mode.
+
+        Raw value is a number type. It has to be in big-endian order.
+        The bits of the result of this method are inserted into the raw number
+        of the whole protocol.
+        
+        For IntField there is nothing to convert. Just simple return the value.
+
+        @rtype: C{number}
+        @return: raw value of the field.
+        """
+
         return self._value
 
     def _is_valid(self, val):
-        """Check if a value is not bigger than expected.
+        """
+        Validate if the value is not bigger than expected.
+
+        @param val: the new value.
+
+        @rtype: C{bool}
+        @return: result of the validation.
         """
 
         if 2**self.bits > val:
@@ -104,31 +252,81 @@ class IntField(Field):
             return False
 
 class SpecialIntField(IntField):
-    """Use this class if the field handle with other fields from the protocol
-    or other layers/protocols.
     """
+    This class is a specific one and has special meaning.
+    
+    It's a subclass of IntField.
+    Use this class if the field handles with other fields from the protocol
+    or other layers/protocols.
+
+    E.g. Internet Header Length (IHL) field from the IP protocol needs to know
+    some informations about others fields.
+
+    We use _tmp_value attribute then in pre/port raw methods in protocol
+    classes. Just assign to the _tmp_value needed information from other fields
+    and implement _generate_value() method in the way related way.
+    Check umpa.protocols.IP module for examples.
+    """
+
     def __init__(self, *args, **kwds):
+        """
+        Create a new SpecialIntField().
+
+        Call the super constructor and initiate temporary value.
+        """
+
         super(SpecialIntField, self).__init__(*args, **kwds)
         self.__temp_value = 0
 
     def get_tmpvalue(self):
+        """
+        Return temporary value.
+
+        @rtype: C{int}
+        @return: temporary value of the field.
+        """
+
         return self.__temp_value
 
     def set_tmpvalue(self, val):
+        """
+        Set the temporary value.
+
+        @type val: C{int}
+        @param val: temporary value for special cases
+        """
+
         self.__temp_value = val
 
     def clear_tmpvalue(self):
+        """
+        Clear the temporary value.
+        """
+
         self.__temp_value = 0
 
     _tmp_value = property(get_tmpvalue, set_tmpvalue, clear_tmpvalue)
 
 class EnumField(IntField):
-    """Useful class for enumerable fields.
+    """
+    This is a specific version of IntField and handles with enumarable fields.
+
+    E.g. SMTP port is 25. To set/get value of port from TCP protocol,
+    use "STMP" instead of "25". Read documentation for get() and set() methods
+    for additional information.
     """
 
     enumerable = {}
 
     def get(self, human=False):
+        """
+        Return the current value of the field.
+
+        @type human: Optional C{bool}
+        @param human: if True, return human-readable value instead of numeric.
+        (Default: False)
+        """
+
         value = super(EnumField, self).get()
         if human:
             for k,v in self.enumerable.items():
@@ -137,6 +335,18 @@ class EnumField(IntField):
         return value
 
     def set(self, value):
+        """
+        Set the new value of the field.
+
+        Try to use value as a key for a dictionary ("SMTP" e.g.) and set
+        the value returned by the dictionary.
+
+        If value doesn't recognise as a dictionary key, try classic way.
+
+        @type value: C{int} or C{str}
+        @param value: assign new value in both ways (numeric and human).
+        """
+        
         # we try to use value as a "human" value
         # if doesn't work, then as a normal one
         try:
@@ -145,15 +355,32 @@ class EnumField(IntField):
             super(EnumField, self).set(value)
 
 class AddrField(Field):
+    """
+    Superclass for address-type fields.
+
+    Subclasses of this class are related to the different kinds of addresses
+    as IP addresses for example.
+    """
+
     pass
 
 class IPAddrField(AddrField):
-    """Main class for IP-style adresses.
-    It handles with 2 types of data:
-    1 - strings as "127.0.0.1" or "0:0:0:0:0:0:0:1"
-    2 - tuples as (127,0,0,1) or (0,0,0,0,0,0,0,1)
     """
+    Main class for IP-style adresses.
+
+    Handle with 2 types of data:
+        1 -- strings as "127.0.0.1" or "0:0:0:0:0:0:0:1"
+        2 -- tuples as (127,0,0,1) or (0,0,0,0,0,0,0,1)
+    """
+
     def set(self, value):
+        """
+        Set the new value of the field.
+        
+        @type value: C{str} or C{list} or C{tuple}
+        @param value: new value for the field.
+        """
+
         # convert list to tuple
         if type(value) is list:
             value = tuple(value)
@@ -161,6 +388,17 @@ class IPAddrField(AddrField):
         super(IPAddrField, self).set(value)
 
     def _raw_value(self):
+        """
+        Convert the value to the raw mode.
+
+        Raw value is a number type. It has to be in big-endian order.
+        The bits of the result of this method are inserted into the raw number
+        of the whole protocol.
+
+        @rtype: C{number}
+        @return: raw value of the field.
+        """
+
         if type(self._value) is str:
             pieces = self._value.split(self.separator)
         else:
@@ -175,6 +413,17 @@ class IPAddrField(AddrField):
         return raw
 
     def _is_valid(self, val):
+        """
+        Validate the new value.
+
+        Only str or tuple type of the value is allowed.
+
+        @param val: the new value.
+
+        @rtype: C{bool}
+        @return: result of the validation.
+        """
+
         if type(val) is str:
             pieces = val.split(self.separator)
         elif type(val) is tuple:
@@ -192,8 +441,14 @@ class IPAddrField(AddrField):
         return True
 
 class IPv4AddrField(IPAddrField):
-    """Address in IPv4 style.
     """
+    Address in IPv4 style.
+
+    Handle with 2 types of data:
+        1 -- strings as "127.0.0.1"
+        2 -- tuples as (127,0,0,1)
+    """
+
     separator = "."
     piece_size = 8
     pieces_amount = 4
@@ -201,8 +456,14 @@ class IPv4AddrField(IPAddrField):
     bits = 32
 
 class IPv6AddrField(IPAddrField):
-    """Address in IPv6 style.
     """
+    Address in IPv6 style.
+
+    Handle with 2 types of data:
+        1 -- strings as "0:0:0:0:0:0:0:1"
+        2 -- tuples as (0,0,0,0,0,0,0,1)
+    """
+
     separator = ":"
     piece_size = 16
     pieces_amount = 8
@@ -210,19 +471,50 @@ class IPv6AddrField(IPAddrField):
     bits = 128
 
 class PaddingField(SpecialIntField):
+    """
+    This class is for padding cases.
+
+    PaddingField is used to ensure that the header ends on a 32 bit boundary.
+    This is common fields for many protocols.
+    """
+
     bits = 0
     auto = True
 
     def __init__(self, name, word=32, *args, **kwds):
+        """
+        Create a new PaddingField().
+        
+        Call the super constructor and initiate extra attributes.
+        """
+
         self._word = word
         super(PaddingField, self).__init__(name, 0, *args, **kwds)
 
     def _is_valid(self, val):
+        """
+        Validate if the value is not bigger than expected.
+
+        @param val: the new value.
+
+        @rtype: C{bool}
+        @return: result of the validation.
+        """
+
         if isinstance(val, int):
             return True
         return False
 
     def fillout(self):
+        """
+        Fillout the field.
+
+        If undefined value, set the correct length of the field and generate
+        a value.
+
+        @return: call _raw_value() method for conversion.
+        """
+
         self._pre_fillout()
 
         if not self._value:
@@ -232,20 +524,52 @@ class PaddingField(SpecialIntField):
         return self._raw_value()
     
     def _raw_value(self):
+        """
+        Don't convert the value. Return 0.
+
+        Padding B{always} contains bits with 0 assigned.
+
+        @rtype: C{int}
+        @return: 0
+        """
+
         return 0
 
     def _generate_value(self):
+        """
+        Generate value for undefined yet field.
+        
+        @return: auto-generated value of the field.
+        """
+
         return (self._word - (self._tmp_value % self._word)) % self._word
 
 class Flags(Field):
-    """Most of protocols have a special field with bit-flags.
-    For those fields we use this subclass of Field.
+    """
+    This is special case of field - Flags.
+
+    Most of protocols have a special field with bit-flags.
+    E.g. TCP use them for ACK,SYN and others flags.
     """
 
     def __init__(self, name, names, **preset):
-        """Names has to be in correct order.
-        If you use **preset, check if keys are in names list as well
-        because of order issue.
+        """
+        Create a new Flags()
+
+        List names need to be in correct order. List contains string names
+        of the bit-flags.
+
+        For **preset, check if keys are in names list because there is
+        not additional check if key is valid.
+
+        @type name: C{str}
+        @param name: name of the field.
+        
+        @type names: C{list}
+        @param names: list of bit-flags (C{str} type) B{in correct order}.
+
+        @type **preset: C{dict}
+        @param **preset: predefined values (C{bool} type) of bit-flags.
         """
         super(Flags, self).__init__(name, bits=len(names))
 
@@ -263,6 +587,14 @@ class Flags(Field):
                 self.unset(name)
 
     def __str__(self):
+        """
+        Print in human-readable tree-style a content of the field.
+
+        Call print statement for bit-flags.
+
+        @return: the part of the whole tree which accords to the field.
+        """
+
         print "| +-[ %-25s ]" % self.name
         print "| | \\"
         for bit in self._ordered_fields:
@@ -271,9 +603,31 @@ class Flags(Field):
         return "| \\-[ %-25s ]\t\tcontains %d bit flags" % (self.name, len(self._ordered_fields))
 
     def _is_valid(self, name):
+        """
+        Validate if the value is not bigger than expected.
+
+        @param name: the name of the bit-flag.
+
+        @rtype: C{bool}
+        @return: result of the validation.
+        """
+
         return name in self._value
 
     def _set_bit(self, names, value):
+        """
+        Set the value for a bit.
+
+        Set True or False for the bit-flag.
+        Set the same value for every bit-flags from the list.
+
+        @type names: C{list}
+        @param names: list of names to set the value
+
+        @type value: C{bool}
+        @param value: the logical value.
+        """
+
         for flag_name in names:
             if self._is_valid(flag_name):
                 self._value[flag_name].set(value)
@@ -281,6 +635,12 @@ class Flags(Field):
                 raise UMPAAttributeException, attr + ' not allowed'
 
     def clear(self):
+        """
+        Clear the values of bit-flags.
+
+        Re-create a storing dictionary.
+        """
+
         # we overwrite an attribute self._value
         # because we need a list instead of simple var here
         self._value = {}
@@ -289,13 +649,37 @@ class Flags(Field):
         #self._value = dict.fromkeys(self._ordered_fields, False)
 
     def set(self, *names):
+        """
+        Set logical True for passed bit-flags.
+
+        @type *names: C{str}
+        @param *names: names of bit-flags.
+        """
+
         self._set_bit(names, True)
         self._modified = True
 
     def unset(self, *names):
+        """
+        Set logical False for passed bit-flags.
+
+        @type *names: C{str}
+        @param *names: names of bit-flags.
+        """
+
         self._set_bit(names, False)
 
     def get(self, *names):
+        """
+        Return list of passed bits values.
+
+        If no names passed or no results, return the whole list with values
+        of every flag-bits.
+
+        @type *names: C{str}
+        @param *names: names of bit-flags.
+        """
+
         # we check if name of the field in the flag is correct
         result = [ self._value[val].get() for val in names
                                                     if self._is_valid(val) ]
@@ -309,6 +693,15 @@ class Flags(Field):
         pass
 
     def fillout(self):
+        """
+        Fillout the field.
+
+        Call fillout() methods for every bit-flags.
+        Return concatenated result.
+
+        @return: bits of the bit-flags.
+        """
+
         self._pre_fillout()
 
         raw = 0
@@ -319,8 +712,28 @@ class Flags(Field):
         return raw
 
 class BitField(Field):
+    """
+    This class is used for bit-flags of Flags field.
+
+    Flags is a field which contains several independent bits.
+    Each of the bits is an instance of BitField.
+    """
+
     bits = 1
     def __init__(self, name, value=None, auto=None):
+        """
+        Create a new BitField().
+
+        @type name: C{str}
+        @param name: name of the field.
+
+        @type value: Optional
+        @param value: predefined value of the field.
+
+        @type auto: Optional C{bool}
+        @param auto: information for users if the field can be auto-filling
+        """
+
         super(BitField, self).__init__(name, value, BitField.bits, auto)
         
         # we store value as a _default_view, it's necessary by generic
@@ -331,15 +744,46 @@ class BitField(Field):
             self.auto = True
 
     def __str__(self):
+        """
+        Print in human-readable tree-style a content of the field.
+
+        @return: the part of the whole tree which accords to the field.
+        """
+
         return "| |  -{ %-23s }\t\t%d" % (self.name, int(self._value))
+
     def _is_valid(self, val):
+        """
+        Validate the new value.
+
+        @param val: the new value
+
+        @rtype: C{bool}
+        @return: True, becuase this is a bool type so every value is correct.
+        """
+
         # always True because it's bool type
         return True
 
     def get(self):
+        """
+        Return the current value of the field.
+
+        @return: the current value of the field.
+        """
+
         return bool(self._value)
 
     def fillout(self):
+        """
+        Fillout the field.
+
+        Generate the value if undefined and convert the result
+        to the big-endian representation.
+
+        @return: bits of the field for the (generated) value.
+        """
+
         if self._value is None:
             self._value = self._generate_value()
             raw = self._raw_value()
@@ -350,14 +794,15 @@ class BitField(Field):
         return raw
 
     def _generate_value(self):
-        """Generate value of bit.
-        
-        Be default it checks if self._default_value is defined,
-        if so it returns this value.
-        
-        If you need more complex action,
-        create subclass and overwrite this method.
         """
+        Generate value of bit.
+        
+        By default, check if self._default_value is defined,
+        if so return this value.
+        
+        For more complex action, create subclass and override this method.
+        """
+
         if self._default_value:
             return bool(self._default_value)
         else:
@@ -365,6 +810,15 @@ class BitField(Field):
                                                     method is not implemented."
 
     def _raw_value(self):
+        """
+        Convert the value to the raw mode.
+
+        In this case simple return 0 or 1.
+
+        @rtype: C{number}
+        @return: raw value of the field.
+        """
+
         if self._value:
             return 1
         else:

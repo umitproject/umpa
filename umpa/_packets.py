@@ -76,9 +76,9 @@ class Packet(object):
 
         @type **kwds: Optional C{bool}
         @param **kwds: 2 keys are proper:
-            -- strict (default True): if True object will keep protocols order.
+            -- strict (default: True): if True object will keep protocols order.
             It avoids to build odd packets with with unsaved layer order
-            -- warn (default True): if True and strict is True, object will
+            -- warn (default: True): if True and strict is True, object will
             issue warnings. Otherwise warnings are ignored.
         """
         
@@ -101,7 +101,7 @@ class Packet(object):
         """
         Print in human-readable tree-style a content of the packet.
 
-        It calls print statement for protocols.
+        Call print statement for protocols.
 
         @return: call __str__ method of super-class.
         """
