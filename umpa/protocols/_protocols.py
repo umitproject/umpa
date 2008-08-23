@@ -35,8 +35,8 @@ from umpa.utils import tools
 from umpa.utils.exceptions import *
 
 class Protocol(object):
-
-    """Superclass for every protocol's implementations.
+    """
+    Superclass for every protocol's implementations.
    
     You have to override following methods:
     -- _pre_raw()

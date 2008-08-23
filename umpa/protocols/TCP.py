@@ -19,6 +19,11 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains TCP (Transmission Control Protocol) protocol
+implementation.
+"""
+
 from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
@@ -27,6 +32,11 @@ from umpa.utils import net
 from umpa.utils import bits
 
 class _HPort(_fields.EnumField):
+    """
+    TCP uses the notion of port numbers to identify sending and receiving
+    application end-points on a host, or Internet sockets.
+    """
+
     bits = 16
     auto = False
     enumerable = {
@@ -323,84 +333,141 @@ class _HPort(_fields.EnumField):
     }
 
 class _HSequenceNumber(_fields.IntField):
-    """The sequence number of the first data octet in this segment (except
+    """
+    The sequence number of the first data octet in this segment (except
     when SYN is present).
 
     See RFC 793 for more.
     """
+
     bits = 32
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # TODO: implemention real auto-filling here ;)
         # otherwise we can simple return 0
         return 0
 
 class _HAcknowledgmentNumber(_fields.IntField):
-    """If the ACK control bit is set this field contains the value of the
+    """
+    If the ACK control bit is set this field contains the value of the
     next sequence number the sender of the segment is expecting to receive.
 
     See RFC 793 for more.
     """
+    
     bits = 32
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # TODO: implemention real auto-filling here ;)
         # otherwise we can simple return 0
         return 1
 
 class _HDataOffset(_fields.SpecialIntField):
-    """The number of 32 bit words in the TCP Header. This indicates where
+    """
+    The number of 32 bit words in the TCP Header. This indicates where
     the data begins.
 
     See RFC 793 for more.
     """
+    
     bits = 4
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # returns in 32-bits units
         return 5 + self._tmp_value / 32 # 5 is a minimum value
 
 class _HReserved(_fields.IntField):
-    """Reserved for future use.
+    """
+    Reserved for future use.
 
     See RFC 793 for more.
     """
+    
     bits = 6
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         return 0
 
 class _HWindow(_fields.IntField):
-    """The number of data octets beginning with the one indicated in the
+    """
+    The number of data octets beginning with the one indicated in the
     acknowledgment field which the sender of this segment is willing to accept.
 
     See RFC 793 for more.
     """
+    
     bits = 16
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # TODO: implemention real auto-filling here ;)
         # otherwise we can simple return 0
         return 512
 
 class _HUrgentPointer(_fields.IntField):
-    """This field communicates the current value of the urgent pointer as a
+    """
+    This field communicates the current value of the urgent pointer as a
     positive offset from the sequence number in this segment.
 
     See RFC 793 for more.
     """
+    
     bits = 16
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # TODO: implemention real auto-filling here ;)
         # otherwise we can simple return 0
         return 0
 
 class TCP(_protocols.Protocol):
-    """This is Transmission Control Protocol.
+    """
+    Transmission Control Protocol implementation.
+
     It the most common protocol in the Internet on fourth layer
     of the OSI model.
     """
+    
     layer = 4       # layer of the OSI
     protocol_id = _consts.PROTOCOL_TCP
     name = "TCP"
@@ -411,6 +478,12 @@ class TCP(_protocols.Protocol):
                     'options', '_padding',)
 
     def __init__(self, **kw):
+        """
+        Create a new TCP().
+
+        @param **kw: pass to super-constructor.
+        """
+
         control_bits = ('urg', 'ack', 'psh', 'rst', 'syn', 'fin')
         control_bits_predefined = dict.fromkeys(control_bits, 0)
 
@@ -449,6 +522,26 @@ to ensure that the TCP header ends and data begins on a 32 bit boundary. \
 See RFC 793 for more.")
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields before calling fillout() for them.
+
+        Set Padding field and calculate header length.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         # Padding
         self._get_field('_padding')._tmp_value = \
                                                 self._get_field('options').bits
@@ -460,6 +553,26 @@ See RFC 793 for more.")
         return raw_value, bit
 
     def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields after calling fillout() for them.
+
+        Calculate header checksum with new instance of PseudoHeader object.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         # rev_offset it the offset from the right side
         cksum_rev_offset = bit - self.get_offset('_checksum') - \
                                             self._get_field('_checksum').bits

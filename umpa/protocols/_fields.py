@@ -150,7 +150,7 @@ class Field(object):
         """
         Convert the value to the raw mode.
 
-        Raw value is a number type. It has to be in big-endian order.
+        Raw value's type is a number. It has to be in big-endian order.
         The bits of the result of this method are inserted into the raw number
         of the whole protocol.
 
@@ -215,7 +215,7 @@ class IntField(Field):
         """
         Convert the value to the raw mode.
 
-        Raw value is a number type. It has to be in big-endian order.
+        Raw value's type is a number. It has to be in big-endian order.
         The bits of the result of this method are inserted into the raw number
         of the whole protocol.
         
@@ -382,7 +382,7 @@ class IPAddrField(AddrField):
         """
         Convert the value to the raw mode.
 
-        Raw value is a number type. It has to be in big-endian order.
+        Raw value's type is a number. It has to be in big-endian order.
         The bits of the result of this method are inserted into the raw number
         of the whole protocol.
 
@@ -526,7 +526,7 @@ class PaddingField(SpecialIntField):
 
     def _generate_value(self):
         """
-        Generate value for undefined yet field.
+        Generate value for undefined field yet.
         
         @return: auto-generated value of the field.
         """

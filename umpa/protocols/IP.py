@@ -19,6 +19,10 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains IP (Internet Protocol) protocol implementation.
+"""
+
 from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
@@ -26,10 +30,12 @@ import umpa.utils.net as _net
 import umpa.utils.bits as _bits
 
 class _HVersion(_fields.EnumField):
-    """The Version field indicates the format of the internet header.
+    """
+    The Version field indicates the format of the internet header.
     
     See RFC 791 for more.
     """
+    
     bits = 4
     auto = True
     enumerable = {
@@ -40,64 +46,115 @@ class _HVersion(_fields.EnumField):
     }
 
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         return _consts.IPVERSION_4
 
 class _HIHL(_fields.SpecialIntField):
-    """Internet Header Length is the length of the internet header in 32 bit
+    """
+    Internet Header Length is the length of the internet header in 32 bit
     words, and thus points to the beginning of the data.
     
     See RFC 791 for more.
     """
+
     bits = 4
     auto = True
+
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         return 5 + self._tmp_value / 32 # 5 is a minimum value (see RFC 791)
 
 class _HTotalLength(_fields.SpecialIntField):
-    """Total Length is the length of the datagram, measured in octets,
+    """
+    Total Length is the length of the datagram, measured in octets,
     including internet header and data.
 
     See RFC 791 for more.
     """
+
     bits = 16
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         return self._tmp_value / _consts.BYTE
 
 class _HIdentification(_fields.IntField):
-    """An identifying value assigned by the sender to aid in assembling the
+    """
+    An identifying value assigned by the sender to aid in assembling the
     fragments of a datagram.
 
     See RFC 791 for more.
     """
+    
     bits = 16
     auto = True
+
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # TODO: implementation of fragmentation
         # otherwise we can simple return 0 ;-)
         return 0
 
 class _HFragmentOffset(_fields.IntField):
-    """This field indicates where in the datagram this fragment belongs.
+    """
+    This field indicates where in the datagram this fragment belongs.
     
     See RFC 791 for more.
     """
+    
     bits = 13
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # TODO: implementation of fragmentation
         # otherwise we can simple return 0 ;-)
         return 0
 
 class _HTTL(_fields.IntField):
-    """This field indicates the maximum time the datagram is allowed to
+    """
+    This field indicates the maximum time the datagram is allowed to
     remain in the internet system.
     
     See RFC 791 for more.
     """
+    
     bits = 8
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # TODO: checking platform to get correct value of TTL
         # unfortunately, there isn't any official document which described
         # list of returns from sys.platform
@@ -105,11 +162,16 @@ class _HTTL(_fields.IntField):
         return _consts.TTL_LINUX
 
     def ttl(self, name):
-        """To set correct value of TTL for following platforms:
+        """
+        Set TTL field to default value of the passed platform.
+
+        Set correct value of TTL for the following platforms:
         AIX, DEC, FREEBSD, HPUX, IRIX, LINUX, MACOS, OS2, SOLARIS,
         SUNOS, ULTRIX, WINDOWS.
 
-        name argument can be pass as shown above or as TTL_NAME
+        @type name: C{str}
+        @param name: name of the platform (from the list above, TTL_ prefix
+                     also accepted.
         """
 
         if not name.startswith("TTL_"):
@@ -117,11 +179,13 @@ class _HTTL(_fields.IntField):
         self._value = getattr(const, name)
 
 class _HProtocol(_fields.SpecialIntField, _fields.EnumField):
-    """This field indicates the next level protocol used in the data portion
+    """
+    This field indicates the next level protocol used in the data portion
     of the internet datagram.
     
     See RFC 791 for more.
     """
+
     bits = 8
     auto = True
     enumerable = {
@@ -156,24 +220,42 @@ class _HProtocol(_fields.SpecialIntField, _fields.EnumField):
     }
 
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         return self._tmp_value
 
 class _HHeaderChecksum(_fields.IntField):
-    """A checksum on the header only.
+    """
+    A checksum of the header only.
     
     See RFC 791 for more.
     """
+    
     bits = 16
     auto = True
+    
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         return 0        # HeaderChecksum field should be initialized by 0
 
 # main IP class
 
 class IP(_protocols.Protocol):
-    """This is Internet Protocol.
+    """
+    Internet Protocol implementation.
+
     The main protocol in third layer of OSI model.
     """
+
     layer = 3      # layer of OSI
     protocol_id = _consts.ETHERTYPE_IP
     name = "IP"
@@ -185,6 +267,12 @@ class IP(_protocols.Protocol):
                     '_padding',)
 
     def __init__(self, **kw):
+        """
+        Create a new IP().
+
+        @param **kw: pass to super-constructor.
+        """
+
         tos = ('precedence0','precedence1', 'precedence2', 'delay',
                 'throughput', 'relibility', 'reserved0', 'reserved1')
         tos_predefined = dict.fromkeys(tos, 0)
@@ -236,6 +324,27 @@ used to ensure that the internet header ends on a 32 bit boundary. \
 See RFC 791 for more.")
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields before calling fillout() for them.
+
+        Set Padding field, calculate header and total length, set protocol of the upper
+        layer.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         # Padding
         self._get_field('_padding')._tmp_value = \
                                                 self._get_field('options').bits
@@ -264,6 +373,26 @@ See RFC 791 for more.")
         return raw_value, bit
 
     def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields after calling fillout() for them.
+
+        Calculate header checksum.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         # Header Checksum
         # a checksum on the header only.
         cksum_offset = bit - self.get_offset('_header_checksum') - \

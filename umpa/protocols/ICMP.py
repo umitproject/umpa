@@ -19,6 +19,11 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains ICMP (Internet Control Message Protocol) protocol
+implementation.
+"""
+
 from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
@@ -281,6 +286,10 @@ class _HCode(_fields.IntField):
     auto = False
 
 class _HChecksum(_fields.IntField):
+    """
+    A checksum of the ICMP protocol.
+    """
+
     bits = 16
     auto = True
     def _generate_value(self):
@@ -290,6 +299,13 @@ class _HExtraData(_fields.Field):
     pass
 
 class ICMP(_protocols.Protocol):
+    """
+    Internet Control Message Protocol implementation.
+
+    It the most common protocol in the Internet on fourth layer
+    of the OSI model.
+    """
+    
     layer = 4
     protocol_id = _consts.PROTOCOL_ICMP
     name = "ICMP"
@@ -297,6 +313,12 @@ class ICMP(_protocols.Protocol):
     _ordered_fields = ('type', 'code', '_checksum', '_extra_data')
 
     def __init__(self, **kw):
+        """
+        Create a new ICMP().
+
+        @param **kw: pass to super-constructor.
+        """
+
         raise NotImplementedError("not finished yet")
         fields_list = [ _HType("Type"),
                         _HCode("Code"),
@@ -306,9 +328,45 @@ class ICMP(_protocols.Protocol):
         super(ICMP, self).__init__(fields_list, **kw)
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields before calling fillout() for them.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         return raw_value, bit
 
     def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields after calling fillout() for them.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         return raw_value, bit
 
 protocols = [ ICMP, ]

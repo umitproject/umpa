@@ -19,6 +19,10 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains UDP (Uset Datagram Protocol) protocol implementation.
+"""
+
 from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
@@ -27,6 +31,10 @@ from umpa.utils import net
 from umpa.utils import bits
 
 class _HPort(_fields.EnumField):
+    """
+    UDP uses ports to allow application-to-application communication.
+    """
+
     bits = 16
     auto = False
     enumerable = {
@@ -241,23 +249,35 @@ class _HPort(_fields.EnumField):
     }
 
 class _HLength(_fields.SpecialIntField):
-    """Length  is the length  in octets  of this user datagram  including  this
-    header  and the data.
     """
+    Length  is the length  in octets  of this user datagram  including  this
+    header  and the data.
+
+    See RFC 768 for more.
+    """
+    
     bits = 16
     auto = True
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         # returns in byte units
         return 8 + self._tmp_value/8    # minimum is 8
 
 class UDP(_protocols.Protocol):
-    """This is User Datagram Protocol.
+    """
+    User Datagram Protocol implementation.
     
     This protocol  provides  a procedure  for application  programs  to send
     messages  to other programs  with a minimum  of protocol mechanism.  The
     protocol  is transaction oriented, and delivery and duplicate protection
     are not guaranteed.
     """
+
     layer = 4
     protocol_id = _consts.PROTOCOL_UDP
     name = "UDP"
@@ -266,6 +286,12 @@ class UDP(_protocols.Protocol):
                                                             '_checksum')
 
     def __init__(self, **kw):
+        """
+        Create a new UDP().
+
+        @param **kw: pass to super-constructor.
+        """
+
         fields_list = [ _HPort("Source Port", 0),
                         _HPort("Destination Port", 0),
                         _HLength("Length"),
@@ -284,12 +310,52 @@ number. See RFC 768 for more.")
 header and data. See RFC 768 for more.")
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields before calling fillout() for them.
+
+        Store temp value of protocols bits for checksum field.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         # Length
         self._get_field('_checksum')._tmp_value = protocol_bits
 
         return raw_value, bit
 
     def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields after calling fillout() for them.
+
+        Calculate header checksum with new instance of PseudoHeader object.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         cksum_rev_offset = 0
         # checking if user not defined his own value of checksum
         if bits.get_bits(raw_value, self._get_field('_checksum').bits,

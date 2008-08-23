@@ -19,25 +19,59 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains usefull classes for 4th layer's protocols.
+
+TCP/UDP use special pseudo header to calculate checksum. These classes
+are provided.
+"""
+
 from umpa.protocols._protocols import Protocol
 from umpa.protocols.IP import IP
 from umpa.protocols._fields import *
 
 class Layer4ChecksumField(IntField):
+    """
+    A checksum for the common classes of 4th layer of OSI model.
+
+    Especially UDP/TCP use it. The checksum is calculated from the Pseudo
+    Header, the main header and the payload.
+    """
+
     bits = 16
     auto = True
     def _generate_value(self):
+        """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
+        """
+
         return 0
 
 class PseudoHeader(Protocol):
-    """This is class is useful for some protocols like TCP or UDP.
-    It has been used to calculate checksum of those protocols.
+    """
+    This is Pseudo Header.
+    
+    This class is useful for some protocols like TCP or UDP.
+    It's used to calculate checksum of those protocols.
     It's prefixed to the protocol header before calculating.
     """
+
     _ordered_fields = ('source_address', 'destination_address', 'reserved',
                     'protocol_id', 'total_length')
 
     def __init__(self, protocol_id, total_length):
+        """
+        Create a new PseudoHeader()
+
+        @type protocol_id: C{int}
+        @param protocol_id: id of the protocol which use PseudoHeader.
+
+        @type total_length: C{int}
+        @param total_length: length of the real header and payload.
+
+        """
 
         fields_list = [ IPv4AddrField("Source Address"),
                         IPv4AddrField("Destination Address"),
@@ -47,6 +81,26 @@ class PseudoHeader(Protocol):
         super(PseudoHeader, self).__init__(fields_list)
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields before calling fillout() for them.
+
+        Parse lower protocol (usually IP) to get source/destination address.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         # we assign first localhost becuase if there is not IP instance
         # than better 0 than nothing (for nonstrict users)
         self.source_address = "127.0.0.1"
@@ -62,4 +116,24 @@ class PseudoHeader(Protocol):
         return raw_value, bit
 
     def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Handle with fields after calling fillout() for them.
+
+        Nothing to do for PseudoHeader class here. Return required vars.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         return raw_value, bit
