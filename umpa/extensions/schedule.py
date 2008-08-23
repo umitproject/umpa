@@ -125,6 +125,6 @@ def _send_schedule(self, delay, *packets, **options):
     @return: sent bits of each packet.
     """
 
-    send(delay, socket=self, *packets, **options)
+    return send(delay, socket=self, *packets, **options)
 
 umpa.Socket.send_schedule = _send_schedule
