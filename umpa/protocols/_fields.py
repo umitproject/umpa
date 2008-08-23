@@ -146,13 +146,6 @@ class Field(object):
 
         raise NotImplementedError, "this is abstract class"
 
-    def _pre_fillout(self):
-        """
-        remove this method
-        """
-
-        pass
-
     def _raw_value(self):
         """
         Convert the value to the raw mode.
@@ -195,8 +188,6 @@ class Field(object):
 
         @return: bits of the field for the (generated) value.
         """
-
-        self._pre_fillout()
 
         # we have to clear self._value if it was not defined
         # because of later usage
@@ -515,8 +506,6 @@ class PaddingField(SpecialIntField):
         @return: call _raw_value() method for conversion.
         """
 
-        self._pre_fillout()
-
         if not self._value:
             self.bits = self._generate_value()
         else:
@@ -689,9 +678,6 @@ class Flags(Field):
             result = self._value
         return result
 
-    def _pre_fillout(self):
-        pass
-
     def fillout(self):
         """
         Fillout the field.
@@ -701,8 +687,6 @@ class Flags(Field):
 
         @return: bits of the bit-flags.
         """
-
-        self._pre_fillout()
 
         raw = 0
         for bitname in self._ordered_fields:
