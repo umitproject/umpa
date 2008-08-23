@@ -19,17 +19,52 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This extension adds schedule feature for the sending packets.
+
+2 features are provided:
+ 1. delay before start sending
+ 2. interval before each packet
+
+send() function is provided and new method for umpa.Socket objects is added.
+
+@attention: This extension works in blocking-way. The main process is being
+blocked during delays. It will be rewritten in the asynchronous way soon.
+Be patient.
+"""
+
 import time
 
 import umpa
 
 def _sleep(delay):
+    """
+    Call system sleep() function.
+
+    @type delay: C{int}
+    @param delay: time in seconds for the sleeping.
+    """
+
     time.sleep(delay)
 
 def send(delay, *packets, **options):
-    """Send packets with the delay,
+    """
+    Send packets with the delay,
 
-    Use detach key if you want to detach sending.
+    @type delay: C{int}
+    @param delay: delay before first sending.
+
+    @param *packets: list of packets for sending.
+
+    @param **options: extra options, currently available are:
+      - detach - send packets in the background (B{type}: C{bool})
+        (not implemented yet),
+      - interval - set interval between packets (B{type}: C{int}),
+      - socket - use passed socket, otherwise create new umpa.Socket() object
+        (B{type}: C{umpa.Socket})
+
+    @rtype: C{list}
+    @return: sent bits of each packet.
     """
 
     # parsing options
@@ -71,6 +106,25 @@ def send(delay, *packets, **options):
     return sent_bits
 
 def _send_schedule(self, delay, *packets, **options):
+    """
+    Send packets with some delays (initial, interval).
+
+    @type delay: C{int}
+    @param delay: delay before first sending.
+
+    @param *packets: list of packets for sending.
+
+    @param **options: extra options, currently available are:
+      - detach - send packets in the background (B{type}: C{bool})
+        (not implemented yet),
+      - interval - set interval between packets (B{type}: C{int}),
+      - socket - use passed socket, otherwise create new umpa.Socket() object
+        (B{type}: C{umpa.Socket})
+
+    @rtype: C{list}
+    @return: sent bits of each packet.
+    """
+
     send(delay, socket=self, *packets, **options)
 
 umpa.Socket.send_schedule = _send_schedule

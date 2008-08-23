@@ -19,10 +19,33 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This package contains several extensions.
+
+Extensions may change behaviour of the library or add extra functionality.
+In general, it's similar to plugins system.
+
+There are 2 ways to load an extension:
+ 1. by load_extension() function for local and global extensions
+    (e.g. C{umpa.extensions.load_extension("XML")}),
+ 2. by import statement
+     - global example: C{import umpa.extensions.XML},
+     - local example: C{import umpa_plugins.extensions.XML}
+
+@note: Extensions have to be single .py files.
+"""
+
 import sys
 import os.path
 
 def load_extension(name):
+    """
+    Load the requested extension.
+
+    First, I{locally} check the $HOME/.umpa location.
+    If failure, I{globally} check the name in umpa.extensions package.
+    """
+
     if os.path.isfile(os.path.join(os.path.expanduser('~'), '.umpa',
                             'umpa_plugins', 'extensions', name+'.py')):
         module_path = "umpa_plugins.extensions.%s" % name

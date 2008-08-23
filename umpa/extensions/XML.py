@@ -19,6 +19,19 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This extension adds XML feature.
+
+Packets can be loaded and saved from XML files.
+
+2 functions are provided:
+ 1. save()
+ 2. load()
+
+Also, Packet objects get 2 extra methods:
+ 1. Packet.save_xml()
+ 2. Packet.load_xml()
+"""
 
 import re
 import xml.dom.minidom
@@ -27,6 +40,16 @@ import umpa
 from umpa.protocols._fields import Flags
 
 def save(filename, packets):
+    """
+    Save the list of Packet's objects into XML file.
+
+    @type filename: C{str}
+    @param filename: name of the XML file.
+
+    @type packets: C{list}
+    @param packets: list of packets which will be saved.
+    """
+
     # for parsing python-object strings like <.... 'xxxx'>
     parse_str = re.compile(r"^.*'([\w\.]+)'>$")
 
@@ -67,6 +90,34 @@ def save(filename, packets):
     open(filename, "w").write(doc.toprettyxml())
 
 def load(filename, proto_only=False):
+    """
+    Load Packet's objects from the XML file.
+
+    Normally, return list of objects' packets but if proto_only is True,
+    just return list of protocols from the first loaded packet.
+    It's usefull if in some cases.
+    I{Example}:
+
+        >>> import umpa
+        >>> import umpa.extensions.XML
+        >>> packet = umpa.Packet()
+        >>> packet.load_xml('packets.xml', proto_only=True)
+    
+    In this case, don't create new objects of Packet. Return list of protocols
+    intead.
+
+    @type filename: C{str}
+    @param filename: name of the XML file.
+
+    @type proto_only: C{bool}
+    @param proto_only: if True, return list of protocols from the first loaded
+    packet (default: I{False}).
+
+    @rtype: C{list}
+    @return: loaded Packet's objects or list of protocols from the first
+    loaded packet (if proto_only is True).
+    """
+
     doc = xml.dom.minidom.parse(filename)
 
     # useful if you have type in string and need to cast it
@@ -123,9 +174,28 @@ def load(filename, proto_only=False):
     return packets
 
 def _save_xml(self, filename):
+    """
+    Save the Packet's object into XML file.
+
+    @type filename: C{str}
+    @param filename: name of the XML file.
+    """
+
     save(filename, [self,])
 
 def _load_xml(self, filename):
+    """
+    Load defined protocols from the XML file.
+
+    Overwrite current list of the protocols in the Packet's object by
+    loaded protocols.
+    
+    Internally, call umpa.extensions.XML.load() function with proto_only=True
+    attribute.
+    @type filename: C{str}
+    @param filename: name of the XML file.
+    """
+
     self.protos = load(filename, proto_only=True)
 
 umpa.Packet.save_xml = _save_xml
