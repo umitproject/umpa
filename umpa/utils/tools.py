@@ -19,11 +19,35 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains functions which are not clasified in other categories.
+"""
+
 def _pairwise(iterable):
+    """
+    Generate pair (key, value) from the iterable sequence.
+
+    @type iterable: any iterable object
+    @param iterable: the sequence of pairs alternately keys, values.
+    """
+
     itnext = iter(iterable).next
     while True:
         yield itnext(), itnext()
 
 def dict_from_sequence(seq):
-    """Return a dictionary based on a sequence."""
+    """
+    Return a dictionary based on the sequence.
+
+    A dictionary is built from the pairs of key and value from the sequence.
+    Example of the sequence:
+    seq = [key1, value1, key2, value2]
+
+    @type seq: any iterable object
+    @param seq: the sequence which will be converted to the dictionary.
+
+    @rtype: C{dict}
+    @return: a dictionary based on the sequence.
+    """
+    
     return dict(_pairwise(seq))

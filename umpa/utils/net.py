@@ -19,11 +19,22 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains some functions related to network issues.
+"""
+
 def _pieces_of_number(number, piece_size=8):
-    """Return list of pieces of the number.
+    """
+    Return list of the number pieces.
     
-    Number is divided on piece_size bits.
-    Default is 8bits.
+    @type number: C{int}
+    @param number: the number for splitting.
+
+    @type piece_size: C{int}
+    @param piece_size: size of the each piece (default: 8 bits)
+
+    @rtype: C{list}
+    @return: the number pieces.
     """
 
     ret = []
@@ -35,12 +46,22 @@ def _pieces_of_number(number, piece_size=8):
     return ret
 
 def in_cksum(data, cksum=0):
-    """Return Internet Checksum.
+    """
+    Return Internet Checksum.
 
     It is an implementation of RFC 1071.
 
-    To check if checksum is correct pass it as cksum argument.
-    If the result is 0, then the ckecksum has not detected an error.
+    To check if the already calculated checksum is correct, pass it as cksum
+    argument. If the result is 0, then the ckecksum has not detected an error.
+
+    @type data: C{int}
+    @param data: the data from which checksum is calculated.
+
+    @type cksum: C{int}
+    @param cksum: already calculated checksum for comparision (default: 0)
+
+    @rtype: C{int}
+    @return: calculated checksum.
     """
 
     pieces = _pieces_of_number(data)

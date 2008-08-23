@@ -18,3 +18,17 @@
 # You should have received a copy of the GNU Lesser General Public License 
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
+"""
+This package contains several useful functions which are not really related
+with the library.
+
+These functions are more independented from the packet manipulations issue.
+
+They are splitted in the following categories (modules):
+    - bits -- some extra manipulations of bits
+    - exceptions -- UMPA's exceptions
+    - net -- network issues
+    - security -- security issues
+    - tools -- other unclasified functions
+"""

@@ -19,18 +19,43 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+"""
+This module contains internal Exceptions for the library.
+"""
+
 class UMPAException(Exception):
+    """
+    General Exception.
+    """
+
     def __init__(self, msg):
         self.msg = msg
     def __str__(self):
         return repr(self.msg)
 
 class UMPAAttributeException(UMPAException):
+    """
+    Exception related to attributes issues.
+
+    It's being used if someone try to acces to undefined field etc.
+    """
+
     pass
 
 class UMPAStrictException(UMPAException):
+    """
+    Exception related to strict packets issue.
+
+    If strict attribute of the Packet's object is True and
+    the order of protocols is odd then the exception is raised.
+    """
+
     pass
 
 class UMPANotPermittedException(UMPAException):
+    """
+    Exception related to system permissions issues."
+    """
+
     def __str__(self):
         return repr(self.msg) + "\n\tRecommended to use umpa.utils.security module to avoid the exception."

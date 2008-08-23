@@ -22,7 +22,7 @@
 """
 This extension adds XML feature.
 
-Packets can be loaded and saved from XML files.
+Packets can be loaded/saved from/to XML files.
 
 2 functions are provided:
  1. save()

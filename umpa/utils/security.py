@@ -19,15 +19,22 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+"""
+This module contains some functions related with security issues.
+"""
+
 import os
 import sys
 
 def drop_priviliges():
-    """Some functions require root-privilegies and after we done them,
+    """
+    Change EUID of the current process to nobody.
+
+    Some functions require root-privilegies and after we done them,
     we don't really need this privilegies. So, we can simple leave them.
     It makes the application more safier.
 
-    For example, to open a socket we need those privilegies
+    For example, to open a socket we need those privilegies.
     
     It works only under UNIX. For other operation systems,
     this function doesn't do anything.
@@ -47,8 +54,19 @@ def drop_priviliges():
         
 def super_priviliges(fun=None, *fargs, **kwargs):
     """
+    Change EUID of the current process to 0 (root).
+
     Request for root-priviliges.
-    We can pass function then after call the function we drop priviliges again.
+    Pass function, then after call the function, drop the priviliges again.
+
+    @type fun: C{function}
+    @param fun: function which will be called with EUID=0.
+
+    @param *fargs: arguments for the function.
+
+    @param **kwargs: key-arguments for the function.
+
+    @return: if function is passed, return the result of the function
     """
 
     if os.name != 'posix':
