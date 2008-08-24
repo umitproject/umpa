@@ -200,4 +200,7 @@ first layer %d, second %d." % (last_proto.layer, p.layer))
         else:
             warnings.simplefilter('ignore', StrictWarning)
 
-    warn = property(_getwarn, _setwarn)
+    warn = property(_getwarn, _setwarn, doc="""
+    Control if issue warnings or ignore them
+    @type: C{bool}
+    """)

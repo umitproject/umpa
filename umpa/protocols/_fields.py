@@ -253,9 +253,9 @@ class SpecialIntField(IntField):
     E.g. Internet Header Length (IHL) field from the IP protocol needs to know
     some informations about others fields.
 
-    We use _tmp_value attribute then in pre/port raw methods in protocol
+    Use _tmp_value attribute then in pre/post raw methods in protocol
     classes. Just assign to the _tmp_value needed information from other fields
-    and implement _generate_value() method in the way related way.
+    and implement _generate_value() method in the related way.
     Check umpa.protocols.IP module for examples.
     """
 
@@ -296,7 +296,17 @@ class SpecialIntField(IntField):
 
         self.__temp_value = 0
 
-    _tmp_value = property(get_tmpvalue, set_tmpvalue, clear_tmpvalue)
+    _tmp_value = property(get_tmpvalue, set_tmpvalue, clear_tmpvalue, """
+    The temporary value -- attribute for special cases in pre/post raw methods.
+
+    Use _tmp_value attribute in pre/post raw methods in protocol
+    classes if you need handle with other fields.
+    Assign to the _tmp_value needed information from other fields
+    and implement _generate_value() method in the related way.
+    Check umpa.protocols.IP module for examples.
+
+    @type: C{int}
+    """)
 
 class EnumField(IntField):
     """
