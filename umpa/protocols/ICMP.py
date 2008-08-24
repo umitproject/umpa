@@ -20,8 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains ICMP (Internet Control Message Protocol) protocol
-implementation.
+ICMP (Internet Control Message Protocol) protocol implementation.
 """
 
 from umpa.protocols import _consts
@@ -316,7 +315,7 @@ class ICMP(_protocols.Protocol):
         """
         Create a new ICMP().
 
-        @param **kw: pass to super-constructor.
+        @param kw: pass to super-constructor.
         """
 
         raise NotImplementedError("not finished yet")

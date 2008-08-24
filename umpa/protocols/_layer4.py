@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains usefull classes for 4th layer's protocols.
+Usefull classes for 4th layer's protocols.
 
 TCP/UDP use special pseudo header to calculate checksum. These classes
 are provided.

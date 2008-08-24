@@ -22,14 +22,17 @@
 """
 UMPA - Umit's Manipulations of Packets Art
 
-It is a packet manipulations library.
+This is a packet manipulations library.
 Packet manipulation library aims to provide easy to use system
 to manipulate packets of every OSI model layers.
 
-Available packages/modules:
+Available packages:
     - protocols
     - extensions
     - utils
+
+For more information check docs/*
+and official website U{http://umpa.umitproject.org}
 """
 
 import os

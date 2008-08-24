@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains Payload "protocol" implementation.
+Payload "protocol" implementation.
 
 Payload is the abstract protocol of 5-7 layers of the OSI model.
 """
@@ -105,7 +105,7 @@ class Payload(Protocol):
         """
         Create a new Payload().
 
-        @param **kw: pass to super-constructor.
+        @param kw: pass to super-constructor.
         """
 
         fields_list = [ _HData("Data"), ]

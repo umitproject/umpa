@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains Protocol - super-class for protocols implemenations.
+Protocol - super-class for protocols implemenations.
 
 Every protocols have to be subclassed from the Protocol.
 Some methods have to be overridden. Read Protocol's docstrings for more
@@ -58,9 +58,9 @@ class Protocol(object):
         Create a new Protocol().
 
         @type fields_list: C{list}
-        @param fields_list: list of fields B{in correct order].
+        @param fields_list: list of fields B{in correct order}.
 
-        @param **kw: predefined values for fields.
+        @param kw: predefined values for fields.
         """
 
         # we pack objects of header's fields to the dict
@@ -165,9 +165,9 @@ class Protocol(object):
         For tuple, use sequence as: field_name1, value1, field_name2, value2.
         For dict, use dict ;) field_name1=value1, field_name2=value2.
 
-        @param *args: sequence of field_name and value.
+        @param args: sequence of field_name and value.
 
-        @param **kwargs: field_name=value.
+        @param kwargs: field_name=value.
         """
         
         # converting args list to the dict and update our kwargs
@@ -189,9 +189,9 @@ class Protocol(object):
         @type name: C{str}
         @param name: name of the field.
 
-        @param *args: sequence of field_name and value.
+        @param args: sequence of field_name and value.
 
-        @param **kwargs: field_name=value.
+        @param kw: field_name=value.
         """
 
         # converting args list to the dict and update our kwargs
@@ -214,7 +214,7 @@ class Protocol(object):
         @type name: C{str}
         @param name: name of the field.
 
-        @param *args: names of flags.
+        @param args: names of flags.
 
         @rtype: C{list}
         @return: list of flags.

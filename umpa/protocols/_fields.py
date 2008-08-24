@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains a generic Field classes.
+Generic Field classes.
 
 Protocols' headers contain fields. Each field's objects should be an instance
 of a Field class or of a subclass thereof (especially some generic subclasses
@@ -360,8 +360,8 @@ class IPAddrField(AddrField):
     Main class for IP-style adresses.
 
     Handle with 2 types of data:
-        1 -- strings as "127.0.0.1" or "0:0:0:0:0:0:0:1"
-        2 -- tuples as (127,0,0,1) or (0,0,0,0,0,0,0,1)
+     1. strings as "127.0.0.1" or "0:0:0:0:0:0:0:1"
+     2. tuples as (127,0,0,1) or (0,0,0,0,0,0,0,1)
     """
 
     def set(self, value):
@@ -436,8 +436,8 @@ class IPv4AddrField(IPAddrField):
     Address in IPv4 style.
 
     Handle with 2 types of data:
-        1 -- strings as "127.0.0.1"
-        2 -- tuples as (127,0,0,1)
+     1. strings as "127.0.0.1"
+     2. tuples as (127,0,0,1)
     """
 
     separator = "."
@@ -451,8 +451,8 @@ class IPv6AddrField(IPAddrField):
     Address in IPv6 style.
 
     Handle with 2 types of data:
-        1 -- strings as "0:0:0:0:0:0:0:1"
-        2 -- tuples as (0,0,0,0,0,0,0,1)
+     1. strings as "0:0:0:0:0:0:0:1"
+     2. tuples as (0,0,0,0,0,0,0,1)
     """
 
     separator = ":"
@@ -548,7 +548,7 @@ class Flags(Field):
         List names need to be in correct order. List contains string names
         of the bit-flags.
 
-        For **preset, check if keys are in names list because there is
+        For preset, check if keys are in names list because there is
         not additional check if key is valid.
 
         @type name: C{str}
@@ -557,8 +557,8 @@ class Flags(Field):
         @type names: C{list}
         @param names: list of bit-flags (C{str} type) B{in correct order}.
 
-        @type **preset: C{dict}
-        @param **preset: predefined values (C{bool} type) of bit-flags.
+        @type preset: C{bool}
+        @param preset: predefined values of bit-flags.
         """
         super(Flags, self).__init__(name, bits=len(names))
 
@@ -641,8 +641,8 @@ class Flags(Field):
         """
         Set logical True for passed bit-flags.
 
-        @type *names: C{str}
-        @param *names: names of bit-flags.
+        @type names: C{str}
+        @param names: names of bit-flags.
         """
 
         self._set_bit(names, True)
@@ -652,8 +652,8 @@ class Flags(Field):
         """
         Set logical False for passed bit-flags.
 
-        @type *names: C{str}
-        @param *names: names of bit-flags.
+        @type names: C{str}
+        @param names: names of bit-flags.
         """
 
         self._set_bit(names, False)
@@ -665,8 +665,8 @@ class Flags(Field):
         If no names passed or no results, return the whole list with values
         of every flag-bits.
 
-        @type *names: C{str}
-        @param *names: names of bit-flags.
+        @type names: C{str}
+        @param names: names of bit-flags.
         """
 
         # we check if name of the field in the flag is correct

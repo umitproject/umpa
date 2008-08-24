@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains UDP (Uset Datagram Protocol) protocol implementation.
+UDP (Uset Datagram Protocol) protocol implementation.
 """
 
 from umpa.protocols import _consts
@@ -289,7 +289,7 @@ class UDP(_protocols.Protocol):
         """
         Create a new UDP().
 
-        @param **kw: pass to super-constructor.
+        @param kw: pass to super-constructor.
         """
 
         fields_list = [ _HPort("Source Port", 0),

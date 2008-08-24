@@ -20,8 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This package contains several useful functions which are not really related
-with the library.
+Useful functions which are not really related with the library.
 
 These functions are more independented from the packet manipulations issue.
 

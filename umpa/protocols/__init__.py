@@ -20,8 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This package contains already implemented protocols
-and API to implement another.
+Already implemented protocols and API to implement another.
 
 Modules which names start with '_' prefix are for developers
 and they are useful to implement new protocols.

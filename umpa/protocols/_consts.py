@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains only constant vars related to any protocols and network issues.
+Only constant vars related to any protocols and network issues.
 """
 
 BYTE = 8

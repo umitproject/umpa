@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module manages with socket connection.
+Socket connection management.
 
 It contains Socket class which should be used instead of
 socket.socket() directly from the standard library.
@@ -65,8 +65,8 @@ class Socket(object):
         """
         Send packets in to the network.
 
-        @type *packets: C{Packet}
-        @param *packets: packets which were built by umpa.Packet objects.
+        @type packets: C{Packet}
+        @param packets: packets which were built by umpa.Packet objects.
         """
 
         sent_bits = []

@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This extension adds schedule feature for the sending packets.
+Schedule feature for the sending packets.
 
 2 features are provided:
  1. delay before start sending
@@ -54,9 +54,10 @@ def send(delay, *packets, **options):
     @type delay: C{int}
     @param delay: delay before first sending.
 
-    @param *packets: list of packets for sending.
+    @type packets: C{Packet}
+    @param packets: list of packets for sending.
 
-    @param **options: extra options, currently available are:
+    @param options: extra options, currently available are:
       - detach - send packets in the background (B{type}: C{bool})
         (not implemented yet),
       - interval - set interval between packets (B{type}: C{int}),
@@ -112,9 +113,10 @@ def _send_schedule(self, delay, *packets, **options):
     @type delay: C{int}
     @param delay: delay before first sending.
 
-    @param *packets: list of packets for sending.
+    @type packets: C{Packet}
+    @param packets: list of packets for sending.
 
-    @param **options: extra options, currently available are:
+    @param options: extra options, currently available are:
       - detach - send packets in the background (B{type}: C{bool})
         (not implemented yet),
       - interval - set interval between packets (B{type}: C{int}),

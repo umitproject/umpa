@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains IP (Internet Protocol) protocol implementation.
+IP (Internet Protocol) protocol implementation.
 """
 
 from umpa.protocols import _consts
@@ -270,7 +270,7 @@ class IP(_protocols.Protocol):
         """
         Create a new IP().
 
-        @param **kw: pass to super-constructor.
+        @param kw: pass to super-constructor.
         """
 
         tos = ('precedence0','precedence1', 'precedence2', 'delay',

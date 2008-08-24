@@ -20,8 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module contains TCP (Transmission Control Protocol) protocol
-implementation.
+TCP (Transmission Control Protocol) protocol implementation.
 """
 
 from umpa.protocols import _consts
@@ -481,7 +480,7 @@ class TCP(_protocols.Protocol):
         """
         Create a new TCP().
 
-        @param **kw: pass to super-constructor.
+        @param kw: pass to super-constructor.
         """
 
         control_bits = ('urg', 'ack', 'psh', 'rst', 'syn', 'fin')

@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This module manages with packets.
+Packets management.
 
 Packet class is a protocol container.
 Use it to build a packet which contains several protocols.
@@ -71,14 +71,14 @@ class Packet(object):
         """
         Create a new Packet().
 
-        @type *protos: Optional C{Protocol}
-        @param *protos: protocols which will be included into the object.
+        @type protos: Optional C{Protocol}
+        @param protos: protocols which will be included into the object.
 
-        @type **kwds: Optional C{bool}
-        @param **kwds: 2 keys are proper:
-            -- strict (default: True): if True object will keep protocols order.
+        @type kwds: Optional C{bool}
+        @param kwds: 2 keys are proper:
+            - strict (default: True): if True object will keep protocols order.
             It avoids to build odd packets with with unsaved layer order
-            -- warn (default: True): if True and strict is True, object will
+            - warn (default: True): if True and strict is True, object will
             issue warnings. Otherwise warnings are ignored.
         """
         
@@ -115,8 +115,8 @@ class Packet(object):
         """
         Add protocols into packet.
 
-        @type *protos: C{Protocol}
-        @param *protos: protocols which will be included into the packet.
+        @type protos: C{Protocol}
+        @param protos: protocols which will be included into the packet.
         """
 
         self._add_new_protocols(protos)
@@ -178,7 +178,7 @@ first layer %d, second %d." % (last_proto.layer, p.layer))
         If warn is True and strict is True, object will
         issue warnings if needed. Otherwise warnings are ignored.
 
-        @return: warn attribute.
+        @returns: warn attribute.
         """
         return self._warn
 

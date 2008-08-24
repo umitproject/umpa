@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-This module contains some functions related with security issues.
+Functions related with security issues.
 """
 
 import os
@@ -62,9 +62,9 @@ def super_priviliges(fun=None, *fargs, **kwargs):
     @type fun: C{function}
     @param fun: function which will be called with EUID=0.
 
-    @param *fargs: arguments for the function.
+    @param fargs: arguments for the function.
 
-    @param **kwargs: key-arguments for the function.
+    @param kwargs: key-arguments for the function.
 
     @return: if function is passed, return the result of the function
     """

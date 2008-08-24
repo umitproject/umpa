@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-This package contains several extensions.
+Global extensions which add extra usability / features.
 
 Extensions may change behaviour of the library or add extra functionality.
 In general, it's similar to plugins system.
