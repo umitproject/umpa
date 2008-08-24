@@ -42,9 +42,9 @@ setup(  name            = "UMPA",
                                     glob.glob(os.path.join('examples','*'))),
                         (os.path.join('share','umpa','scripts'),
                             glob.glob(os.path.join('install_scripts','*.sh'))),
+                        (os.path.join('share','doc','umpa','API'),
+                            glob.glob(os.path.join('docs','API','*'))),
                         (os.path.join('share','doc','umpa'),
-                            glob.glob(os.path.join('docs','*'))),
-                        (os.path.join('share','doc','umpa'),
-                            ('COPYING', 'AUTHORS', 'TODO', 'CHANGES')),
+                        ('README', 'COPYING', 'AUTHORS', 'TODO', 'CHANGES')),
                     ]
 )

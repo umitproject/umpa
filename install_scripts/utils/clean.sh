@@ -18,6 +18,8 @@ echo "Removing build directory.."
 rm -rf build
 echo "Removing dist directory.."
 rm -rf dist
+echo "Removing API documentation.."
+rm -rf docs/API/*
 cd $old_pwd
 
 echo "Done."
