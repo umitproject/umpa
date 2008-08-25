@@ -36,6 +36,7 @@ Be patient.
 import time
 
 import umpa
+from umpa.utils.exceptions import UMPAException
 
 def _sleep(delay):
     """
@@ -47,7 +48,7 @@ def _sleep(delay):
 
     time.sleep(delay)
 
-def send(delay, *packets, **options):
+def send(delay, *packets, **kwargs):
     """
     Send packets with the delay,
 
@@ -57,7 +58,7 @@ def send(delay, *packets, **options):
     @type packets: C{Packet}
     @param packets: list of packets for sending.
 
-    @param options: extra options, currently available are:
+    @param kwargs: extra options, currently available are:
       - detach - send packets in the background (B{type}: C{bool})
         (not implemented yet),
       - interval - set interval between packets (B{type}: C{int}),
@@ -68,41 +69,35 @@ def send(delay, *packets, **options):
     @return: sent bits of each packet.
     """
 
-    # parsing options
-    if "detach" in options:
+    # parsing passed options
+    options= {  'detach'    : False,
+                'interval'  : None,
+                'socket'    : umpa.Socket(),
+                }
+    for opt in kwargs:
+        if opt not in options:
+            raise UMPAException("Undefined option " + opt)
+        else:
+            options[opt] = kwargs[opt]
+
+    sent_bits = []
+
+    # forking if detach
+    if options['detach']:
         # TODO: The only reasonable way to implement this feature
         # is to use asynch way.
         # spawning processes or threading are totally bad for a library
         # but to write it with select() we need a bit more time, but
         # it worth to wait for it than using threads etc.
         raise NotImlementedError("It will be implemented soon. Sorry!")
-        detach = int(options['detach'])
-    else:
-        detach = False
-
-    if "interval" in options:
-        interval = int(options['interval'])
-    else:
-        interval = None
-
-    if "socket" in options:
-        sock = options["socket"]
-    else:
-        sock = umpa.Socket()
-
-    sent_bits = []
-
-    # forking if detach
-    if detach:
-        pass
 
     # delay before start
-    _sleep(delay)
+    _sleep(options['delay'])
 
     for packet in packets:
-        sent_bits.append(sock.send(packet))
-        if interval:
-            _sleep(interval)
+        sent_bits.append(options['socket'].send(packet))
+        if options['interval']:
+            _sleep(options['interval'])
 
     return sent_bits
 
