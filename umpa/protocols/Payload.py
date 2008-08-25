@@ -29,24 +29,13 @@ from umpa.protocols._fields import Field
 from umpa.protocols._protocols import Protocol
 from umpa.protocols._consts import BYTE
 
-class _HData(Field): # FIXME: should we move it to _fields.py as a common field?
+class _HData(Field):
     """
     Data as a strings.
     """
     
     bits = 0
     auto = False
-
-    def _is_valid(self, val):
-        """
-        Validate if the value is not bigger than expected.
-
-        @param val: the new value.
-
-        @rtype: C{bool}
-        @return: C{True}.
-        """
-        return True     # we use str() so everything is ok
 
     def set(self, value):
         """
@@ -60,7 +49,7 @@ class _HData(Field): # FIXME: should we move it to _fields.py as a common field?
             # calculate how many bits we need
             self.bits = len(self._value) * BYTE
         else:
-            raise UMPAAttributeException, value + ' not allowed'
+            raise UMPAAttributeException(value + ' not allowed')
 
     def clear(self):
         """
@@ -69,6 +58,17 @@ class _HData(Field): # FIXME: should we move it to _fields.py as a common field?
 
         super(Field, self).clear()
         self.bits = 0
+
+    def _is_valid(self, val):
+        """
+        Validate if the value is not bigger than expected.
+
+        @param val: the new value.
+
+        @rtype: C{bool}
+        @return: C{True}.
+        """
+        return True     # we use str() so everything is ok
 
     def _raw_value(self):
         """

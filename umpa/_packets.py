@@ -30,7 +30,7 @@ import struct
 import warnings
 
 import umpa.utils.bits
-from umpa.utils.exceptions import UMPAStrictException
+from umpa.utils.exceptions import UMPAException, UMPAStrictException
 
 BYTE = 8
 
@@ -44,7 +44,7 @@ class StrictWarning(Warning):
 
     pass
 
-def strict_warn(layer_a, layer_b):
+def _strict_warn(layer_a, layer_b):
     """
     Issue the warning with prepared message as a StrictWarning category.
 
@@ -67,30 +67,31 @@ class Packet(object):
     An instance of the class should contains protocols which you want to send.
     """
 
-    def __init__(self, *protos, **kwds):
+    def __init__(self, *protos, **options):
         """
         Create a new Packet().
 
         @type protos: Optional C{Protocol}
         @param protos: protocols which will be included into the object.
 
-        @type kwds: Optional C{bool}
-        @param kwds: 2 keys are proper:
+        @type options: Optional C{bool}
+        @param options: 2 keys are proper:
             - strict (default: True): if True object will keep protocols order.
             It avoids to build odd packets with with unsaved layer order
             - warn (default: True): if True and strict is True, object will
             issue warnings. Otherwise warnings are ignored.
         """
         
-        if 'strict' in kwds:
-            self.strict = kwds['strict']
-        else:
-            self.strict = True      # default value
-            
-        if 'warn' in kwds:
-            self.warn = kwds['warn']
-        else:
-            self.warn = True        # default value
+        # parsing options dictionary
+        available_options = { 'strict' : True, 'warn' : True }
+        for opt in available_options:
+            if opt in options:
+                setattr(self, opt, options[opt])
+                options.pop(opt)
+            else:
+                setattr(self, opt, available_options[opt])
+        if len(options) != 0:
+            raise UMPAException("Undefined options " + str(options.keys()))
 
         self.protos = []
         self._add_new_protocols(protos)
@@ -134,16 +135,19 @@ class Packet(object):
         for p in protos:
             if len(self.protos) > 0:
                 last_proto = self.protos[-1]
-                if p.layer - last_proto.layer != 1: # FIXME: should allow only this?
+                # FIXME: should we allow only the distance no less and
+                # no more than 1 between layers?
+                if p.layer - last_proto.layer != 1: 
                     if self.strict:
-                        raise UMPAStrictException("bad protocols ordering. \
-first layer %d, second %d." % (last_proto.layer, p.layer))
+                        raise UMPAStrictException("bad protocols ordering."
+                            "first layer %d, second %d."
+                            % (last_proto.layer, p.layer))
                     else:
-                        strict_warn(last_proto.layer, p.layer)
+                        _strict_warn(last_proto.layer, p.layer)
                 last_proto.__dict__['payload'] = p
             self.protos.append(p)
 
-    def get_raw(self):
+    def _get_raw(self):
         """
         Return raw packet in the bit-mode (big-endian).
 
@@ -182,7 +186,7 @@ first layer %d, second %d." % (last_proto.layer, p.layer))
         """
         return self._warn
 
-    def _setwarn(self, val):
+    def _setwarn(self, value):
         """
         Set warn attribute
 
@@ -190,11 +194,11 @@ first layer %d, second %d." % (last_proto.layer, p.layer))
         If warn is True and strict is True, object will
         issue warnings if needed. Otherwise warnings are ignored.
 
-        @type val: C{bool}
-        @param val: bool value.
+        @type value: C{bool}
+        @param value: bool value.
         """
 
-        self._warn = val
+        self._warn = value
         if self._warn:
             warnings.simplefilter('always', StrictWarning)
         else:

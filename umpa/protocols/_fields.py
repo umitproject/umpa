@@ -31,7 +31,7 @@ Use these fields' classes to create new implementation of any protocols.
 
 import struct
 
-from umpa.utils.exceptions import *
+from umpa.utils.exceptions import UMPAException, UMPAAttributeException
 
 class Field(object):
     """
@@ -83,22 +83,10 @@ class Field(object):
         """
 
         if self.auto:
-            return "| +-[ %-25s ]\t\t%s (auto - %s)" % (self.name, str(self._value), str(self.fillout()))
+            return "| +-[ %-25s ]\t\t%s (auto - %s)" % (self.name,
+                                        str(self._value), str(self.fillout()))
         else:
             return "| +-[ %-25s ]\t\t%s" % (self.name, str(self._value))
-    def set(self, value):
-        """
-        Set a value for the field.
-
-        The new value is validing before assigment.
-
-        @param value: new value for the field.
-        """
-
-        if self._is_valid(value):
-            self._value = value
-        else:
-            raise UMPAAttributeException, str(value) + ' not allowed'
 
     def get(self):
         """
@@ -111,6 +99,20 @@ class Field(object):
         """
 
         return self._value
+
+    def set(self, value):
+        """
+        Set a value for the field.
+
+        The new value is validing before assigment.
+
+        @param value: new value for the field.
+        """
+
+        if self._is_valid(value):
+            self._value = value
+        else:
+            raise UMPAAttributeException(str(value) + ' not allowed')
 
     def clear(self):
         """
@@ -132,19 +134,19 @@ class Field(object):
 
         self.__doc__ = text
 
-    def _is_valid(self, val):
+    def _is_valid(self, value):
         """
         Validate the new value.
 
         This method is an abstract. You HAVE TO override it.
 
-        @param val: the new value
+        @param value: the new value
 
         @rtype: C{bool}
         @return: result of the validation.
         """
 
-        raise NotImplementedError, "this is abstract class"
+        raise NotImplementedError("this is abstract class")
 
     def _raw_value(self):
         """
@@ -163,7 +165,7 @@ class Field(object):
         @return: raw value of the field.
         """
 
-        raise NotImplementedError, "this is abstract class"
+        raise NotImplementedError("this is abstract class")
 
     def _generate_value(self):
         """
@@ -176,10 +178,10 @@ class Field(object):
         @return: auto-generated value of the field.
         """
 
-        raise UMPAException, "value is not defined or _generate_value() \
-                                            method is not implemented."
+        raise UMPAException("value is not defined or _generate_value()" 
+                                                "method is not implemented.")
 
-    def fillout(self, *args):
+    def fillout(self):
         """
         Fillout the field.
 
@@ -227,17 +229,17 @@ class IntField(Field):
 
         return self._value
 
-    def _is_valid(self, val):
+    def _is_valid(self, value):
         """
         Validate if the value is not bigger than expected.
 
-        @param val: the new value.
+        @param value: the new value.
 
         @rtype: C{bool}
         @return: result of the validation.
         """
 
-        if 2**self.bits > val:
+        if 2**self.bits > value:
             return True
         else:
             return False
@@ -259,14 +261,14 @@ class SpecialIntField(IntField):
     Check umpa.protocols.IP module for examples.
     """
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwargs):
         """
         Create a new SpecialIntField().
 
         Call the super constructor and initiate temporary value.
         """
 
-        super(SpecialIntField, self).__init__(*args, **kwds)
+        super(SpecialIntField, self).__init__(*args, **kwargs)
         self.__temp_value = 0
 
     def get_tmpvalue(self):
@@ -279,15 +281,15 @@ class SpecialIntField(IntField):
 
         return self.__temp_value
 
-    def set_tmpvalue(self, val):
+    def set_tmpvalue(self, value):
         """
         Set the temporary value.
 
-        @type val: C{int}
-        @param val: temporary value for special cases
+        @type value: C{int}
+        @param value: temporary value for special cases
         """
 
-        self.__temp_value = val
+        self.__temp_value = value
 
     def clear_tmpvalue(self):
         """
@@ -400,11 +402,14 @@ class IPAddrField(AddrField):
         @return: raw value of the field.
         """
 
+        # convert the value to the list if it's str
         if type(self._value) is str:
             pieces = self._value.split(self.separator)
         else:
             pieces = self._value
 
+        # add every piece of the address to the raw value
+        # with bits-length of them keeping
         raw = 0
         for b in pieces:
             raw += int(b, self.base)
@@ -413,22 +418,22 @@ class IPAddrField(AddrField):
 
         return raw
 
-    def _is_valid(self, val):
+    def _is_valid(self, value):
         """
         Validate the new value.
 
         Only str or tuple type of the value is allowed.
 
-        @param val: the new value.
+        @param value: the new value.
 
         @rtype: C{bool}
         @return: result of the validation.
         """
 
-        if type(val) is str:
-            pieces = val.split(self.separator)
-        elif type(val) is tuple:
-            pieces = val
+        if type(value) is str:
+            pieces = value.split(self.separator)
+        elif type(value) is tuple:
+            pieces = value
         else:
             return False
 
@@ -482,7 +487,7 @@ class PaddingField(SpecialIntField):
     bits = 0
     auto = True
 
-    def __init__(self, name, word=32, *args, **kwds):
+    def __init__(self, name, word=32, *args, **kwargs):
         """
         Create a new PaddingField().
         
@@ -490,21 +495,7 @@ class PaddingField(SpecialIntField):
         """
 
         self._word = word
-        super(PaddingField, self).__init__(name, 0, *args, **kwds)
-
-    def _is_valid(self, val):
-        """
-        Validate if the value is not bigger than expected.
-
-        @param val: the new value.
-
-        @rtype: C{bool}
-        @return: result of the validation.
-        """
-
-        if isinstance(val, int):
-            return True
-        return False
+        super(PaddingField, self).__init__(name, 0, *args, **kwargs)
 
     def fillout(self):
         """
@@ -522,6 +513,20 @@ class PaddingField(SpecialIntField):
             self.bits = self._value
         return self._raw_value()
     
+    def _is_valid(self, value):
+        """
+        Validate if the value is not bigger than expected.
+
+        @param value: the new value.
+
+        @rtype: C{bool}
+        @return: result of the validation.
+        """
+
+        if isinstance(value, int):
+            return True
+        return False
+
     def _raw_value(self):
         """
         Don't convert the value. Return 0.
@@ -599,7 +604,79 @@ class Flags(Field):
         for bit in self._ordered_fields:
             print self._value[bit]
         print "| | /"
-        return "| \\-[ %-25s ]\t\tcontains %d bit flags" % (self.name, len(self._ordered_fields))
+        return "| \\-[ %-25s ]\t\tcontains %d bit flags" % (self.name,
+                                                    len(self._ordered_fields))
+
+    def get(self, *names):
+        """
+        Return list of passed bits values.
+
+        If no names passed or no results, return the whole list with values
+        of every flag-bits.
+
+        @type names: C{str}
+        @param names: names of bit-flags.
+        """
+
+        # we check if name of the field in the flag is correct
+        result = [ self._value[val].get() for val in names
+                                                    if self._is_valid(val) ]
+
+        # if no results above we return whole list of values
+        if len(result) < 1:
+            result = self._value
+        return result
+
+
+    def set(self, *names):
+        """
+        Set logical True for passed bit-flags.
+
+        @type names: C{str}
+        @param names: names of bit-flags.
+        """
+
+        self._set_bit(names, True)
+        self._modified = True
+
+    def unset(self, *names):
+        """
+        Set logical False for passed bit-flags.
+
+        @type names: C{str}
+        @param names: names of bit-flags.
+        """
+
+        self._set_bit(names, False)
+
+    def clear(self):
+        """
+        Clear the values of bit-flags.
+
+        Re-create a storing dictionary.
+        """
+
+        # we overwrite an attribute self._value
+        # because we need a list instead of simple var here
+        self._value = {}
+        for flag in self._ordered_fields:
+            self._value[flag] = BitField(flag)
+    def fillout(self):
+        """
+        Fillout the field.
+
+        Call fillout() methods for every bit-flags.
+        Return concatenated result.
+
+        @return: bits of the bit-flags.
+        """
+
+        raw = 0
+        for bitname in self._ordered_fields:
+            raw += self._value[bitname].fillout()
+            raw <<= 1
+        raw >>= 1
+        return raw
 
     def _is_valid(self, name):
         """
@@ -631,79 +708,8 @@ class Flags(Field):
             if self._is_valid(flag_name):
                 self._value[flag_name].set(value)
             else:
-                raise UMPAAttributeException, attr + ' not allowed'
+                raise UMPAAttributeException(attr + ' not allowed')
 
-    def clear(self):
-        """
-        Clear the values of bit-flags.
-
-        Re-create a storing dictionary.
-        """
-
-        # we overwrite an attribute self._value
-        # because we need a list instead of simple var here
-        self._value = {}
-        for flag in self._ordered_fields:
-            self._value[flag] = BitField(flag)
-        #self._value = dict.fromkeys(self._ordered_fields, False)
-
-    def set(self, *names):
-        """
-        Set logical True for passed bit-flags.
-
-        @type names: C{str}
-        @param names: names of bit-flags.
-        """
-
-        self._set_bit(names, True)
-        self._modified = True
-
-    def unset(self, *names):
-        """
-        Set logical False for passed bit-flags.
-
-        @type names: C{str}
-        @param names: names of bit-flags.
-        """
-
-        self._set_bit(names, False)
-
-    def get(self, *names):
-        """
-        Return list of passed bits values.
-
-        If no names passed or no results, return the whole list with values
-        of every flag-bits.
-
-        @type names: C{str}
-        @param names: names of bit-flags.
-        """
-
-        # we check if name of the field in the flag is correct
-        result = [ self._value[val].get() for val in names
-                                                    if self._is_valid(val) ]
-
-        # if no results above we return whole list of values
-        if len(result) < 1:
-            result = self._value
-        return result
-
-    def fillout(self):
-        """
-        Fillout the field.
-
-        Call fillout() methods for every bit-flags.
-        Return concatenated result.
-
-        @return: bits of the bit-flags.
-        """
-
-        raw = 0
-        for bitname in self._ordered_fields:
-            raw += self._value[bitname].fillout()
-            raw <<= 1
-        raw >>= 1
-        return raw
 
 class BitField(Field):
     """
@@ -746,19 +752,6 @@ class BitField(Field):
 
         return "| |  -{ %-23s }\t\t%d" % (self.name, int(self._value))
 
-    def _is_valid(self, val):
-        """
-        Validate the new value.
-
-        @param val: the new value
-
-        @rtype: C{bool}
-        @return: True, becuase this is a bool type so every value is correct.
-        """
-
-        # always True because it's bool type
-        return True
-
     def get(self):
         """
         Return the current value of the field.
@@ -787,6 +780,19 @@ class BitField(Field):
 
         return raw
 
+    def _is_valid(self, value):
+        """
+        Validate the new value.
+
+        @param value: the new value
+
+        @rtype: C{bool}
+        @return: C{True}, becuase this is a bool type so every value is correct.
+        """
+
+        # always True because it's bool type
+        return True
+
     def _generate_value(self):
         """
         Generate value of bit.
@@ -800,8 +806,8 @@ class BitField(Field):
         if self._default_value:
             return bool(self._default_value)
         else:
-            raise UMPAException, "value is not defined or _generate_value() \
-                                                    method is not implemented."
+            raise UMPAException("value is not defined or _generate_value() "
+                                                "method is not implemented.")
 
     def _raw_value(self):
         """

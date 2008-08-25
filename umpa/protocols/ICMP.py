@@ -34,7 +34,8 @@ class _HType(_fields.EnumField):
         "Echo Reply"	: _consts.ICMP_TYPE_ECHO_REPLY,
         "Unassigned (1)"	: _consts.ICMP_TYPE_UNASSIGNED1,
         "Unassigned (2)"	: _consts.ICMP_TYPE_UNASSIGNED2,
-        "Destination Unreachable"	: _consts.ICMP_TYPE_DESTINATION_UNREACHABLE,
+        "Destination Unreachable"	:
+                                    _consts.ICMP_TYPE_DESTINATION_UNREACHABLE,
         "Source Quench"	: _consts.ICMP_TYPE_SOURCE_QUENCH,
         "Redirect"	: _consts.ICMP_TYPE_REDIRECT,
         "Alternate Host Address"	: _consts.ICMP_TYPE_ALTERNATE_HOST_ADDRESS,
@@ -53,12 +54,15 @@ class _HType(_fields.EnumField):
         "Reserved Security"	: _consts.ICMP_TYPE_RESERVED_SECURITY,
         "Reserved Robustness"	: _consts.ICMP_TYPE_RESERVED_ROBUSTNESS,
         "Traceroute"	: _consts.ICMP_TYPE_TRACEROUTE,
-        "Datagram Conversion Error"	: _consts.ICMP_TYPE_DATAGRAM_CONVERSION_ERROR,
+        "Datagram Conversion Error"	:
+                                _consts.ICMP_TYPE_DATAGRAM_CONVERSION_ERROR,
         "Mobile Host Redirect"	: _consts.ICMP_TYPE_MOBILE_HOST_REDIRECT,
         "Ipv (6) Where-Are-You"	: _consts.ICMP_TYPE_IPV6_WHERE_ARE_YOU,
         "Ipv (6) I-Am-Here"	: _consts.ICMP_TYPE_IPV6_I_AM_HERE,
-        "Mobile Registration Request"	: _consts.ICMP_TYPE_MOBILE_REGISTRATION_REQUEST,
-        "Mobile Registration Reply"	: _consts.ICMP_TYPE_MOBILE_REGISTRATION_REPLY,
+        "Mobile Registration Request"	:
+                                _consts.ICMP_TYPE_MOBILE_REGISTRATION_REQUEST,
+        "Mobile Registration Reply"	:
+                                _consts.ICMP_TYPE_MOBILE_REGISTRATION_REPLY,
         "Domain Name Request"	: _consts.ICMP_TYPE_DOMAIN_NAME_REQUEST,
         "Domain Name Reply"	: _consts.ICMP_TYPE_DOMAIN_NAME_REPLY,
         "Skip"	: _consts.ICMP_TYPE_SKIP,
@@ -311,11 +315,9 @@ class ICMP(_protocols.Protocol):
 
     _ordered_fields = ('type', 'code', '_checksum', '_extra_data')
 
-    def __init__(self, **kw):
+    def __init__(self, **kwargs):
         """
         Create a new ICMP().
-
-        @param kw: pass to super-constructor.
         """
 
         raise NotImplementedError("not finished yet")
@@ -324,7 +326,7 @@ class ICMP(_protocols.Protocol):
                         _HChecksum("Checksum"), 
                         _HExtraData("Extra Data"), ]
 
-        super(ICMP, self).__init__(fields_list, **kw)
+        super(ICMP, self).__init__(fields_list, **kwargs)
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """

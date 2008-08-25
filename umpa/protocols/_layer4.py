@@ -28,7 +28,7 @@ are provided.
 
 from umpa.protocols._protocols import Protocol
 from umpa.protocols.IP import IP
-from umpa.protocols._fields import *
+from umpa.protocols._fields import IntField, IPv4AddrField
 
 class Layer4ChecksumField(IntField):
     """
@@ -40,6 +40,7 @@ class Layer4ChecksumField(IntField):
 
     bits = 16
     auto = True
+
     def _generate_value(self):
         """
         Generate value for undefined field yet.
@@ -70,7 +71,6 @@ class PseudoHeader(Protocol):
 
         @type total_length: C{int}
         @param total_length: length of the real header and payload.
-
         """
 
         fields_list = [ IPv4AddrField("Source Address"),
@@ -105,7 +105,7 @@ class PseudoHeader(Protocol):
         # than better 0 than nothing (for nonstrict users)
         self.source_address = "127.0.0.1"
         self.destination_address = "127.0.0.1"
-        # grabbing informations from IP's header
+        # grabbing informations from the IP's header
         it = iter(protocol_container)
         for proto in it:
             if isinstance(proto,IP):

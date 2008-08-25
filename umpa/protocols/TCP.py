@@ -27,8 +27,8 @@ from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
 from umpa.protocols import _layer4
-from umpa.utils import net
-from umpa.utils import bits
+import umpa.utils.net as _net
+import umpa.utils.bits as _bits
 
 class _HPort(_fields.EnumField):
     """
@@ -476,11 +476,9 @@ class TCP(_protocols.Protocol):
                     'control_bits', '_window', '_checksum', '_urgent_pointer',
                     'options', '_padding',)
 
-    def __init__(self, **kw):
+    def __init__(self, **kwargs):
         """
         Create a new TCP().
-
-        @param kw: pass to super-constructor.
         """
 
         control_bits = ('urg', 'ack', 'psh', 'rst', 'syn', 'fin')
@@ -501,24 +499,24 @@ class TCP(_protocols.Protocol):
                         _fields.PaddingField("Padding") ]
 
         # we call super.__init__ after prepared necessary data
-        super(TCP, self).__init__(fields_list, **kw)
+        super(TCP, self).__init__(fields_list, **kwargs)
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self._get_field('source_port').set_doc("The source port number. \
-See RFC 793 for more.")
-        self._get_field('destination_port').set_doc("The destination port \
-number. See RFC 793 for more.")
-        self._get_field('control_bits').set_doc("URG, ACK, PSH, RST, SYN, FIN \
-flags. See RFC 793 for more.")
-        self._get_field('_checksum').set_doc("Checksum of Pseudo Header, TCP \
-header and data. See RFC 793 for more.")
-        self._get_field('options').set_doc("Options may occupy space at the \
-end of the TCP header and are a multiple of 8 bits in length. See RFC 793 \
-for more.")
-        self._get_field('_padding').set_doc("The TCP header padding is used \
-to ensure that the TCP header ends and data begins on a 32 bit boundary. \
-See RFC 793 for more.")
+        self.get_field('source_port').set_doc("The source port number. "
+            "See RFC 793 for more.")
+        self.get_field('destination_port').set_doc("The destination port "
+            "number. See RFC 793 for more.")
+        self.get_field('control_bits').set_doc("URG, ACK, PSH, RST, SYN, FIN "
+            "flags. See RFC 793 for more.")
+        self.get_field('_checksum').set_doc("Checksum of Pseudo Header, TCP "
+            "header and data. See RFC 793 for more.")
+        self.get_field('options').set_doc("Options may occupy space at the "
+            "end of the TCP header and are a multiple of 8 bits in length. "
+            "See RFC 793 for more.")
+        self.get_field('_padding').set_doc("The TCP header padding is used "
+            "to ensure that the TCP header ends and data begins on a 32 bit "
+            "boundary. See RFC 793 for more.")
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
@@ -542,12 +540,12 @@ See RFC 793 for more.")
         """
 
         # Padding
-        self._get_field('_padding')._tmp_value = \
-                                                self._get_field('options').bits
+        self.get_field('_padding')._tmp_value = \
+                                                self.get_field('options').bits
 
         # Data Offset
-        self._get_field('_data_offset')._tmp_value = \
-            self._get_field('options').bits + self._get_field('_padding').bits
+        self.get_field('_data_offset')._tmp_value = \
+            self.get_field('options').bits + self.get_field('_padding').bits
 
         return raw_value, bit
 
@@ -574,9 +572,9 @@ See RFC 793 for more.")
 
         # rev_offset it the offset from the right side
         cksum_rev_offset = bit - self.get_offset('_checksum') - \
-                                            self._get_field('_checksum').bits
+                                            self.get_field('_checksum').bits
         # checking if user not defined his own value of checksum
-        if bits.get_bits(raw_value, self._get_field('_checksum').bits,
+        if _bits.get_bits(raw_value, self.get_field('_checksum').bits,
                                     cksum_rev_offset, rev_offset=True) == 0:
             # Payload
             if self.payload:
@@ -592,7 +590,7 @@ See RFC 793 for more.")
             # Pseudo Header
             #
             # TCP header length...converted to bits unit
-            total_length = self._get_field('_data_offset').fillout()*32
+            total_length = self.get_field('_data_offset').fillout()*32
             # add payload
             total_length += protocol_bits
             # conversion to bytes unit
@@ -607,7 +605,7 @@ See RFC 793 for more.")
             cksum |= pheader_raw << offset
 
             # finally, calcute and apply checksum
-            raw_cksum = net.in_cksum(cksum)
+            raw_cksum = _net.in_cksum(cksum)
             raw_value |= raw_cksum << cksum_rev_offset
 
         return raw_value, bit

@@ -30,6 +30,7 @@ Available protocols are in modules without '_' prefix.
 
 import sys
 import os.path
+import warnings
 
 # loading global protocols
 from IP import IP
@@ -88,9 +89,9 @@ def _load_local_protocols():
                 globals()[proto.__name__] = proto
             items.extend(module.protocols)
         except Exception, err:
-            print >> sys.stderr, "Can't load local plugins."
-            print >> sys.stderr, err
-            print >> sys.stderr, "..ignoring."
+            msg = "Can't load the extension.\n" + repr(err) + "\n..ignoring."
+            warnings.simplefilter('always', ImportWarning)
+            warnings.warn(msg, ImportWarning)
     return items
 
 def _dict_protos(protos_list):
@@ -116,6 +117,6 @@ _lprotos_list = _load_local_protocols()
 _gproto = _dict_protos(_gprotos_list)
 _lproto = _dict_protos(_lprotos_list)
 
-del _dict_protos
+# cleaning
 del _gprotos_list
 del _lprotos_list

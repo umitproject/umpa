@@ -27,8 +27,8 @@ from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
 from umpa.protocols import _layer4
-from umpa.utils import net
-from umpa.utils import bits
+import umpa.utils.net as _net
+import umpa.utils.bits as _bits
 
 class _HPort(_fields.EnumField):
     """
@@ -283,13 +283,11 @@ class UDP(_protocols.Protocol):
     name = "UDP"
 
     _ordered_fields = ('source_port', 'destination_port', '_length',
-                                                            '_checksum')
+                                                                '_checksum')
 
-    def __init__(self, **kw):
+    def __init__(self, **kwargs):
         """
         Create a new UDP().
-
-        @param kw: pass to super-constructor.
         """
 
         fields_list = [ _HPort("Source Port", 0),
@@ -298,16 +296,16 @@ class UDP(_protocols.Protocol):
                         _layer4.Layer4ChecksumField("Checksum"), ]
 
         # we call super.__init__ after prepared necessary data
-        super(UDP, self).__init__(fields_list, **kw)
+        super(UDP, self).__init__(fields_list, **kwargs)
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self._get_field('source_port').set_doc("The source port number. \
-See RFC 768 for more.")
-        self._get_field('destination_port').set_doc("The destination port \
-number. See RFC 768 for more.")
-        self._get_field('_checksum').set_doc("Checksum of Pseudo Header, UDP \
-header and data. See RFC 768 for more.")
+        self.get_field('source_port').set_doc("The source port number. "
+            "See RFC 768 for more.")
+        self.get_field('destination_port').set_doc("The destination port "
+            "number. See RFC 768 for more.")
+        self.get_field('_checksum').set_doc("Checksum of Pseudo Header, UDP "
+            "header and data. See RFC 768 for more.")
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
@@ -331,7 +329,7 @@ header and data. See RFC 768 for more.")
         """
 
         # Length
-        self._get_field('_checksum')._tmp_value = protocol_bits
+        self.get_field('_checksum')._tmp_value = protocol_bits
 
         return raw_value, bit
 
@@ -358,7 +356,7 @@ header and data. See RFC 768 for more.")
 
         cksum_rev_offset = 0
         # checking if user not defined his own value of checksum
-        if bits.get_bits(raw_value, self._get_field('_checksum').bits,
+        if _bits.get_bits(raw_value, self.get_field('_checksum').bits,
                                     cksum_rev_offset, rev_offset=True) == 0:
             # Payload
             if self.payload:
@@ -375,7 +373,7 @@ header and data. See RFC 768 for more.")
             #
             # create pseudo header object
             pheader = _layer4.PseudoHeader(self.protocol_id,
-                                        self._get_field('_length').fillout())
+                                        self.get_field('_length').fillout())
             # generate raw value of it
             pheader_raw = pheader._get_raw(protocol_container,
                                                         protocol_bits)[0]
@@ -383,7 +381,7 @@ header and data. See RFC 768 for more.")
             cksum |= pheader_raw << offset
 
             # finally, calcute and apply checksum
-            raw_cksum = net.in_cksum(cksum)
+            raw_cksum = _net.in_cksum(cksum)
             raw_value |= raw_cksum << cksum_rev_offset
 
         return raw_value, bit

@@ -37,6 +37,7 @@ There are 2 ways to load an extension:
 
 import sys
 import os.path
+import warnings
 
 def load_extension(name):
     """
@@ -56,6 +57,6 @@ def load_extension(name):
         module = __import__(module_path, fromlist=[None])
         globals()[name] = module
     except Exception, err:
-        print >> sys.stderr, "Can't load the extension."
-        print >> sys.stderr, err
-        print >> sys.stderr, "..ignoring."
+        msg = "Can't load the extension.\n" + repr(err) + "\n..ignoring."
+        warnings.simplefilter('always', ImportWarning)
+        warnings.warn(msg, ImportWarning)

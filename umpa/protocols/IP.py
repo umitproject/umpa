@@ -189,34 +189,42 @@ class _HProtocol(_fields.SpecialIntField, _fields.EnumField):
     bits = 8
     auto = True
     enumerable = {
-        "Reserved (0)"                    : _consts.PROTOCOL_RESERVED0,
-        "ICMP"                            : _consts.PROTOCOL_ICMP,
-        "Gateway-to-Gateway"              : _consts.PROTOCOL_GATEWAY_TO_GATEWAY,
-        "CMCC Gateway Monitoring Message" : _consts.PROTOCOL_CMCC,
-        "ST"                              : _consts.PROTOCOL_ST,
-        "TCP"                             : _consts.PROTOCOL_TCP,
-        "UCL"                             : _consts.PROTOCOL_UCL,
-        "Secure"                          : _consts.PROTOCOL_SECURE,
-        "BBN RCC Monitoring"              : _consts.PROTOCOL_BBN_RCC_MONITORING,
-        "NVP"                             : _consts.PROTOCOL_NVP,
-        "PUP"                             : _consts.PROTOCOL_PUP,
-        "Pluribus"                        : _consts.PROTOCOL_PLURIBUS,
-        "Telenet"                         : _consts.PROTOCOL_TELENET,
-        "XNET"                            : _consts.PROTOCOL_XNET,
-        "Chaos"                           : _consts.PROTOCOL_CHAOS,
-        "UDP"                             : _consts.PROTOCOL_UDP,
-        "Multiplexing"                    : _consts.PROTOCOL_MULTIPLEXING,
-        "DCN"                             : _consts.PROTOCOL_DCN,
-        "TAC Monitoring"                  : _consts.PROTOCOL_TAC_MONITORING,
-        "any local network"               : _consts.PROTOCOL_ANY,
-        "SATNET and Backroom EXPAK"       : _consts.PROTOCOL_SATNET_BACKROOM_EXPAK,
-        "MIT Subnet Support"              : _consts.PROTOCOL_MIT_SUBNET_SUPPORT,
-        "SATNET Monitoring"               : _consts.PROTOCOL_SATNET_MONITORING,
-        "Internet Packet Core Utility"    : _consts.PROTOCOL_INTERNET_PACKET_CORE_UTILITY,
-        "Backroom SATNET Monitoring"      : _consts.PROTOCOL_BACKROOM_SATNET_MONITORING,
-        "WIDEBAND Monitoring"             : _consts.PROTOCOL_WIDEBAND_MONITORING,
-        "WIDEBAND EXPAK"                  : _consts.PROTOCOL_WIDEBAND_EXPAK,
-        "Reserved (255)"                  : _consts.PROTOCOL_RESERVED255
+        "Reserved (0)"                      : _consts.PROTOCOL_RESERVED0,
+        "ICMP"                              : _consts.PROTOCOL_ICMP,
+        "Gateway-to-Gateway"                :
+                                        _consts.PROTOCOL_GATEWAY_TO_GATEWAY,
+        "CMCC Gateway Monitoring Message"   : _consts.PROTOCOL_CMCC,
+        "ST"                                : _consts.PROTOCOL_ST,
+        "TCP"                               : _consts.PROTOCOL_TCP,
+        "UCL"                               : _consts.PROTOCOL_UCL,
+        "Secure"                            : _consts.PROTOCOL_SECURE,
+        "BBN RCC Monitoring"                :
+                                        _consts.PROTOCOL_BBN_RCC_MONITORING,
+        "NVP"                               : _consts.PROTOCOL_NVP,
+        "PUP"                               : _consts.PROTOCOL_PUP,
+        "Pluribus"                          : _consts.PROTOCOL_PLURIBUS,
+        "Telenet"                           : _consts.PROTOCOL_TELENET,
+        "XNET"                              : _consts.PROTOCOL_XNET,
+        "Chaos"                             : _consts.PROTOCOL_CHAOS,
+        "UDP"                               : _consts.PROTOCOL_UDP,
+        "Multiplexing"                      : _consts.PROTOCOL_MULTIPLEXING,
+        "DCN"                               : _consts.PROTOCOL_DCN,
+        "TAC Monitoring"                    : _consts.PROTOCOL_TAC_MONITORING,
+        "any local network"                 : _consts.PROTOCOL_ANY,
+        "SATNET and Backroom EXPAK"         :
+                                        _consts.PROTOCOL_SATNET_BACKROOM_EXPAK,
+        "MIT Subnet Support"                :
+                                        _consts.PROTOCOL_MIT_SUBNET_SUPPORT,
+        "SATNET Monitoring"                 :
+                                        _consts.PROTOCOL_SATNET_MONITORING,
+        "Internet Packet Core Utility"      :
+                                _consts.PROTOCOL_INTERNET_PACKET_CORE_UTILITY,
+        "Backroom SATNET Monitoring"        :
+                                _consts.PROTOCOL_BACKROOM_SATNET_MONITORING,
+        "WIDEBAND Monitoring"               :
+                                        _consts.PROTOCOL_WIDEBAND_MONITORING,
+        "WIDEBAND EXPAK"                    : _consts.PROTOCOL_WIDEBAND_EXPAK,
+        "Reserved (255)"                    : _consts.PROTOCOL_RESERVED255
     }
 
     def _generate_value(self):
@@ -266,11 +274,9 @@ class IP(_protocols.Protocol):
                     'source_address', 'destination_address', 'options',
                     '_padding',)
 
-    def __init__(self, **kw):
+    def __init__(self, **kwargs):
         """
         Create a new IP().
-
-        @param kw: pass to super-constructor.
         """
 
         tos = ('precedence0','precedence1', 'precedence2', 'delay',
@@ -286,7 +292,7 @@ class IP(_protocols.Protocol):
         #       if user choose this option
         #   - checking platform for TTL value
         #       to be more reliable we should generate default value depends on
-        #       user platform. does anyone know every values of sys.platform? :)
+        #       user platform. does anyone know every values of sys.platform?:)
         fields_list = [ _HVersion("Version", 4),
                         _HIHL("IHL"),
                         _fields.Flags("TOS", tos, **tos_predefined),
@@ -304,31 +310,31 @@ class IP(_protocols.Protocol):
                         _fields.PaddingField("Padding") ]
 
         # we call super.__init__ after prepared necessary data
-        super(IP, self).__init__(fields_list, **kw)
+        super(IP, self).__init__(fields_list, **kwargs)
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self._get_field('type_of_service').set_doc("The Type of Service \
-provides an indication of the abstract parameters of the quality of service \
-desired. See RFC 791 for more.")
-        self._get_field('flags').set_doc("Various Control Flags. See RFC 791 \
-for more.")
-        self._get_field('source_address').set_doc("The source address. \
-See RFC 791 for more.")
-        self._get_field('destination_address').set_doc("The destination \
-address. See RFC 791 for more.")
-        self._get_field('options').set_doc("The options may appear or not in \
-datagrams. See RFC 791 for more.")
-        self._get_field('_padding').set_doc("The internet header padding is \
-used to ensure that the internet header ends on a 32 bit boundary. \
-See RFC 791 for more.")
+        self.get_field('type_of_service').set_doc("The Type of Service "
+            "provides an indication of the abstract parameters of the quality "
+            "of service desired. See RFC 791 for more.")
+        self.get_field('flags').set_doc("Various Control Flags. See RFC 791 " 
+            "for more.")
+        self.get_field('source_address').set_doc("The source address. "
+            "See RFC 791 for more.")
+        self.get_field('destination_address').set_doc("The destination "
+            "address. See RFC 791 for more.")
+        self.get_field('options').set_doc("The options may appear or not in "
+            "datagrams. See RFC 791 for more.")
+        self.get_field('_padding').set_doc("The internet header padding is "
+            "used to ensure that the internet header ends on a 32 bit "
+            "boundary. See RFC 791 for more.")
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
         Handle with fields before calling fillout() for them.
 
-        Set Padding field, calculate header and total length, set protocol of the upper
-        layer.
+        Set Padding field, calculate header and total length,
+        set protocol of the upper layer.
 
         @type raw_value: C{int}
         @param raw_value: currently raw value for the packet.
@@ -346,20 +352,19 @@ See RFC 791 for more.")
         """
 
         # Padding
-        self._get_field('_padding')._tmp_value = \
-                                                self._get_field('options').bits
+        self.get_field('_padding')._tmp_value = self.get_field('options').bits
 
         # IHL
         # we store sum of option and padding bits in the _temp_value
         # we can't overwrite _value because user might set his own value there
         # later, generate_value() will return correct value
-        self._get_field('_ihl')._tmp_value = \
-            self._get_field('options').bits + self._get_field('_padding').bits
+        self.get_field('_ihl')._tmp_value = \
+            self.get_field('options').bits + self.get_field('_padding').bits
 
         # Total Length
         # we sum length of upper layers and IP layer
-        self._get_field('_total_length')._tmp_value = \
-            self._get_field('_ihl').fillout()*32 + protocol_bits
+        self.get_field('_total_length')._tmp_value = \
+            self.get_field('_ihl').fillout()*32 + protocol_bits
 
         # Protocol
         # field indicates the next level protocol used in the data
@@ -368,7 +373,7 @@ See RFC 791 for more.")
             proto_id = self.payload.protocol_id
         else:
             proto_id = 0 # FIXME: what's the default value for non-upper layer?
-        self._get_field('_protocol')._tmp_value = proto_id
+        self.get_field('_protocol')._tmp_value = proto_id
 
         return raw_value, bit
 
@@ -396,10 +401,10 @@ See RFC 791 for more.")
         # Header Checksum
         # a checksum on the header only.
         cksum_offset = bit - self.get_offset('_header_checksum') - \
-                                    self._get_field('_header_checksum').bits
+                                    self.get_field('_header_checksum').bits
         # check if user doesn't provide own values of bits
         if _bits.get_bits(raw_value,
-                        self._get_field('_header_checksum').bits,
+                        self.get_field('_header_checksum').bits,
                         cksum_offset,
                         rev_offset=True) == 0:
             # calculate and add checksum to the raw_value

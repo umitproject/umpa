@@ -31,16 +31,16 @@ import struct
 
 from umpa.protocols._consts import BYTE
 from umpa.protocols._fields import Field, Flags
-from umpa.utils import tools
-from umpa.utils.exceptions import *
+from umpa.utils.exceptions import UMPAException, UMPAAttributeException
+from umpa.utils.tools import dict_from_sequence as _dict_from_sequence
 
 class Protocol(object):
     """
     Superclass for every protocol's implementations.
    
     You have to override following methods:
-    -- _pre_raw()
-    -- _post_raw()
+     - _pre_raw()
+     - _post_raw()
     They are used to make some tasks especially with SuperIntField objects.
     Check IP.py, TCP.py for examples.
 
@@ -53,42 +53,27 @@ class Protocol(object):
     protocol_id = None
     name = None
 
-    def __init__(self, fields_list, **kw):
+    def __init__(self, fields_list, **preset):
         """
         Create a new Protocol().
 
         @type fields_list: C{list}
         @param fields_list: list of fields B{in correct order}.
 
-        @param kw: predefined values for fields.
+        @param preset: predefined values for fields.
         """
 
-        # we pack objects of header's fields to the dict
+        # pack objects of header's fields to the dict
         fields = dict(zip(self._ordered_fields, fields_list))
 
-        # because of overwritten __setattr__ we need to call super here
+        # because of overwritten __setattr__ we need to assign with __dict__
         self.__dict__['_fields'] = fields
-        # setting up passed fields
-        for field in kw:
-            self.__setattr__(field, kw[field])
-
         self.__dict__['payload'] = None
         self.__dict__['__raw_value'] = None
 
-    def __setattr__(self, attr, val):
-        """
-        Set value of the field.
-
-        @type attr: C{str}
-        @param attr: name of the field.
-
-        @param val: the new value.
-        """
-
-        if self._is_valid(attr):
-            self._get_field(attr).set(val)
-        else:
-            raise UMPAAttributeException, attr + ' not allowed'
+        # setting up passed fields
+        for field in preset:
+            setattr(self, field, preset[field])
 
     def __getattr__(self, attr):
         """
@@ -101,9 +86,24 @@ class Protocol(object):
         """
         
         if self._is_valid(attr):
-            return self._get_field(attr).get()
+            return self.get_field(attr).get()
         else:
-            raise UMPAAttributeException, attr + ' not allowed'
+            raise UMPAAttributeException(attr + ' not allowed')
+
+    def __setattr__(self, attr, value):
+        """
+        Set value of the field.
+
+        @type attr: C{str}
+        @param attr: name of the field.
+
+        @param value: the new value.
+        """
+
+        if self._is_valid(attr):
+            self.get_field(attr).set(value)
+        else:
+            raise UMPAAttributeException(attr + ' not allowed')
 
     def __str__(self):
         """
@@ -118,18 +118,9 @@ class Protocol(object):
         print "| \\"
         for field in self.get_fields():
             print field
-        print "\\-< %-27s >\t\tcontains %d fields" % (self.name, len(self._fields))
+        print "\\-< %-27s >\t\tcontains %d fields" % (self.name,
+                                                            len(self._fields))
         return super(Protocol, self).__str__()
-
-    def get_fields(self):
-        """
-        Yield the ordered sequence of the fields.
-
-        This is a generator for ordered fields.
-        """
-        
-        for field in self._ordered_fields:
-            yield self._get_field(field)
 
     @classmethod
     def get_fields_keys(cname):
@@ -141,21 +132,32 @@ class Protocol(object):
 
         for field in cname._ordered_fields:
             yield field
+
+    def get_fields(self):
+        """
+        Yield the ordered sequence of the fields.
+
+        This is a generator for ordered fields.
+        """
+        
+        for field in self._ordered_fields:
+            yield self.get_field(field)
     
-    def _get_field(self, keyname):
+    def get_field(self, keyname):
         """
         Return the field.
 
         @type keyname: C{str}
         @param keyname: name of the field
 
+        @rtype: C{Field}
         @return: requested field.
         """
 
         if self._is_valid(keyname):
             return self._fields[keyname]
         else:
-            raise UMPAAttributeException, keyname + ' not allowed'
+            raise UMPAAttributeException(keyname + ' not allowed')
 
     def set_fields(self, *args, **kwargs):
         """
@@ -171,14 +173,14 @@ class Protocol(object):
         """
         
         # converting args list to the dict and update our kwargs
-        kwargs.update(tools.dict_from_sequence(args))
+        kwargs.update(_dict_from_sequence(args))
 
         for key in kwargs:
             if self._is_valid(key):
                 setattr(self, key, kwargs[key])
             self.fields[key].set(kwargs[key])
 
-    def set_flags(self, name, *args, **kw):
+    def set_flags(self, name, *args, **kwargs):
         """
         Set flags for flags-field.
 
@@ -191,21 +193,21 @@ class Protocol(object):
 
         @param args: sequence of field_name and value.
 
-        @param kw: field_name=value.
+        @param kwargs: field_name=value.
         """
 
         # converting args list to the dict and update our kwargs
-        kw.update(tools.dict_from_sequence(args))
+        kwargs.update(_dict_from_sequence(args))
 
-        flag_field = self._get_field(name)
+        flag_field = self.get_field(name)
         if isinstance(flag_field, Flags):
-            for flag_name in kw:
-                if kw[flag_name]:
+            for flag_name in kwargs:
+                if kwargs[flag_name]:
                     flag_field.set(flag_name)
                 else:
                     flag_field.unset(flag_name)
         else:
-            raise UMPAAttributeException, "No Flags instance for " + name
+            raise UMPAAttributeException("No Flags instance for " + name)
 
     def get_flags(self, name, *args):
         """
@@ -220,11 +222,42 @@ class Protocol(object):
         @return: list of flags.
         """
 
-        flag_field = self._get_field(name)
+        flag_field = self.get_field(name)
         if isinstance(flag_field, Flags):
             return flag_field.get(*args)
         else:
-            raise UMPAAttributeException, "No Flags instance for " + name
+            raise UMPAAttributeException("No Flags instance for " + name)
+
+    def get_offset(self, field):
+        """
+        Return the offset for the field.
+
+        This offset is for the current protocol, not the packet.
+
+        @type field: C{str} or C{Field}
+        @param field: name of the field
+
+        @rtype: C{int}
+        @return: offset of the field in bits.
+        """
+
+        # checking if argument is a key or instance
+        if isinstance(field, str):
+            field_list = self._ordered_fields
+        elif isinstance(field, Field):
+            field_list = [ f for f in self.get_fields() ]
+        else:
+            raise UMPAException(type(field) + ' unsupported')
+    
+        if field not in field_list:
+            raise UMPAAttributeException(field + ' not allowed')
+
+        offset = 0
+        for i, f in enumerate(field_list):
+            if field == f:
+                break
+            offset += self.get_field(self._ordered_fields[i]).bits
+        return offset
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
@@ -253,7 +286,7 @@ class Protocol(object):
         @return: C{raw_value, bit}
         """
         
-        raise NotImplementedError, "this is abstract class"
+        raise NotImplementedError("this is abstract class")
 
     def _raw(self, raw_value, bit, protocol_container, protocol_bits):
         # because of some protocols implementation, there are some tasks before
@@ -263,9 +296,9 @@ class Protocol(object):
 
         # so we make a big number with bits of every fields of the protocol
         for field in reversed(self._ordered_fields):
-            x = self._get_field(field).fillout()
+            x = self.get_field(field).fillout()
             raw_value |= x << bit
-            bit += self._get_field(field).bits
+            bit += self.get_field(field).bits
 
         # because of some protocols implementation, there are some tasks after
         # we call fillout() for fields
@@ -280,8 +313,8 @@ class Protocol(object):
 
         Some fields (especially SpecialIntField) need to handle with other
         fields. First, think to do it in _pre_raw() method. But if they need
-        to handle with other fields B{after} the fillout() (e.g. to calculate a
-        checksum), do it here.
+        to handle with other fields B{after} the fillout() (e.g. to calculate
+        a checksum), do it here.
 
         I{Currently} means that if we're generating raw values for
         the packet/protocol it's done by some loops. So, currently it's
@@ -302,7 +335,7 @@ class Protocol(object):
         @return: C{raw_value, bit}
         """
         
-        raise NotImplementedError, "this is abstract class"
+        raise NotImplementedError("this is abstract class")
 
     def _get_raw(self, protocol_container, protocol_bits):
         """
@@ -328,7 +361,7 @@ class Protocol(object):
 
         # protocol should return byte-compatible length
         if bit%BYTE != 0:
-            raise UMPAException, 'odd number of bits in ' + self.__name__
+            raise UMPAException('odd number of bits in ' + self.__name__)
 
         self.__dict__['__raw_value'] = raw_value
         return raw_value, bit
@@ -344,34 +377,3 @@ class Protocol(object):
         """
 
         return field in self._fields
-
-    def get_offset(self, field):
-        """
-        Return the offset for the field.
-
-        This offset is for the current protocol, not the packet.
-
-        @type field: C{str} or C{Field}
-        @param field: name of the field
-
-        @rtype: C{int}
-        @return: offset of the field in bits.
-        """
-
-        # checking if argument is a key or instance
-        if isinstance(field, str):
-            field_list = self._ordered_fields
-        elif isinstance(field, Field):
-            field_list = [ f for f in self.get_fields() ]
-        else:
-            raise UMPAException, type(field) + ' unsupported'
-    
-        if field not in field_list:
-            raise UMPAAttributeException, field + ' not allowed'
-
-        offset = 0
-        for i, f in enumerate(field_list):
-            if field == f:
-                break
-            offset += self._get_field(self._ordered_fields[i]).bits
-        return offset

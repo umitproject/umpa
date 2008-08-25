@@ -39,6 +39,8 @@ import xml.dom.minidom
 import umpa
 from umpa.protocols._fields import Flags
 
+# TODO: refactoring with SAX usage
+
 def save(filename, packets):
     """
     Save the list of Packet's objects into XML file.
@@ -72,21 +74,20 @@ def save(filename, packets):
                 f = doc.createElement(field)
                 pr.appendChild(f)
                 # if Flags...we need care about BitFlags objects
-                if isinstance(proto._get_field(field), Flags):
+                if isinstance(proto.get_field(field), Flags):
                     f.setAttribute("type", "bits")
-                    for flag in proto._get_field(field).get():
+                    for flag in proto.get_field(field).get():
                         b = doc.createElement(flag)
                         f.appendChild(b)
-                        value = proto._get_field(field)._value[flag].get()
+                        value = proto.get_field(field)._value[flag].get()
                         b.appendChild(doc.createTextNode(str(value)))
                         b.setAttribute("type",
                             parse_str.match(str(type(value))).group(1))
                 else:
                     f.appendChild(doc.createTextNode(
-                        str(proto._get_field(field).get())))
+                        str(proto.get_field(field).get())))
                     f.setAttribute("type", parse_str.match(
-                        str(type(proto._get_field(field).get()))).group(1))
-    #print doc.toprettyxml()
+                        str(type(proto.get_field(field).get()))).group(1))
     open(filename, "w").write(doc.toprettyxml())
 
 def load(filename, proto_only=False):
@@ -152,7 +153,7 @@ def load(filename, proto_only=False):
                             value = None
                         else:
                             value = typemap[type_node](value)
-                        protocol._get_field(field_name).set(value)
+                        protocol.get_field(field_name).set(value)
                     # Flags
                     else:
                         for bits in node.childNodes:
@@ -160,10 +161,10 @@ def load(filename, proto_only=False):
                                 bit_value = bits.localName
                                 is_true = (bit_value == "True")
                                 if is_true:
-                                    protocol._get_field(field_name).set(
+                                    protocol.get_field(field_name).set(
                                                                     bit_value)
                                 else:
-                                    protocol._get_field(field_name).unset(
+                                    protocol.get_field(field_name).unset(
                                                                     bit_value)
             packet.include(protocol)
 

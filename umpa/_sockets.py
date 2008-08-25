@@ -29,7 +29,7 @@ But it's correctly to use socket module directly if needed.
 """
 
 import sys
-from socket import *
+import socket
 
 from umpa.utils.exceptions import UMPANotPermittedException
 
@@ -50,16 +50,18 @@ class Socket(object):
         Create a new Socket().
         """
 
+        # to create socket object we need root priviligies.
         # if non-root EUID, then exception is raised
         # use umpa.utils.security.super_priviliges() to avoid exception
-        # we new Socket object is created
+        # when a new Socket object is created
         try:
-            # to create socket object we need root priviligies
-            self._sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)
-        except error, msg:
+            self._sock = socket.socket(socket.AF_INET, socket.SOCK_RAW,
+                                                            socket.IPPROTO_RAW)
+        except socket.error, msg:
             raise UMPANotPermittedException(msg)
+
         # to build own headers of IP
-        self._sock.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
+        self._sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
 
     def send(self, *packets):
         """
@@ -71,13 +73,14 @@ class Socket(object):
 
         sent_bits = []
         for packet in packets:
-            # XXX: this connects to a remote socket, so destination address has
-            # to be known. the better solution would be to use Ethernet protocol
-            # (the lowest software layer from OSI).
+            # XXX: it connects to a remote socket, so destination address has
+            # to be known. the better solution would be to use Ethernet 
+            # protocol (the lowest software layer from OSI).
             # it will be implemented when Ethernet protocol will be implemented
             # so now we have to parse the packet for destination address
             dst_addr = self._get_address(packet)
-            sent_bits.append(self._sock.sendto(packet.get_raw(), (dst_addr,0)))
+            sent_bits.append(self._sock.sendto(packet._get_raw(),
+                                                                (dst_addr,0)))
         return sent_bits
 
     def _get_address(self, packet):

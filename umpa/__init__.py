@@ -41,11 +41,11 @@ import sys
 from _packets import Packet
 from _sockets import Socket
 
+# UMPA handles with the local directory $HOME/.umpa
+# especially with the $HOME/,umpa/umpa_plugins
+# it's something similar to plugin system
+# and we can easily import local protocols/extensions
 local_path = os.path.join(os.path.expanduser('~'), '.umpa')
-
-# UMPA handles with local directory $HOME/.umpa
-# we need to check necessary hierarchy of dirs exists
-# if not, then create it
 
 # checking if local directory exists
 if not os.path.isdir(local_path):
@@ -54,7 +54,7 @@ if not os.path.isdir(local_path):
 
 # to allow things like: from umpa_plugins.extensions import something
 # we need to add the local_path to the PYTHONPATH
-sys.path.append(local_path)
+sys.path.insert(0,local_path)
 
 # delete unnecessary vars
 del local_path
