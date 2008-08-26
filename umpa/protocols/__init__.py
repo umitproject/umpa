@@ -46,6 +46,7 @@ def get_locals():
     Local protocols are the ones which are located in the user home directory.
     Usually it's $HOME/.umpa/umpa_plugins/protocols/.
 
+    @rtype: C{dict}
     @return: local protocols.
     """
 
@@ -58,10 +59,26 @@ def get_globals():
     Global protocols are the ones which are located
     in the umpa.protocols package.
 
+    @rtype: C{dict}
     @return: global protocols.
     """
 
     return _gproto
+
+def get_all():
+    """
+    Return all protocols.
+
+    Include globals and locals protocols.
+
+    @rtype: C{dict}
+    @return: all protocols.
+    """
+
+    all = get_locals()
+    all.update(get_globals())
+
+    return all
 
 # loading local protocols (from $HOME/.umpa/umpa_plugins/protocols)
 def _load_local_protocols():
