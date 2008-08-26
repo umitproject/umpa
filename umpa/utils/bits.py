@@ -25,31 +25,27 @@ Functions related with parsing bits of numbers.
 
 BYTE = 8
 
-def split_into_chunks(number, number_length, chunks_size=BYTE):
+def split_number_into_chunks(number, chunk_size=BYTE):
     """
     Split the big number into small chunks.
-
-    The number_length argument isn't odd as you may think in the first time.
-    We could calculte it but what if the number is 10 (4 bits) but the number
-    length should be 32 bits? That why, number_length is necessary.
     
     @type number: C{int}
-    @param number: the number which will be splitted.
+    @param number: the number for splitting.
 
-    @type number_length: C{int}
-    @param number_length: length of the number in bits
+    @type piece_size: C{int}
+    @param piece_size: size of the each chunk (default: 8 bits)
 
-    @type chunks_size: C{int}
-    @param chunks_size: size of the single chunk (default: 8 (1 byte) )
-
-    @rtype: C{int}
-    @return: splitted chunks.
+    @rtype: C{list}
+    @return: list of chunks.
     """
-    
-    mask = 2**chunks_size - 1
-    bytes = number_length / chunks_size
-    return [ (number & (mask << (chunks_size*i))) >> chunks_size*i
-                                    for i in reversed(xrange(bytes)) ]
+
+    chunks = []
+    mask = 2**chunk_size - 1
+    while number:
+        chunks.append(number & mask)
+        number >>= chunk_size
+    chunks.reverse()
+    return chunks
 
 def get_bits(number, bits, offset=0, rev_offset=False):
     """

@@ -23,27 +23,7 @@
 Functions related to network issues.
 """
 
-def _pieces_of_number(number, piece_size=8):
-    """
-    Return list of the number pieces.
-    
-    @type number: C{int}
-    @param number: the number for splitting.
-
-    @type piece_size: C{int}
-    @param piece_size: size of the each piece (default: 8 bits)
-
-    @rtype: C{list}
-    @return: the number pieces.
-    """
-
-    ret = []
-    mask = 2**piece_size - 1
-    while number:
-        ret.append(number & mask)
-        number >>= piece_size
-    ret.reverse()
-    return ret
+import umpa.utils.bits
 
 def in_cksum(data, cksum=0):
     """
@@ -64,7 +44,7 @@ def in_cksum(data, cksum=0):
     @return: calculated checksum.
     """
 
-    pieces = _pieces_of_number(data)
+    pieces = umpa.utils.bits.split_number_into_chunks(data)
     if len(pieces)%2 == 1:
         pieces.append(0)
 
