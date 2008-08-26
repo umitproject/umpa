@@ -441,6 +441,7 @@ class IPAddrField(AddrField):
             return False
 
         for i in pieces:
+            i = str(i)
             if int(i, self.base) > 2**self.piece_size or int(i, self.base) < 0:
                 return False
 
