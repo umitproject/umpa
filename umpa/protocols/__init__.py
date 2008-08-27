@@ -75,10 +75,10 @@ def get_all():
     @return: all protocols.
     """
 
-    all = get_locals()
-    all.update(get_globals())
+    both = get_locals()
+    both.update(get_globals())
 
-    return all
+    return both
 
 # loading local protocols (from $HOME/.umpa/umpa_plugins/protocols)
 def _load_local_protocols():

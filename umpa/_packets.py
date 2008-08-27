@@ -132,22 +132,22 @@ class Packet(object):
         @param protos: protocols which will be included into the packet.
         """
 
-        for p in protos:
+        for proto in protos:
             if len(self.protos) > 0:
                 last_proto = self.protos[-1]
                 # FIXME: should we allow only the distance no less and
                 # no more than 1 between layers?
-                if p.layer - last_proto.layer != 1: 
+                if proto.layer - last_proto.layer != 1: 
                     if self.strict:
                         raise UMPAStrictException("bad protocols ordering."
                             "first layer %d, second %d."
-                            % (last_proto.layer, p.layer))
+                            % (last_proto.layer, proto.layer))
                     else:
-                        _strict_warn(last_proto.layer, p.layer)
-                last_proto.__dict__['payload'] = p
-            self.protos.append(p)
+                        _strict_warn(last_proto.layer, proto.layer)
+                last_proto.__dict__['payload'] = proto
+            self.protos.append(proto)
 
-    def _get_raw(self):
+    def get_raw(self):
         """
         Return raw packet in the bit-mode (big-endian).
 
@@ -159,13 +159,11 @@ class Packet(object):
 
         self.raw = 0
         self.bits = 0
-        proto_id = 0
         for proto in reversed(self.protos):
             # unfortunately we must pass list of protocols to every protocol
             # because some fields handle with other protocols, so they need
             # an access to them
-            raw_proto, bit_proto = proto._get_raw(tuple(self.protos),
-                                                                    self.bits)
+            raw_proto, bit_proto = proto.get_raw(tuple(self.protos), self.bits)
             self.raw |= raw_proto << self.bits
             self.bits += bit_proto
         # split into chunks

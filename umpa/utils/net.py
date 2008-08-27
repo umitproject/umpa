@@ -49,8 +49,8 @@ def in_cksum(data, cksum=0):
         pieces.append(0)
 
     for i in xrange(0, len(pieces), 2):
-        x = ((pieces[i] << 8) & 0xff00) + (pieces[i+1] & 0xff)
-        cksum += x
+        xxx = ((pieces[i] << 8) & 0xff00) + (pieces[i+1] & 0xff)
+        cksum += xxx
 
     while cksum >> 16:
         cksum = (cksum & 0xffff) + (cksum >> 16)

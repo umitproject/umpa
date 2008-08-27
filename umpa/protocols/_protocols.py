@@ -121,14 +121,14 @@ class Protocol(object):
         return super(Protocol, self).__str__()
 
     @classmethod
-    def get_fields_keys(cname):
+    def get_fields_keys(cls):
         """
         Yield the ordered sequence of the fields' names.
 
         This is a generator for ordered names (keys) of header's fields.
         """
 
-        for field in cname._ordered_fields:
+        for field in cls._ordered_fields:
             yield field
 
     def get_fields(self):
@@ -251,8 +251,8 @@ class Protocol(object):
             raise UMPAAttributeException(field + ' not allowed')
 
         offset = 0
-        for i, f in enumerate(field_list):
-            if field == f:
+        for i, val in enumerate(field_list):
+            if field == val:
                 break
             offset += self.get_field(self._ordered_fields[i]).bits
         return offset
@@ -287,6 +287,27 @@ class Protocol(object):
         raise NotImplementedError("this is abstract class")
 
     def _raw(self, raw_value, bit, protocol_container, protocol_bits):
+        """
+        Call pre/post handling with other fields and merge results of fillout.
+
+        Call fillout() method for every fields from the protocol.
+        Handle with fields by pre/port methods.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
+        """
+
         # because of some protocols implementation, there are some tasks before
         # we call fillout() for fields
         raw_value, bit = self._pre_raw(raw_value, bit, protocol_container,
@@ -294,8 +315,8 @@ class Protocol(object):
 
         # so we make a big number with bits of every fields of the protocol
         for field in reversed(self._ordered_fields):
-            x = self.get_field(field).fillout()
-            raw_value |= x << bit
+            field_bits = self.get_field(field).fillout()
+            raw_value |= field_bits << bit
             bit += self.get_field(field).bits
 
         # because of some protocols implementation, there are some tasks after
@@ -335,7 +356,7 @@ class Protocol(object):
         
         raise NotImplementedError("this is abstract class")
 
-    def _get_raw(self, protocol_container, protocol_bits):
+    def get_raw(self, protocol_container, protocol_bits):
         """
         Return raw bits of the protocol.
 

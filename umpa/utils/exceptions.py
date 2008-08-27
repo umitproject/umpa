@@ -58,4 +58,5 @@ class UMPANotPermittedException(UMPAException):
     """
 
     def __str__(self):
-        return repr(self.msg) + "\n\tRecommended to use umpa.utils.security module to avoid the exception."
+        return repr(self.msg) + ("\n\tIt's recommended to use "
+                        "umpa.utils.security module to avoid the exception.")

@@ -89,10 +89,10 @@ def send(delay, *packets, **kwargs):
         # spawning processes or threading are totally bad for a library
         # but to write it with select() we need a bit more time, but
         # it worth to wait for it than using threads etc.
-        raise NotImlementedError("It will be implemented soon. Sorry!")
+        raise NotImplementedError("It will be implemented soon. Sorry!")
 
     # delay before start
-    _sleep(options['delay'])
+    _sleep(delay)
 
     for packet in packets:
         sent_bits.append(options['socket'].send(packet))

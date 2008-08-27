@@ -29,8 +29,6 @@ provided by this module).
 Use these fields' classes to create new implementation of any protocols.
 """
 
-import struct
-
 from umpa.utils.exceptions import UMPAException, UMPAAttributeException
 
 class Field(object):
@@ -332,8 +330,8 @@ class EnumField(IntField):
 
         value = super(EnumField, self).get()
         if human:
-            for k, v in self.enumerable.items():
-                if v == value:
+            for k, val in self.enumerable.items():
+                if val == value:
                     return k
         return value
 
@@ -376,6 +374,12 @@ class IPAddrField(AddrField):
      2. tuples as (127,0,0,1) or (0,0,0,0,0,0,0,1)
     """
 
+    separator = ""
+    base = 0
+    piece_size = 0
+    pieces_amount = 0
+    bits = 0
+
     def set(self, value):
         """
         Set the new value of the field.
@@ -411,9 +415,9 @@ class IPAddrField(AddrField):
         # add every piece of the address to the raw value
         # with bits-length of them keeping
         raw = 0
-        for b in pieces:
-            b = str(b)
-            raw += int(b, self.base)
+        for bit in pieces:
+            bit = str(bit)
+            raw += int(bit, self.base)
             raw <<= self.piece_size
         raw >>= self.piece_size
 
@@ -663,6 +667,7 @@ class Flags(Field):
         self._value = {}
         for flag in self._ordered_fields:
             self._value[flag] = BitField(flag)
+
     def fillout(self):
         """
         Fillout the field.
@@ -710,7 +715,7 @@ class Flags(Field):
             if self._is_valid(flag_name):
                 self._value[flag_name].set(value)
             else:
-                raise UMPAAttributeException(attr + ' not allowed')
+                raise UMPAAttributeException(value + ' not allowed')
 
 
 class BitField(Field):

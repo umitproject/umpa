@@ -375,8 +375,7 @@ class UDP(_protocols.Protocol):
             pheader = _layer4.PseudoHeader(self.protocol_id,
                                         self.get_field('_length').fillout())
             # generate raw value of it
-            pheader_raw = pheader._get_raw(protocol_container,
-                                                        protocol_bits)[0]
+            pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
             # added pseudo header bits to cksum value
             cksum |= pheader_raw << offset
 

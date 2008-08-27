@@ -28,10 +28,9 @@ socket.socket() directly from the standard library.
 But it's correctly to use socket module directly if needed.
 """
 
-import sys
 import socket
 
-from umpa.utils.exceptions import UMPANotPermittedException
+from umpa.utils.exceptions import UMPAException, UMPANotPermittedException
 
 class Socket(object):
     """
@@ -83,8 +82,8 @@ class Socket(object):
             if type(dst_addr) is tuple:
                 dst_addr = ".".join(str(y) for y in dst_addr)
 
-            sent_bits.append(self._sock.sendto(packet._get_raw(),
-                                                                (dst_addr,0)))
+            sent_bits.append(self._sock.sendto(packet.get_raw(),
+                                                                (dst_addr, 0)))
         return sent_bits
 
     def _get_address(self, packet):
@@ -96,7 +95,11 @@ class Socket(object):
 
         @return: destination address from 3rd layer of OSI model.
         """
-        for p in packet.protos:
-            if p.layer == 3:    # XXX: if we included more than one protocol
-                break           #      of layer 3 we got IP from the first one
-        return p.destination_address
+        for proto in packet.protos:
+            if proto.layer == 3:    # XXX: if we included more than one protocol
+                break               #   of layer 3 we got IP from the first one
+
+        if not proto:
+            raise UMPAException("There is not prototocol from 3rd layer.")
+
+        return proto.destination_address

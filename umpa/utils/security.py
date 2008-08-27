@@ -72,7 +72,6 @@ def super_priviliges(fun=None, *fargs, **kwargs):
     if os.name != 'posix':
         return
 
-    import pwd
     try:
         os.seteuid(0)
     except OSError:

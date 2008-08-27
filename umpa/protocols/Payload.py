@@ -29,6 +29,8 @@ from umpa.protocols._fields import Field
 from umpa.protocols._protocols import Protocol
 from umpa.protocols._consts import BYTE
 
+from umpa.utils.exceptions import UMPAAttributeException
+
 class _HData(Field):
     """
     Data as a strings.
@@ -56,7 +58,7 @@ class _HData(Field):
         Clear the current value of the field.
         """
 
-        super(Field, self).clear()
+        super(_HData, self).clear()
         self.bits = 0
 
     def _is_valid(self, val):
@@ -101,16 +103,16 @@ class Payload(Protocol):
     name = "Payload"
     _ordered_fields = ('data',)
 
-    def __init__(self, **kw):
+    def __init__(self, **kwargs):
         """
         Create a new Payload().
 
-        @param kw: pass to super-constructor.
+        @param kwargs: pass to super-constructor.
         """
 
         fields_list = [ _HData("Data"), ]
 
-        super(Payload, self).__init__(fields_list, **kw)
+        super(Payload, self).__init__(fields_list, **kwargs)
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
