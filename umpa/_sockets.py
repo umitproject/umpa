@@ -79,6 +79,10 @@ class Socket(object):
             # it will be implemented when Ethernet protocol will be implemented
             # so now we have to parse the packet for destination address
             dst_addr = self._get_address(packet)
+            # if dst_addr is a tuple, convert it to string, works only for IPv4
+            if type(dst_addr) is tuple:
+                dst_addr = ".".join(str(y) for y in dst_addr)
+
             sent_bits.append(self._sock.sendto(packet._get_raw(),
                                                                 (dst_addr,0)))
         return sent_bits

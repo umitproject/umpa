@@ -412,6 +412,7 @@ class IPAddrField(AddrField):
         # with bits-length of them keeping
         raw = 0
         for b in pieces:
+            b = str(b)
             raw += int(b, self.base)
             raw <<= self.piece_size
         raw >>= self.piece_size
