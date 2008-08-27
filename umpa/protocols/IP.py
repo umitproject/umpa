@@ -137,7 +137,7 @@ class _HFragmentOffset(_fields.IntField):
         # otherwise we can simple return 0 ;-)
         return 0
 
-class _HTTL(_fields.IntField):
+class _HTTL(_fields.EnumField):
     """
     This field indicates the maximum time the datagram is allowed to
     remain in the internet system.
@@ -147,6 +147,19 @@ class _HTTL(_fields.IntField):
     
     bits = 8
     auto = True
+    enumerable = {
+        "aix"       : _consts.TTL_AIX,
+        "dec"       : _consts.TTL_DEC,
+        "freebsd"   : _consts.TTL_FREEBSD,
+        "irix"      : _consts.TTL_IRIX,
+        "linux"     : _consts.TTL_LINUX,
+        "macos"     : _consts.TTL_MACOS,
+        "os2"       : _consts.TTL_OS2,
+        "solaris"   : _consts.TTL_SOLARIS,
+        "sunos"     : _consts.TTL_SUNOS,
+        "ultrix"    : _consts.TTL_ULTRIX,
+        "windows"   : _consts.TTL_WINDOWS,
+    }
     
     def _generate_value(self):
         """
@@ -155,28 +168,11 @@ class _HTTL(_fields.IntField):
         @return: auto-generated value of the field.
         """
 
-        # TODO: checking platform to get correct value of TTL
+        # TODO: checking platform to set correct value of TTL
         # unfortunately, there isn't any official document which described
         # list of returns from sys.platform
         # also, there is some changes in Python 2.6 about sys.platform
         return _consts.TTL_LINUX
-
-    def ttl(self, name):
-        """
-        Set TTL field to default value of the passed platform.
-
-        Set correct value of TTL for the following platforms:
-        AIX, DEC, FREEBSD, HPUX, IRIX, LINUX, MACOS, OS2, SOLARIS,
-        SUNOS, ULTRIX, WINDOWS.
-
-        @type name: C{str}
-        @param name: name of the platform (from the list above, TTL_ prefix
-                     also accepted.
-        """
-
-        if not name.startswith("TTL_"):
-            name = "TTL_" + name
-        self._value = getattr(const, name)
 
 class _HProtocol(_fields.SpecialIntField, _fields.EnumField):
     """
