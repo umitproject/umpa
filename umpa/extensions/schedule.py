@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 """
-Schedule feature for the sending packets.
+Schedule feature is for sending packets.
 
 2 features are provided:
  1. delay before start sending

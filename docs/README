@@ -24,7 +24,7 @@ UMPA - Umit's Manipulations of Packets Art
 Introduction
 ============
 
-  UMPA is a packet manipulations library.
+  UMPA is a packets manipulation library.
 
   UMPA is developed in the Python programming language.
 
@@ -35,8 +35,8 @@ Introduction
   editing header fields, auto-filling, interaction system (with libpcap
   capturing support) - it's not released yet, etc.
 
-  The goal of project is to get a powerful, easy to use for pro and newbies
-  and intelligent tool for packet manipulation.
+  The goal of the project is to get a powerful, easy to use and intelligent
+  tool for pro and newbies.
 
   Check docs/* for additional informations.
 
@@ -79,5 +79,6 @@ Authors
 Links
 =====
 
-  [0] UMPA wiki - http://trac.umitproject.org/wiki/UMPA
+  [0] UMPA website - http://www.umpa.umitproject.org
   [1] Python official website - http://www.python.org
+  [2] Umit Project - http://www.umitproject.org
