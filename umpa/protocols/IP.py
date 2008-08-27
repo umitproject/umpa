@@ -275,7 +275,7 @@ class IP(_protocols.Protocol):
         Create a new IP().
         """
 
-        tos = ('precedence0','precedence1', 'precedence2', 'delay',
+        tos = ('precedence0', 'precedence1', 'precedence2', 'delay',
                 'throughput', 'relibility', 'reserved0', 'reserved1')
         tos_predefined = dict.fromkeys(tos, 0)
 

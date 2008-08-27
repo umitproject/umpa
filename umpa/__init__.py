@@ -38,8 +38,8 @@ and official website U{http://umpa.umitproject.org}
 import os
 import sys
 
-from _packets import Packet
-from _sockets import Socket
+from umpa._packets import Packet
+from umpa._sockets import Socket
 
 # UMPA handles with the local directory $HOME/.umpa
 # especially with the $HOME/,umpa/umpa_plugins
@@ -49,12 +49,12 @@ local_path = os.path.join(os.path.expanduser('~'), '.umpa')
 
 # checking if local directory exists
 if not os.path.isdir(local_path):
-    os.makedirs(os.path.join(local_path,'umpa_plugins','protocols'))
-    os.mkdir(os.path.join(local_path,'umpa_plugins','extensions'))
+    os.makedirs(os.path.join(local_path, 'umpa_plugins', 'protocols'))
+    os.mkdir(os.path.join(local_path, 'umpa_plugins', 'extensions'))
 
 # to allow things like: from umpa_plugins.extensions import something
 # we need to add the local_path to the PYTHONPATH
-sys.path.insert(0,local_path)
+sys.path.insert(0, local_path)
 
 # delete unnecessary vars
 del local_path

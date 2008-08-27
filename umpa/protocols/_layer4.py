@@ -108,7 +108,7 @@ class PseudoHeader(Protocol):
         # grabbing informations from the IP's header
         it = iter(protocol_container)
         for proto in it:
-            if isinstance(proto,IP):
+            if isinstance(proto, IP):
                 self.source_address = proto.source_address
                 self.destination_address = proto.destination_address
                 break

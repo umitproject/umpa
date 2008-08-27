@@ -182,7 +182,7 @@ def _save_xml(self, filename):
     @param filename: name of the XML file.
     """
 
-    save(filename, [self,])
+    save(filename, [self, ])
 
 def _load_xml(self, filename):
     """

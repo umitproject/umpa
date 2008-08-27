@@ -332,7 +332,7 @@ class EnumField(IntField):
 
         value = super(EnumField, self).get()
         if human:
-            for k,v in self.enumerable.items():
+            for k, v in self.enumerable.items():
                 if v == value:
                     return k
         return value

@@ -70,7 +70,7 @@ def send(delay, *packets, **kwargs):
     """
 
     # parsing passed options
-    options= {  'detach'    : False,
+    options = {  'detach'    : False,
                 'interval'  : None,
                 'socket'    : umpa.Socket(),
                 }

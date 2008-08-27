@@ -27,8 +27,6 @@ Some methods have to be overridden. Read Protocol's docstrings for more
 information.
 """
 
-import struct
-
 from umpa.protocols._consts import BYTE
 from umpa.protocols._fields import Field, Flags
 from umpa.utils.exceptions import UMPAException, UMPAAttributeException
@@ -360,7 +358,7 @@ class Protocol(object):
                                                                 protocol_bits)
 
         # protocol should return byte-compatible length
-        if bit%BYTE != 0:
+        if bit % BYTE != 0:
             raise UMPAException('odd number of bits in ' + self.__name__)
 
         self.__dict__['__raw_value'] = raw_value
