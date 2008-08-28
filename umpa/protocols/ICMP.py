@@ -27,6 +27,8 @@ from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
 
+__all__ = [ "ICMP", ]
+
 class _HType(_fields.EnumField):
     bits = 8
     auto = False
@@ -371,4 +373,3 @@ class ICMP(_protocols.Protocol):
         return raw_value, bit
 
 protocols = [ ICMP, ]
-__all__ = [ "ICMP", ]

@@ -31,6 +31,8 @@ from umpa.protocols._consts import BYTE
 
 from umpa.utils.exceptions import UMPAAttributeException
 
+__all__ = [ "Payload", ]
+
 class _HData(Field):
     """
     Data as a strings.
@@ -161,4 +163,3 @@ class Payload(Protocol):
         return raw_value, bit
 
 protocols = [ Payload, ]
-__all__ = [ "Payload", ]

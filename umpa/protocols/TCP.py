@@ -30,6 +30,8 @@ from umpa.protocols import _layer4
 import umpa.utils.net as _net
 import umpa.utils.bits as _bits
 
+__all__ = [ "TCP", ]
+
 class _HPort(_fields.EnumField):
     """
     TCP uses the notion of port numbers to identify sending and receiving
@@ -610,4 +612,3 @@ class TCP(_protocols.Protocol):
         return raw_value, bit
 
 protocols = [ TCP, ]
-__all__ = [ "TCP", ]

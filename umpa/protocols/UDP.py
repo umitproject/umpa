@@ -30,6 +30,8 @@ from umpa.protocols import _layer4
 import umpa.utils.net as _net
 import umpa.utils.bits as _bits
 
+__all__ = [ "UDP", ]
+
 class _HPort(_fields.EnumField):
     """
     UDP uses ports to allow application-to-application communication.
@@ -386,4 +388,3 @@ class UDP(_protocols.Protocol):
         return raw_value, bit
 
 protocols = [ UDP, ]
-__all__ = [ "UDP", ]

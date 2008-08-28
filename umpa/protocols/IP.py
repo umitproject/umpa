@@ -29,6 +29,8 @@ from umpa.protocols import _protocols
 import umpa.utils.net as _net
 import umpa.utils.bits as _bits
 
+__all__ = [ "IP", ]
+
 class _HVersion(_fields.EnumField):
     """
     The Version field indicates the format of the internet header.
@@ -410,4 +412,3 @@ class IP(_protocols.Protocol):
         return raw_value, bit
 
 protocols = [ IP, ]
-__all__ = [ "IP", ]
