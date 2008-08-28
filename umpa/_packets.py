@@ -139,7 +139,7 @@ class Packet(object):
                 # no more than 1 between layers?
                 if proto.layer - last_proto.layer != 1: 
                     if self.strict:
-                        raise UMPAStrictException("bad protocols ordering."
+                        raise UMPAStrictException("bad protocols ordering. "
                             "first layer %d, second %d."
                             % (last_proto.layer, proto.layer))
                     else:
