@@ -32,8 +32,8 @@ def split_number_into_chunks(number, chunk_size=BYTE):
     @type number: C{int}
     @param number: the number for splitting.
 
-    @type piece_size: C{int}
-    @param piece_size: size of the each chunk (default: 8 bits)
+    @type chunk_size: C{int}
+    @param chunk_size: size of the each chunk (default: 8 bits)
 
     @rtype: C{list}
     @return: list of chunks.
