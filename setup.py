@@ -45,6 +45,7 @@ setup(  name            = "UMPA",
                         (os.path.join('share','doc','umpa','API'),
                             glob.glob(os.path.join('docs','API','*'))),
                         (os.path.join('share','doc','umpa'),
-                        ('README', 'COPYING', 'AUTHORS', 'TODO', 'CHANGES')),
+                            ('README', 'COPYING', 'AUTHORS', 'TODO', 'CHANGES',
+                            'INSTALL')),
                     ]
 )

@@ -1,0 +1,108 @@
+= UMPA Installation Guide =
+
+Contents:
+ I. INTRODUCTION
+  A. Audience
+  B. Dependencies
+ II. INSTALLATION
+  A. Installing from binaries Tarball or ZIP
+  B. Installing from binaries EXE (Windows only)
+  C. Building from sources Tarball or ZIP
+  D. Building from the SVN
+ III. UNINSTALL PROCESS
+  A. UNIX
+  B. Windows
+
+== I. INTRODUCTION ==
+
+=== A. Audience ===
+
+	This document is written for people who intend to build or install
+	UMPA. It's recommended to use binaries release of the latest release.
+
+=== B. Dependencies ===
+
+	UMPA is developed in Python programming language. Currently it is
+	the only dependence. In near future sniffing feature will be added
+	and new dependencies will come then.
+
+== II. INSTALLATION ==
+
+=== A. Installing from binaries Tarball or ZIP ===
+
+	The binaries are available under following address:
+
+	http://www.umitproject.org/umpa/download/
+
+	Download the suitable file and extract it. Copy dirs and files
+	where you want.
+
+=== B. Installing from binaries EXE (Windows only) ===
+
+	The EXE binaries are available under following address:
+
+	http://www.umitproject.org/umpa/download/
+
+	Download the suitable file and run it.
+
+=== C. Building from sources Tarball or ZIP ===
+
+	The sources are available under following address:
+
+	http://www.umitproject.org/umpa/download/
+
+	Download the suitable file and extract it. Change the current directory
+	to the extracted UMPA's directory and run the command:
+
+	{{{
+		./setup.py install
+	}}}
+
+	Perhaps, you should run it with root's priviliges.
+
+=== D. Building from the SVN ===
+
+	Check out the latest files by running the following command:
+
+	{{{
+		svn co http://svn.umitproject.org/svnroot/umit/branch/UMPA
+	}}}
+
+	Run the sh script by the following command:
+
+	{{{
+		sh UMPA/install_scripts/utils/create_packages.sh
+	}}}
+
+	Binaries and sources Tarball will be created in UMPA/dist directory.
+
+	If you preffer to use UMPA/setup.py directly, remember to generate
+	the API documentation before by the following command:
+
+	{{{
+		sh UMPA/install_scripts/utils/create_docs.sh
+	}}}
+
+== III. UNINSTALL PROCESS ==
+
+=== A. UNIX ===
+
+	There is a shell script suitable for this process.
+
+	It's located in:
+	 * install_scripts/uninstall_linux.sh -- for sources and SVN repository
+	 * $PREFIX/share/umpa/scripts/uninstall_linux.sh -- for already installed UMPA
+
+=== B. Windows ===
+
+	If you installed UMPA by the EXE installer, you can simple use removeUMPA.exe
+	application which is located in your Python base directory
+	(C:\Python2.5 for example).
+
+	If you didn't use the EXE installer, you have to remove umpa directories manually.
+	They are located on Python's installation path (C:\Python2.5\ for example).
+	{{{
+		$PYTHON_DIR\Lib\site-packages\umpa
+		$PYTHON_DIR\share\doc\umpa
+		$PYTHON_DIR\share\umpa
+	}}}
