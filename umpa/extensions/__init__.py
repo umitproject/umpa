@@ -60,3 +60,62 @@ def load_extension(name):
         msg = "Can't load the extension.\n" + repr(err) + "\n..ignoring."
         warnings.simplefilter('always', ImportWarning)
         warnings.warn(msg, ImportWarning)
+
+def get_locals():
+    """
+    Return local extensions.
+
+    Local extensions are the ones which are located in the user home directory.
+    Usually it's $HOME/.umpa/umpa_plugins/extensions/.
+
+    @rtype: C{list}
+    @return: local extensions.
+    """
+
+    return _lextensions
+
+def get_globals():
+    """
+    Return global extensions.
+
+    Global extensions are the ones which are located
+    in the umpa.extensions package.
+
+    @rtype: C{list}
+    @return: global extensions.
+    """
+
+    return _gextensions
+
+def get_all():
+    """
+    Return all available extensions.
+
+    Include global and local extensions.
+
+    @rtype: C{list}
+    @return: available extensions.
+    """
+
+    both = get_locals()[:]
+    both.extend(get_globals())
+
+    return both
+
+def _list_local_extensions():
+    """
+    Scan for local extensions.
+
+    Scan $HOME/.umpa/umpa_plugins/extensions directory.
+
+    @rtype: C{list}
+    @return: list of available extensions.
+    """
+
+    return [ ext[:-3] for ext
+            in os.listdir(os.path.join(os.path.expanduser('~'), '.umpa',
+                                            'umpa_plugins', 'extensions'))
+            if ext.endswith('.py') and not ext.startswith('_') ]
+    
+_gextensions = [ "XML", "schedule" ]
+_lextensions = _list_local_extensions()

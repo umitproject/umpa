@@ -67,15 +67,15 @@ def get_globals():
 
 def get_all():
     """
-    Return all protocols.
+    Return all available protocols.
 
-    Include globals and locals protocols.
+    Include global and local protocols.
 
     @rtype: C{dict}
     @return: all protocols.
     """
 
-    both = get_locals()
+    both = get_locals().copy()
     both.update(get_globals())
 
     return both
@@ -87,6 +87,7 @@ def _load_local_protocols():
 
     Load protocols from $HOME/.umpa/umpa_plugins/protocols directory.
 
+    @rtype: C{list}
     @return: list of protocols' classes.
     """
 
