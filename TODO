@@ -1,6 +1,5 @@
 == before next release ==
 - tests
-- sync wiki docs to the branch
 
 == after next release ==
 - ICMP implementation
