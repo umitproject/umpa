@@ -16,6 +16,12 @@ system tests - cover bigger parts of program with the full workflow and
 
 Tests are splitted into the following directories: unit, system.
 
+Running tests:
+--------------
+
+In main directory there is a executable file `run-tests.sh`.
+You can run tests by running py.test (the package is included in UMPA sources)
+directly with passing testsuite. E.g. $ py.test tests
 
 References:
 -----------
