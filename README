@@ -1,3 +1,4 @@
+==========================================
 UMPA - Umit's Manipulations of Packets Art
 ==========================================
 
@@ -22,7 +23,7 @@ UMPA - Umit's Manipulations of Packets Art
   Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 Introduction
-============
+------------
 
   UMPA is a packets manipulation library.
 
@@ -41,7 +42,7 @@ Introduction
   Check docs/* for additional informations.
 
 Documentation
-=============
+-------------
 
   On the Web:
 
@@ -56,12 +57,12 @@ Documentation
   See /usr/share/doc/umpa       if you have already installed the library
 
 Dependencies
-============
+------------
 
   * [1] Python programming language
 
 Acknowledgements
-================
+----------------
 
   I would like to thank for a several people, who help and support me with the
   library, sending patches, testing it and giving ideas:
@@ -72,12 +73,12 @@ Acknowledgements
    * Guilherme Henrique Polo Gonçalves
 
 Authors
-=======
+-------
 
   * Bartosz SKOWRON <getxsick at gmail dot com>
 
-Links
-=====
+References
+----------
 
   [0] UMPA website - http://www.umpa.umitproject.org
   [1] Python official website - http://www.python.org
