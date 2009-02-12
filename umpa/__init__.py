@@ -47,10 +47,12 @@ from umpa._sockets import Socket
 # and we can easily import local protocols/extensions
 local_path = os.path.join(os.path.expanduser('~'), '.umpa')
 
-# checking if local directory exists
-if not os.path.isdir(local_path):
-    os.makedirs(os.path.join(local_path, 'umpa_plugins', 'protocols'))
-    os.mkdir(os.path.join(local_path, 'umpa_plugins', 'extensions'))
+for dir in ('protocols', 'extensions'):
+    try:
+        os.makedirs(os.path.join(local_path, 'umpa_plugins', dir))
+    except OSError, err:
+        if err.errno != 17:     # skip if dir exists
+            raise
 
 # to allow things like: from umpa_plugins.extensions import something
 # we need to add the local_path to the PYTHONPATH

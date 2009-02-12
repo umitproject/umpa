@@ -31,6 +31,11 @@ class TestUMPAInitialization(object):
             return cls.tmp_dir
         cls.tmp_dir = tempfile.mkdtemp()
         os.path.expanduser = expanduser
+        # TODO: make a test for commented lines but clean .umpa and
+        # re-import umpa after creating dirs
+        #os.makedirs(os.path.join(cls.tmp_dir, '.umpa'))
+        #os.makedirs(os.path.join(cls.tmp_dir, '.umpa', 'umpa_plugins',
+        #                                                       'protocols'))
         import umpa
 
     def teardown_class(cls):
