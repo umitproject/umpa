@@ -19,18 +19,26 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import sys
 import os.path
+
 import umpa
 
 def test_paths():
+    def path_exist(path):
+        assert os.path.isdir(path)
+
     home = os.path.join(os.path.expanduser('~'), '.umpa')
     dirs = ('umpa_plugins',
             os.path.join('umpa_plugins', 'protocols'),
             os.path.join('umpa_plugins', 'extensions'),
         )
     path_list = [ os.path.join(home, p) for p in dirs ]
+
     for path in path_list:
         yield path_exist, path
 
-def path_exist(path):
-    assert os.path.isdir(path)
+def test_syspath():
+    home = os.path.join(os.path.expanduser('~'), '.umpa')
+    assert home in sys.path
+    assert sys.path.index(home) == 0
