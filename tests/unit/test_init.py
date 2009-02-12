@@ -20,25 +20,37 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import sys
+import shutil
+import tempfile
 import os.path
 
-import umpa
+class TestUMPAInitialization(object):
+    def setup_class(cls):
+        # overwrite expanduser to use our temporary directory
+        def expanduser(path):
+            return cls.tmp_dir
+        cls.tmp_dir = tempfile.mkdtemp()
+        os.path.expanduser = expanduser
+        import umpa
 
-def test_paths():
-    def path_exist(path):
-        assert os.path.isdir(path)
+    def teardown_class(cls):
+        shutil.rmtree(cls.tmp_dir)
 
-    home = os.path.join(os.path.expanduser('~'), '.umpa')
-    dirs = ('umpa_plugins',
-            os.path.join('umpa_plugins', 'protocols'),
-            os.path.join('umpa_plugins', 'extensions'),
-        )
-    path_list = [ os.path.join(home, p) for p in dirs ]
+    def test_paths(self):
+        def path_exist(path):
+            assert os.path.isdir(path)
 
-    for path in path_list:
-        yield path_exist, path
+        home = os.path.join(os.path.expanduser('~'), '.umpa')
+        dirs = ('umpa_plugins',
+                os.path.join('umpa_plugins', 'protocols'),
+                os.path.join('umpa_plugins', 'extensions'),
+            )
+        path_list = [ os.path.join(home, p) for p in dirs ]
 
-def test_syspath():
-    home = os.path.join(os.path.expanduser('~'), '.umpa')
-    assert home in sys.path
-    assert sys.path.index(home) == 0
+        for path in path_list:
+            yield path_exist, path
+
+    def test_syspath(self):
+        home = os.path.join(os.path.expanduser('~'), '.umpa')
+        assert home in sys.path
+        assert sys.path.index(home) == 0
