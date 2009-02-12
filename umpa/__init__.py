@@ -42,7 +42,7 @@ from umpa._packets import Packet
 from umpa._sockets import Socket
 
 # UMPA handles with the local directory $HOME/.umpa
-# especially with the $HOME/,umpa/umpa_plugins
+# especially with the $HOME/.umpa/umpa_plugins
 # it's something similar to plugin system
 # and we can easily import local protocols/extensions
 local_path = os.path.join(os.path.expanduser('~'), '.umpa')
