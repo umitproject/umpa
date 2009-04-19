@@ -12,16 +12,16 @@ The difference between unit and system testsuites is:
 unit tests - cover small pieces of code separately (e.g. functions or methods
              behaviour/functionality)
 system tests - cover bigger parts of program with the full workflow and
-               exptected results of functionality
+               expected results of functionality
 
 Tests are splitted into the following directories: unit, system.
 
 Running tests:
 --------------
 
-In main directory there is a executable file `run-tests.sh`.
-You can run tests by running py.test (the package is included in UMPA sources)
-directly with passing testsuite. E.g. $ py.test tests
+In main directory there is an executable file `run-tests.sh`.
+Also, you can run tests by running py.test (the package is included
+in UMPA repository) directly by passing testsuite. E.g. $ py.test tests
 
 References:
 -----------
