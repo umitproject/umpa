@@ -64,3 +64,15 @@ class TestUMPAPackets(object):
         py.test.skip('how py.test handles with warnings?')
         p = Packet(strict=False)
         py.test.raises(StrictWarning, "p.include(TCP(), IP())")
+
+    def test_protos_order(self):
+        order = (IP, UDP, Payload)
+
+        p = Packet(*[x() for x in order])
+        for i in xrange(len(order)):
+            assert isinstance(p.protos[i], order[i])
+
+        p = Packet(IP())
+        p.include(UDP(), Payload())
+        for i in xrange(len(order)):
+            assert isinstance(p.protos[i], order[i])
