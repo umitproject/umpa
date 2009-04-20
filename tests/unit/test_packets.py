@@ -20,7 +20,8 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 from umpa import Packet
-from umpa.utils.exceptions import UMPAException
+from umpa.protocols import IP, TCP, UDP, Payload
+from umpa.utils.exceptions import UMPAException, UMPAStrictException
 
 import py.test
 
@@ -38,3 +39,22 @@ class TestUMPAPacketsBasic(object):
     def test_broken_options(self):
         py.test.raises(UMPAException, Packet, foo=False)
         py.test.raises(UMPAException, Packet, strict=True, foo=False, bar=True)
+
+class TestUMPAPackets(object):
+    def test_add_new_protocols__strict(self):
+        py.test.raises(UMPAStrictException, Packet, TCP(), IP())
+        py.test.raises(UMPAStrictException, Packet, TCP(), IP(), strict=True)
+        py.test.raises(UMPAStrictException, Packet, TCP(), Payload(), IP())
+        py.test.raises(UMPAStrictException, Packet, TCP(),  IP(), Payload())
+        py.test.raises(UMPAStrictException, Packet, Payload(), TCP())
+        py.test.raises(UMPAStrictException, Packet, Payload(), TCP())
+        py.test.raises(UMPAStrictException, Packet, UDP(), TCP())
+
+        p = Packet(TCP())
+        py.test.raises(UMPAStrictException, p.include, IP())
+        py.test.raises(UMPAStrictException, p.include, UDP())
+
+        p = Packet(strict=False)
+        p.strict = True 
+        py.test.raises(UMPAStrictException, p.include, UDP(), TCP())
+
