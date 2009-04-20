@@ -22,6 +22,7 @@
 from umpa import Packet
 from umpa.protocols import IP, TCP, UDP, Payload
 from umpa.utils.exceptions import UMPAException, UMPAStrictException
+from umpa._packets import StrictWarning
 
 import py.test
 
@@ -58,3 +59,8 @@ class TestUMPAPackets(object):
         p.strict = True 
         py.test.raises(UMPAStrictException, p.include, UDP(), TCP())
 
+    def test_add_new_protocols__warn(self):
+        # TODO: how py.test handles with warnings?
+        py.test.skip('how py.test handles with warnings?')
+        p = Packet(strict=False)
+        py.test.raises(StrictWarning, "p.include(TCP(), IP())")
