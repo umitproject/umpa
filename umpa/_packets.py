@@ -135,7 +135,7 @@ class Packet(object):
         for proto in protos:
             if len(self.protos) > 0:
                 last_proto = self.protos[-1]
-                # FIXME: should we allow only the distance no less and
+                # XXX: should we allow only the distance no less and
                 # no more than 1 between layers?
                 if proto.layer - last_proto.layer != 1: 
                     if self.strict:
