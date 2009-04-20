@@ -55,8 +55,8 @@ def _strict_warn(layer_a, layer_b):
     @param layer_b: layer for second protocol.
     """
 
-    msg = "bad protocols ordering. first layer %d, second %d." % (layer_a,
-                                                                    layer_b)
+    msg = "bad protocols ordering. first layer %d, then %d." % (layer_a,
+                                                                layer_b)
     warnings.warn(msg, StrictWarning, stacklevel=3)
 
 class Packet(object):
