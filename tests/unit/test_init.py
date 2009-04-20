@@ -45,6 +45,8 @@ class TestUMPAInitialization(object):
         def path_exist(path):
             assert os.path.isdir(path)
 
+        assert
+        print os.path.expanduser
         home = os.path.join(os.path.expanduser('~'), '.umpa')
         dirs = ('umpa_plugins',
                 os.path.join('umpa_plugins', 'protocols'),
