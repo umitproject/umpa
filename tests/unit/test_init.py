@@ -19,10 +19,10 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import os
 import sys
 import shutil
 import tempfile
-import os.path
 
 class TestUMPAInitialization(object):
     def setup_class(cls):
@@ -31,12 +31,9 @@ class TestUMPAInitialization(object):
             return cls.tmp_dir
         cls.tmp_dir = tempfile.mkdtemp()
         os.path.expanduser = expanduser
-        # TODO: make a test for commented lines but clean .umpa and
-        # re-import umpa after creating dirs
-        #os.makedirs(os.path.join(cls.tmp_dir, '.umpa'))
-        #os.makedirs(os.path.join(cls.tmp_dir, '.umpa', 'umpa_plugins',
-        #                                                       'protocols'))
         import umpa
+        # dirty hack to get possibility of reload module later
+        globals()[umpa.__name__] = umpa
 
     def teardown_class(cls):
         shutil.rmtree(cls.tmp_dir)
@@ -59,3 +56,10 @@ class TestUMPAInitialization(object):
         home = os.path.join(os.path.expanduser('~'), '.umpa')
         assert home in sys.path
         assert sys.path.index(home) == 0
+
+    def test_reconstruct_broken_directory(self):
+        home = os.path.join(os.path.expanduser('~'), '.umpa')
+        for dir in os.listdir(home):
+            shutil.rmtree(os.path.join(home,dir))
+        reload(umpa)
+        self.test_paths()
