@@ -53,7 +53,7 @@ class _HData(Field):
             # calculate how many bits we need
             self.bits = len(self._value) * BYTE
         else:
-            raise UMPAAttributeException(value + ' not allowed')
+            raise UMPAAttributeException(value + ' is not allowed')
 
     def clear(self):
         """

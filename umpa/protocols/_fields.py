@@ -110,7 +110,7 @@ class Field(object):
         if self._is_valid(value):
             self._value = value
         else:
-            raise UMPAAttributeException(str(value) + ' not allowed')
+            raise UMPAAttributeException(str(value) + ' is not allowed')
 
     def clear(self):
         """
@@ -715,7 +715,7 @@ class Flags(Field):
             if self._is_valid(flag_name):
                 self._value[flag_name].set(value)
             else:
-                raise UMPAAttributeException(value + ' not allowed')
+                raise UMPAAttributeException(value + ' is not allowed')
 
 
 class BitField(Field):

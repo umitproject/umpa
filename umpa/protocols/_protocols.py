@@ -86,7 +86,7 @@ class Protocol(object):
         if self._is_valid(attr):
             return self.get_field(attr).get()
         else:
-            raise UMPAAttributeException(attr + ' not allowed')
+            raise UMPAAttributeException(attr + ' is not allowed')
 
     def __setattr__(self, attr, value):
         """
@@ -101,7 +101,7 @@ class Protocol(object):
         if self._is_valid(attr):
             self.get_field(attr).set(value)
         else:
-            raise UMPAAttributeException(attr + ' not allowed')
+            raise UMPAAttributeException(attr + ' is not allowed')
 
     def __str__(self):
         """
@@ -155,7 +155,7 @@ class Protocol(object):
         if self._is_valid(keyname):
             return self._fields[keyname]
         else:
-            raise UMPAAttributeException(keyname + ' not allowed')
+            raise UMPAAttributeException(keyname + ' is not allowed')
 
     def set_fields(self, *args, **kwargs):
         """
@@ -248,7 +248,7 @@ class Protocol(object):
             raise UMPAException(type(field) + ' unsupported')
     
         if field not in field_list:
-            raise UMPAAttributeException(field + ' not allowed')
+            raise UMPAAttributeException(field + ' is not allowed')
 
         offset = 0
         for i, val in enumerate(field_list):
