@@ -250,7 +250,7 @@ class TestExtensionXML(object):
     tcp2.set_flags('control_bits', syn=False)
     data2 = Payload()
     data2.data = "another umpa packet!"
-    example_packet2 = umpa.Packet(tcp2, data2)
+    example_packet2 = umpa.Packet(tcp2, data2, strict=True)
 
     def test_packet_attrs(self):
         assert hasattr(umpa.Packet, 'save_xml')
