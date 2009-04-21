@@ -286,7 +286,7 @@ class IP(_protocols.Protocol):
 
         # TODO:
         #   - support for fragmentation
-        #       defaulty we don't you fragmentation but we should support it
+        #       defaulty we don't use fragmentation but we should support it
         #       if user choose this option
         #   - checking platform for TTL value
         #       to be more reliable we should generate default value depends on
