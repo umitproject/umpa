@@ -174,7 +174,7 @@ def load(filename, proto_only=False):
                                                                     bit_name)
             packet.include(protocol)
 
-        # we load lonly first packet in the file and return list of protocols..
+        # we only load first packet in the file and return list of protocols..
         if proto_only:
             return packet.protos
     packets.append(packet)
