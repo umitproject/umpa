@@ -128,7 +128,6 @@ def load(filename, proto_only=False):
 
     # useful if you have type in string and need to cast it
     typemap = dict(float=float, int=int, str=str, bool=bool)
-
     packets = []
     for pa in doc.getElementsByTagName("packet"):
         is_true = (pa.getAttribute("strict") != "False")
@@ -177,7 +176,7 @@ def load(filename, proto_only=False):
         # we only load first packet in the file and return list of protocols..
         if proto_only:
             return packet.protos
-    packets.append(packet)
+        packets.append(packet)
     return packets
 
 def _save_xml(self, filename):
