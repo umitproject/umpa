@@ -257,17 +257,24 @@ class TestExtensionXML(object):
         assert hasattr(umpa.Packet, 'load_xml')
 
     def test_xml_load(self):
-        f = StringIO()
-        f.write(self.example_xml)
-        f.seek(0)
+        def load(text):
+            f = StringIO()
+            f.write(text)
+            f.seek(0)
 
-        packets = XML.load(f)
-
-        for p in packets:
-            for i, proto in enumerate(p.protos):
-                for fieldname in proto.get_fields_keys():
-                    assert proto.get_field(fieldname).fillout() == \
+            packets = XML.load(f)
+            for p in packets:
+                for i, proto in enumerate(p.protos):
+                    for fieldname in proto.get_fields_keys():
+                        assert proto.get_field(fieldname).fillout() == \
                 self.example_packet.protos[i].get_field(fieldname).fillout()
+
+        packets = (self.example_xml, self.example_xml2)
+        tmp = ""
+        for p in packets:
+            tmp += p
+            yield load, tmp
+            tmp = tmp[:-8] # </UMPA>\n
 
     def test_xml_save(self):
         output = StringIO()
