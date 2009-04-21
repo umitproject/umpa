@@ -276,6 +276,15 @@ class TestExtensionXML(object):
             yield load, tmp
             tmp = tmp[:-8] # </UMPA>\n
 
+    def test_xml_load_proto_only(self):
+        f = StringIO()
+        f.write(self.example_xml)
+        f.seek(0)
+
+        protos = XML.load(f, proto_only=True)
+        for i, p in enumerate((IP, TCP, Payload)):
+            assert isinstance(protos[i], p)
+
     def test_xml_save(self):
         output = StringIO()
         XML.save(output, (self.example_packet,))
