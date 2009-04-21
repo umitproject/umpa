@@ -107,7 +107,7 @@ def load(filename, proto_only=False):
         >>> import umpa
         >>> import umpa.extensions.XML
         >>> packet = umpa.Packet()
-        >>> packet.load_xml('packets.xml', proto_only=True)
+        >>> packet.load_xml('packets.xml') # proto_only by default in this case
     
     In this case, don't create new objects of Packet. Return list of protocols
     intead.
