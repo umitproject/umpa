@@ -164,6 +164,68 @@ class TestExtensionXML(object):
         </packet>
 </UMPA>
 """
+    example_xml2 = """        <packet id="1" strict="True">
+                <protocol class="umpa.protocols.TCP.TCP">
+                        <source_port type="int">
+                                123
+                        </source_port>
+                        <destination_port type="int">
+                                321
+                        </destination_port>
+                        <_sequence_number type="NoneType">
+                                None
+                        </_sequence_number>
+                        <_acknowledgment_number type="NoneType">
+                                None
+                        </_acknowledgment_number>
+                        <_data_offset type="NoneType">
+                                None
+                        </_data_offset>
+                        <_reserved type="int">
+                                0
+                        </_reserved>
+                        <control_bits type="bits">
+                                <psh type="bool">
+                                        False
+                                </psh>
+                                <urg type="bool">
+                                        False
+                                </urg>
+                                <ack type="bool">
+                                        False
+                                </ack>
+                                <syn type="bool">
+                                        False
+                                </syn>
+                                <rst type="bool">
+                                        False
+                                </rst>
+                                <fin type="bool">
+                                        False
+                                </fin>
+                        </control_bits>
+                        <_window type="NoneType">
+                                None
+                        </_window>
+                        <_checksum type="NoneType">
+                                None
+                        </_checksum>
+                        <_urgent_pointer type="NoneType">
+                                None
+                        </_urgent_pointer>
+                        <options type="bits"/>
+                        <_padding type="int">
+                                0
+                        </_padding>
+                </protocol>
+                <protocol class="umpa.protocols.Payload.Payload">
+                        <data type="str">
+                                another umpa packet!
+                        </data>
+                </protocol>
+        </packet>
+</UMPA>
+"""
 
     ip = IP()
     ip.source_address = "127.0.0.1"
@@ -181,6 +243,14 @@ class TestExtensionXML(object):
 
     # packet
     example_packet = umpa.Packet(ip, tcp, data)
+    
+    tcp2 = TCP()
+    tcp2.source_port = 123
+    tcp2.destination_port = 321
+    tcp2.set_flags('control_bits', syn=False)
+    data2 = Payload()
+    data2.data = "another umpa packet!"
+    example_packet2 = umpa.Packet(tcp2, data2)
 
     def test_packet_attrs(self):
         assert hasattr(umpa.Packet, 'save_xml')
@@ -204,4 +274,13 @@ class TestExtensionXML(object):
         XML.save(output, (self.example_packet,))
         a = output.getvalue()
         b = self.example_xml.replace('        ','\t')
+        assert a == b
+
+    def test_xml_save_multiple(self):
+        output = StringIO()
+        XML.save(output, (self.example_packet,self.example_packet2))
+        a = output.getvalue()
+        b = self.example_xml[:-8] # </UMPA>\n
+        b += self.example_xml2
+        b = b.replace('        ','\t')
         assert a == b
