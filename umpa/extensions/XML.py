@@ -161,16 +161,17 @@ def load(filename, proto_only=False):
                         protocol.get_field(field_name).set(value)
                     # Flags
                     else:
-                        for bits in node.childNodes:
-                            if bits.nodeType == node.ELEMENT_NODE:
-                                bit_value = bits.localName
+                        for bit in node.childNodes:
+                            if bit.nodeType == node.ELEMENT_NODE:
+                                bit_name = bit.localName
+                                bit_value = bit.childNodes[0].nodeValue.strip()
                                 is_true = (bit_value == "True")
                                 if is_true:
                                     protocol.get_field(field_name).set(
-                                                                    bit_value)
+                                                                    bit_name)
                                 else:
                                     protocol.get_field(field_name).unset(
-                                                                    bit_value)
+                                                                    bit_name)
             packet.include(protocol)
 
         # we load lonly first packet in the file and return list of protocols..
