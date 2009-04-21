@@ -28,7 +28,7 @@ from umpa.extensions import XML
 
 class TestExtensionXML(object):
     example_xml = """<?xml version="1.0" ?>
-    <UMPA>
+<UMPA>
         <packet id="0" strict="True">
                 <protocol class="umpa.protocols.IP.IP">
                         <_version type="int">
@@ -162,7 +162,8 @@ class TestExtensionXML(object):
                         </data>
                 </protocol>
         </packet>
-</UMPA>"""
+</UMPA>
+"""
 
     ip = IP()
     ip.source_address = "127.0.0.1"
@@ -197,3 +198,10 @@ class TestExtensionXML(object):
                 for fieldname in proto.get_fields_keys():
                     assert proto.get_field(fieldname).fillout() == \
                 self.example_packet.protos[i].get_field(fieldname).fillout()
+
+    def test_xml_save(self):
+        output = StringIO()
+        XML.save(output, (self.example_packet,))
+        a = output.getvalue()
+        b = self.example_xml.replace('        ','\t')
+        assert a == b
