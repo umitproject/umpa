@@ -24,12 +24,16 @@ import sys
 import shutil
 import tempfile
 
+old_expanduser = os.path.expanduser
+
 class TestUMPAInitialization(object):
     def setup_class(cls):
         # overwrite expanduser to use our temporary directory
+        # NOTE: this test has to be run as a first because of this!
         def expanduser(path):
             return cls.tmp_dir
         cls.tmp_dir = tempfile.mkdtemp()
+        #cls.old_expanduser = os.path.expanduser
         os.path.expanduser = expanduser
         import umpa
         # dirty hack to get possibility of reload module later
@@ -37,6 +41,7 @@ class TestUMPAInitialization(object):
 
     def teardown_class(cls):
         shutil.rmtree(cls.tmp_dir)
+        os.path.expanduser = old_expanduser
 
     def test_paths(self):
         def path_exist(path):
