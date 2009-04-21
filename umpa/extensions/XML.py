@@ -88,7 +88,12 @@ def save(filename, packets):
                         str(proto.get_field(field).get())))
                     f.setAttribute("type", parse_str.match(
                         str(type(proto.get_field(field).get()))).group(1))
-    open(filename, "w").write(doc.toprettyxml())
+
+    # check if filename is not already opened
+    try:
+        filename.write(doc.toprettyxml())
+    except AttributeError:
+        open(filename, "w").write(doc.toprettyxml())
 
 def load(filename, proto_only=False):
     """
