@@ -76,3 +76,42 @@ class TestUMPAPackets(object):
         p.include(UDP(), Payload())
         for i in xrange(len(order)):
             assert isinstance(p.protos[i], order[i])
+
+class TestUMPAPacketsOutput(object):
+    def setup_class(cls):
+        py.test.skip("these tests need more improvemtns. "
+                    "propably something is broken also.")
+
+    def test_get_raw__ip(self):
+        p = Packet()
+        p.include(IP(source_address="127.0.0.1",
+                    destination_address="127.0.0.1",
+                    _identification=1000,
+                    _header_checksum=0x7900))
+
+        assert ("\x45\x00\x00\x14\x55\x8b\x00\x00"
+                "\x40\x00\x27\x5d\x7f\x00\x00\x01"
+                "\x7f\x00\x00\x01") == p.get_raw()
+
+    def test_get_raw__tcp(self):
+        p = Packet()
+        p.include(TCP(source_port=0, destination_port=80))
+
+        assert ("\x7f\x00\x00\x01\x00\x00\x00\x50"
+                "\x00\x00\x00\x00\x00\x00\x00\x01"
+                "\x50\x00\x02\x00\xaf\x91\x00\x00") == p.get_raw()
+
+    def test_get_raw(self):
+        p = Packet()
+        p.include(IP(source_address="127.0.0.1",
+                    destination_address="127.0.0.1"))
+        p.include(TCP(source_port=0, destination_port=80))
+
+        assert ("\x45\x00\x00\x28\x00\x00\x00\x00"
+                "\x40\x06\xc0\x49\x7f\x00\x00\x01"
+                "\x7f\x00\x00\x01\x00\x00\x00\x50"
+                "\x00\x00\x00\x00\x00\x00\x00\x01"
+                "\x50\x00\x02\x00\xaf\x91\x00\x00") == p.get_raw()
+
+        p.include(Payload("test"))
+
