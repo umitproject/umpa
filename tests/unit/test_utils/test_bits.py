@@ -35,3 +35,11 @@ class TestUtilBitsGet(object):
     def test_get_bits_errors(self):
         py.test.raises(ValueError, get_bits, 0, 1)
         py.test.raises(ValueError, get_bits, 10, 100)
+
+class TestUtilBitsChunks(object):
+    def test_chunks(self):
+        assert split_number_into_chunks(0xFFFF) == [0xFF, 0xFF]
+        assert split_number_into_chunks(0xFFFF, 16) == [0xFFFF]
+        assert split_number_into_chunks(0xFFFFF) == [0xF, 0xFF, 0xFF]
+        assert split_number_into_chunks(0xFFFFF,4) == [0xF, 0xF, 0xF, 0xF, 0xF]
+        assert split_number_into_chunks(0xFFFFF, 5) == [0x1F, 0x1F, 0x1F, 0x1F]
