@@ -3,6 +3,7 @@ UMPA Version History
 Version 0.1.1:
   * create testsuite (26 tests)
   * #308 - new API for schedule.send()
+  * new func argument for utils.security.drop_priviliges(euid=None)
   * bug fixing: #306, #307
 
 Version 0.1:

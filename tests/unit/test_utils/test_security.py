@@ -42,6 +42,10 @@ class TestUtilSecurity(object):
         drop_priviliges()
         assert os.geteuid() == pwd.getpwnam('nobody')[2]
 
+    def test_drop_argument(self):
+        drop_priviliges(1)
+        assert os.geteuid() == 1
+
     def test_super_euid(self):
         euid = os.geteuid()
         super_priviliges(foo)

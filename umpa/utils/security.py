@@ -26,7 +26,7 @@ Functions related with security issues.
 import os
 import sys
 
-def drop_priviliges():
+def drop_priviliges(euid=None):
     """
     Change EUID of the current process to nobody.
 
@@ -38,16 +38,20 @@ def drop_priviliges():
     
     It works only under UNIX. For other operation systems,
     this function doesn't do anything.
+
+    @type euid: C{int}
+    @param fun: UID number candidate (default: nobody)
     """
 
     # checking if it's UNIX-family OS
     if os.name != 'posix':
         return
 
-    import pwd
-    nobody_id = pwd.getpwnam('nobody')[2]
+    if euid is None:
+        import pwd
+        euid = pwd.getpwnam('nobody')[2]
     try:
-        os.seteuid(nobody_id)
+        os.seteuid(euid)
     except OSError:
         print >> sys.stderr, "Run the program with root-priviliges.\n"
         raise
@@ -72,6 +76,7 @@ def super_priviliges(fun=None, *fargs, **kwargs):
     if os.name != 'posix':
         return
 
+    old_euid = os.geteuid()
     try:
         os.seteuid(0)
     except OSError:
@@ -79,5 +84,5 @@ def super_priviliges(fun=None, *fargs, **kwargs):
         raise
     if fun:
         result = fun(*fargs, **kwargs)
-        drop_priviliges()
+        drop_priviliges(old_euid)
         return result
