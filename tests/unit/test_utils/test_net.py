@@ -19,5 +19,17 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+from umpa.utils.net import *
+
 class TestUtilNet(object):
-    pass
+    def test_in_cksum(self):
+        def check(data, cksum):
+            assert in_cksum(data) == cksum
+            assert in_cksum(data+cksum) == 0
+            assert in_cksum(data, cksum) == 0
+
+        for i, j in (
+                    (0x0100F203F4F5F6F70000, 0x210E),
+                    (0xe34f2396442799f3, 0x1aff),
+                    ):
+            yield check, i, j
