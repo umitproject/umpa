@@ -64,7 +64,7 @@ class Field(object):
         """
 
         self.name = name
-        if auto != None:
+        if auto is not None:
             self.auto = auto
         else:
             self.auto = self.__class__.auto
