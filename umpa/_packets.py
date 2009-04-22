@@ -169,7 +169,8 @@ class Packet(object):
         # split into chunks
         # we make it because we need string for socket object
         # so after that we pack it by struct module.pack()
-        byte_chunks = umpa.utils.bits.split_number_into_chunks(self.raw)
+        byte_chunks = umpa.utils.bits.split_number_into_chunks(
+                                        self.raw, chunk_amount=self.bits/BYTE)
         return struct.pack('!' + 'B'*(self.bits/BYTE), *byte_chunks)
 
     def _getwarn(self):

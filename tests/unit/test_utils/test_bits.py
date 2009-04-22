@@ -43,3 +43,9 @@ class TestUtilBitsChunks(object):
         assert split_number_into_chunks(0xFFFFF) == [0xF, 0xFF, 0xFF]
         assert split_number_into_chunks(0xFFFFF,4) == [0xF, 0xF, 0xF, 0xF, 0xF]
         assert split_number_into_chunks(0xFFFFF, 5) == [0x1F, 0x1F, 0x1F, 0x1F]
+
+    def test_amount(self):
+        assert split_number_into_chunks(0xFFFF,chunk_amount=3) == [0,0xFF,0xFF]
+        assert split_number_into_chunks(0xFFFF, 16, 2) == [0, 0xFFFF]
+
+        py.test.raises(UMPAException, split_number_into_chunks, 0xF, 1, 1)

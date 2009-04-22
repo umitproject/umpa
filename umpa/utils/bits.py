@@ -23,9 +23,11 @@
 Functions related with parsing bits of numbers.
 """
 
+from umpa.utils.exceptions import UMPAException
+
 BYTE = 8
 
-def split_number_into_chunks(number, chunk_size=BYTE):
+def split_number_into_chunks(number, chunk_size=BYTE, chunk_amount=None):
     """
     Split the big number into small chunks.
     
@@ -44,6 +46,14 @@ def split_number_into_chunks(number, chunk_size=BYTE):
     while number:
         chunks.append(number & mask)
         number >>= chunk_size
+
+    if chunk_amount is not None:
+        extend_zero = chunk_amount - len(chunks)
+        if extend_zero < 0:
+            raise UMPAException("Wrong amount of requested chunks. Requested "
+                                "%d, minimum %d." % (chunk_amount,len(chunks)))
+        chunks.extend([0]*extend_zero)
+
     chunks.reverse()
     return chunks
 
