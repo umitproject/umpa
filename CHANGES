@@ -1,5 +1,9 @@
 UMPA Version History
 ====================
+Version 0.1.1:
+  * create testsuite (26 tests)
+  * #308 - new API for schedule.send()
+  * bug fixing: #306, #307
 
 Version 0.1:
-  * first release (not released yet)
+  * first release (2009/02/14)
