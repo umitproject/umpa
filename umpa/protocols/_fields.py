@@ -69,7 +69,7 @@ class Field(object):
         else:
             self.auto = self.__class__.auto
 
-        if bits:
+        if bits is not None:
             self.bits = bits
         self._value = value
 
@@ -830,4 +830,3 @@ class BitField(Field):
             return 1
         else:
             return 0
-
