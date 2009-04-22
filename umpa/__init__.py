@@ -45,14 +45,17 @@ from umpa._sockets import Socket
 # especially with the $HOME/.umpa/umpa_plugins
 # it's something similar to plugin system
 # and we can easily import local protocols/extensions
+def _newpackage(path):
+    if not os.path.isdir(path):
+        os.makedirs(path)
+    if not os.path.isfile(os.path.join(path, '__init__.py')):
+        open(os.path.join(path, '__init__.py'), 'w').close()
+
 local_path = os.path.join(os.path.expanduser('~'), '.umpa')
 
+_newpackage(os.path.join(local_path, 'umpa_plugins'))
 for dir in ('protocols', 'extensions'):
-    try:
-        os.makedirs(os.path.join(local_path, 'umpa_plugins', dir))
-    except OSError, err:
-        if err.errno != 17:     # skip if dir exists
-            raise
+    _newpackage(os.path.join(local_path, 'umpa_plugins', dir))
 
 # to allow things like: from umpa_plugins.extensions import something
 # we need to add the local_path to the PYTHONPATH
@@ -60,3 +63,4 @@ sys.path.insert(0, local_path)
 
 # delete unnecessary vars
 del local_path
+del _newpackage
