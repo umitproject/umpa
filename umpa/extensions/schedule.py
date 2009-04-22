@@ -48,7 +48,7 @@ def _sleep(delay):
 
     time.sleep(delay)
 
-def send(delay, *packets, **kwargs):
+def send(delay, packets=None, *args, **kwargs):
     """
     Send packets with the delay,
 
@@ -57,6 +57,9 @@ def send(delay, *packets, **kwargs):
 
     @type packets: C{Packet}
     @param packets: list of packets for sending.
+
+    @type args: C{Packet}
+    @param args: additional list of packets for sending.
 
     @param kwargs: extra options, currently available are:
       - detach - send packets in the background (B{type}: C{bool})
@@ -70,7 +73,7 @@ def send(delay, *packets, **kwargs):
     """
 
     # parsing passed options
-    options = {  'detach'    : False,
+    options = { 'detach'    : False,
                 'interval'  : None,
                 'socket'    : umpa.Socket(),
                 }
@@ -90,6 +93,15 @@ def send(delay, *packets, **kwargs):
         # but to write it with select() we need a bit more time, but
         # it worth to wait for it than using threads etc.
         raise NotImplementedError("It will be implemented soon. Sorry!")
+
+    # merge packets
+    if packets is None:
+        packets = []
+    try:
+        packets = list(packets)
+    except TypeError:
+        packets = [packets]
+    packets.extend(args)
 
     # delay before start
     _sleep(delay)

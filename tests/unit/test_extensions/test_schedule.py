@@ -39,6 +39,15 @@ class TestExtensionScheduleRoot(object):
         if os.name == 'posix' and os.geteuid()!=0:
             py.test.skip('root-priviliges are needed')
 
+    def test_extra_args(self):
+        schedule.send(0, umpa.Packet(IP()))
+        schedule.send(0, (umpa.Packet(IP()), umpa.Packet(IP())))
+        schedule.send(0, [umpa.Packet(IP()), umpa.Packet(IP())])
+        schedule.send(0, (umpa.Packet(IP()), umpa.Packet(IP())),
+                                                            umpa.Packet(IP()))
+        schedule.send(0, (umpa.Packet(IP()), umpa.Packet(IP())),
+                                        umpa.Packet(IP()), umpa.Packet(IP()))
+
     def test_detach(self):
         try:
             schedule.send(0, [], detach=True)
