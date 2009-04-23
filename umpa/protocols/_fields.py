@@ -451,7 +451,7 @@ class IPAddrField(AddrField):
                 i_base = int(i, self.base)
             except ValueError:
                 return False
-            if i_base > 2**self.piece_size or i_base < 0:
+            if i_base >= 2**self.piece_size or i_base < 0:
                 return False
 
         return True
