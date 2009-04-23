@@ -478,6 +478,10 @@ class IPv6AddrField(IPAddrField):
     Handle with 2 types of data:
      1. strings as "0:0:0:0:0:0:0:1"
      2. tuples as (0,0,0,0,0,0,0,1)
+
+    @note: This field is really limited and you can't use address
+    like 2001:db8::1428:57ab. All groups have to be pass.
+    This issue should be fixed soon.
     """
 
     separator = ":"
@@ -720,7 +724,6 @@ class Flags(Field):
                 self._value[flag_name].set(value)
             else:
                 raise UMPAAttributeException(value + ' is not allowed')
-
 
 class BitField(Field):
     """
