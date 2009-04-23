@@ -277,3 +277,16 @@ class TestIPv6AddrField(TestIPAddrField):
         check((0,0,0,0,0,0,0,0))
         check((0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF))
         check((0x2001,0x0db8,0x85a3,0,0,0x8a2e,0x0370,0x7334))
+        f.set([0,0,0,0,0,0,0,0])
+        assert f.get() == (0,0,0,0,0,0,0,0)
+        f.set([0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF])
+        assert f.get() == (0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,0xFFFF,
+                                                                        0xFFFF)
+        f.set([0x2001,0x0db8,0x85a3,0,0,0x8a2e,0x0370,0x7334])
+        assert f.get() == (0x2001,0x0db8,0x85a3,0,0,0x8a2e,0x0370,0x7334)
+
+        py.test.raises(UMPAAttributeException, f.set, "127.0.0.1")
+        py.test.raises(UMPAAttributeException, f.set, "FFFF.FFFF.FFFF.FFFF")
+        py.test.raises(UMPAAttributeException, f.set,
+                                    "FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF")
+        py.test.raises(UMPAAttributeException, f.set, "G:G:G:G:G:G:G:G")
