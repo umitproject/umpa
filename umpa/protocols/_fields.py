@@ -191,7 +191,7 @@ class Field(object):
 
         # we have to clear self._value if it was not defined
         # because of later usage
-        if not self._value and self._value != 0:
+        if self._value is None:
             self._value = self._generate_value()
             raw = self._raw_value()
             self.clear()
@@ -310,7 +310,7 @@ class SpecialIntField(IntField):
 
 class EnumField(IntField):
     """
-    This is a specific version of IntField and handles with enumarable fields.
+    This is a specific version of IntField and handles with enumerable fields.
 
     E.g. SMTP port is 25. To set/get value of port from TCP protocol,
     use "STMP" instead of "25". Read documentation for get() and set() methods
@@ -389,7 +389,7 @@ class IPAddrField(AddrField):
         """
 
         # convert list to tuple
-        if type(value) is list:
+        if isinstance(value, list):
             value = tuple(value)
 
         super(IPAddrField, self).set(value)
@@ -435,9 +435,9 @@ class IPAddrField(AddrField):
         @return: result of the validation.
         """
 
-        if type(value) is str:
+        if isinstance(value, str):
             pieces = value.split(self.separator)
-        elif type(value) is tuple:
+        elif isinstance(value, tuple):
             pieces = value
         else:
             return False
@@ -447,7 +447,11 @@ class IPAddrField(AddrField):
 
         for i in pieces:
             i = str(i)
-            if int(i, self.base) > 2**self.piece_size or int(i, self.base) < 0:
+            try:
+                i_base = int(i, self.base)
+            except ValueError:
+                return False
+            if i_base > 2**self.piece_size or i_base < 0:
                 return False
 
         return True
