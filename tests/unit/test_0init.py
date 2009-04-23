@@ -42,6 +42,7 @@ class TestUMPAInitialization(object):
     def teardown_class(cls):
         shutil.rmtree(cls.tmp_dir)
         os.path.expanduser = old_expanduser
+        reload(umpa)
 
     def test_paths(self):
         def path_exist(path):
