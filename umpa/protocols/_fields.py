@@ -526,7 +526,7 @@ class PaddingField(SpecialIntField):
         @return: call _raw_value() method for conversion.
         """
 
-        if self.get() == 0:
+        if not self.get():
             self.bits = self._generate_value()
         else:
             self.bits = self.get()
