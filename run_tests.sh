@@ -12,10 +12,11 @@ if [ $? -eq 1 ]; then
 	exit 1
 fi
 
-m=""
 if [ $# -gt 0 ]  && [ $1 == "-m" ]; then
 	m=$1
 	shift
+else
+	m=""
 fi
 
 echo "#### TESTS FOR UMPA [ START ] ####"
