@@ -537,7 +537,7 @@ class PaddingField(SpecialIntField):
         @return: result of the validation.
         """
 
-        if isinstance(value, int):
+        if isinstance(value, int) and 0 <= value <= self._word:
             return True
         return False
 
