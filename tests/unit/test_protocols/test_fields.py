@@ -290,3 +290,90 @@ class TestIPv6AddrField(TestIPAddrField):
         py.test.raises(UMPAAttributeException, f.set,
                                     "FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF")
         py.test.raises(UMPAAttributeException, f.set, "G:G:G:G:G:G:G:G")
+
+class TestPaddingField(TestSpecialIntField):
+    cls_field = PaddingField
+
+    def test_init(self):
+        f = self.cls_field('foobar')
+        assert f.auto is True
+        assert f.get() == 0
+
+        f = self.cls_field('foobar', 8)
+        assert f.auto is True
+        assert f.get() == 0
+
+    def test_get(self):
+        f = self.cls_field('foobar')
+        assert f.get() == 0
+
+        f = self.cls_field('foobar', 8)
+        assert f.get() == 0
+
+    def test_set(self):
+        f = self.cls_field('foobar', 10)
+        assert f.get() == 0
+
+        f.set(5)
+        assert f.get() == 5
+
+        f.set(0)
+        assert f.get() == 0
+
+        f._word = 9
+        f.set(9)
+        assert f.get() == 9
+        py.test.raises(UMPAAttributeException, f.set, 10)
+        py.test.raises(UMPAAttributeException, f.set, -1)
+
+    def test_raw_value(self):
+        f = self.cls_field('foobar')
+        assert f._raw_value() == 0
+
+    def test_generate_value(self):
+        f = self.cls_field('foobar')
+
+        f._tmp_value = 0
+        assert f._generate_value() == 0
+        f._tmp_value = 1
+        assert f._generate_value() == 31
+        f._tmp_value = 10
+        assert f._generate_value() == 22
+        f._tmp_value = 31
+        assert f._generate_value() == 1
+        f._tmp_value = 32
+        assert f._generate_value() == 0
+        f._tmp_value = 33
+        assert f._generate_value() == 31
+
+        f = self.cls_field('foobar', 16) # word == 16
+
+        f._tmp_value = 0
+        assert f._generate_value() == 0
+        f._tmp_value = 1
+        assert f._generate_value() == 15
+        f._tmp_value = 10
+        assert f._generate_value() == 6
+        f._tmp_value = 15
+        assert f._generate_value() == 1
+        f._tmp_value = 32
+        assert f._generate_value() == 0
+        f._tmp_value = 33
+        assert f._generate_value() == 15
+
+    def test_fillout(self):
+        f = self.cls_field('foobar')
+        assert f.bits == 0
+        assert f.fillout() == 0
+        assert f.bits == 0
+
+        f._tmp_value = 3
+        assert f.fillout() == 0
+        assert f.bits == 29
+
+        f._word = 16
+        f._tmp_value = 3
+        f.bits = 0
+        assert f.fillout() == 0
+        assert f.bits == 13
+
