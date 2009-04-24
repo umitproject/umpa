@@ -526,10 +526,10 @@ class PaddingField(SpecialIntField):
         @return: call _raw_value() method for conversion.
         """
 
-        if not self._value:
+        if self.get() == 0:
             self.bits = self._generate_value()
         else:
-            self.bits = self._value
+            self.bits = self.get()
         return self._raw_value()
     
     def _is_valid(self, value):
