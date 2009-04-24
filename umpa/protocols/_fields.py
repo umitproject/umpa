@@ -504,8 +504,13 @@ class PaddingField(SpecialIntField):
     def __init__(self, name, word=32, *args, **kwargs):
         """
         Create a new PaddingField().
+
+        @type word: C{int}
+        @param word: length of field which need padding (default: 32)
         
         Call the super constructor and initiate extra attributes.
+
+        Please note that padding is always done by using zeros (0).
         """
 
         self._word = word
