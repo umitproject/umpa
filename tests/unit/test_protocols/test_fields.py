@@ -377,3 +377,84 @@ class TestPaddingField(TestSpecialIntField):
         assert f.fillout() == 0
         assert f.bits == 13
 
+class TestFlags(TestField):
+    cls_field = Flags
+
+    def test_init(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits)
+        f._ordered_fields == bits
+        for b in bits:
+            f._value.has_key(b)
+        assert f.bits == len(bits)
+
+        f = self.cls_field('foobar', bits, b=False, c=True)
+        assert f.get('a') == [False]
+        assert f.get('b') == [False]
+        assert f.get('c') == [True]
+
+    def test_get(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits, b=False, c=True)
+        assert f.get(*bits) == [False, False, True]
+        assert f.get() == [False, False, True]
+
+    def test_set(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits)
+        assert f.get() == [False, False, False]
+        f.set('b')
+        assert f.get('b') == [True]
+        f.set('a', 'c')
+        assert f.get('a', 'b') == [True, True]
+        
+    def test_unset(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits, a=True, b=True, c=True)
+        assert f.get() == [True, True, True]
+        f.unset('b')
+        assert f.get('b') == [False]
+        f.unset('a', 'c')
+        assert f.get('a', 'b') == [False, False]
+
+    def test_clear(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits, a=True, b=False, c=True)
+        assert f.get() == [True, False, True]
+        f.clear()
+        assert f.get() == [False, False, False]
+
+    def test_is_valid(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits)
+        
+        assert f._is_valid('xxx') is False
+        py.test.raises(UMPAAttributeException, f.set, 'xxx')
+
+    def test_doc(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits)
+        f.set_doc('xxx')
+        assert f.__doc__ == 'xxx'
+
+    def test_fillout(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits)
+        
+        f.fillout() == 0
+
+    def test_raw_value(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits, a=True, b=True, c=True)
+        py.test.raises(NotImplementedError, f._raw_value)
+
+    def test_set_bit(self):
+        bits = ['a', 'b', 'c']
+        f = self.cls_field('foobar', bits)
+
+        f._set_bit('a', True)
+        assert f.get('a') == [True]
+        f._set_bit('a', False)
+        assert f.get('a') == [False]
+
+        py.test.raises(UMPAAttributeException, f._set_bit, 'xxx', True)
