@@ -604,7 +604,7 @@ class Flags(Field):
 
         # if **preset exists then we update values
         for name in preset:
-            if preset[name] == True:
+            if preset[name] is True:
                 self.set(name)
             else:
                 self.unset(name)
@@ -635,6 +635,8 @@ class Flags(Field):
 
         @type names: C{str}
         @param names: names of bit-flags.
+
+        @return: list of passed bits values.
         """
 
         # we check if name of the field in the flag is correct
@@ -643,7 +645,7 @@ class Flags(Field):
 
         # if no results above we return whole list of values
         if len(result) < 1:
-            result = self._value
+            result = [ self._value[bit].get() for bit in self._ordered_fields ]
         return result
 
 
@@ -728,7 +730,7 @@ class Flags(Field):
             if self._is_valid(flag_name):
                 self._value[flag_name].set(value)
             else:
-                raise UMPAAttributeException(value + ' is not allowed')
+                raise UMPAAttributeException(flag_name + ' is not allowed')
 
 class BitField(Field):
     """
