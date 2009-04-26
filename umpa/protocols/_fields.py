@@ -658,7 +658,6 @@ class Flags(Field):
         """
 
         self._set_bit(names, True)
-        self._modified = True
 
     def unset(self, *names):
         """
