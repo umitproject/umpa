@@ -582,9 +582,6 @@ class Flags(Field):
         List names need to be in correct order. List contains string names
         of the bit-flags.
 
-        For preset, check if keys are in names list because there is
-        not additional check if key is valid.
-
         @type name: C{str}
         @param name: name of the field.
         
@@ -592,14 +589,14 @@ class Flags(Field):
         @param names: list of bit-flags (C{str} type) B{in correct order}.
 
         @type preset: C{bool}
-        @param preset: predefined values of bit-flags.
+        @param preset: predefined values of bit-flags (defailt: I{0})
         """
         super(Flags, self).__init__(name, bits=len(names))
 
         self._ordered_fields = names
 
         # initialize of self._value...
-        # well we can call clear() to not duplicate the code
+        # call clear() to not duplicate the code
         self.clear()
 
         # if **preset exists then we update values
@@ -639,11 +636,11 @@ class Flags(Field):
         @return: list of passed bits values.
         """
 
-        # we check if name of the field in the flag is correct
+        # check if name of the field in the flag is correct
         result = [ self._value[val].get() for val in names
                                                     if self._is_valid(val) ]
 
-        # if no results above we return whole list of values
+        # if no results above return whole list of values
         if len(result) < 1:
             result = [ self._value[bit].get() for bit in self._ordered_fields ]
         return result
@@ -680,7 +677,7 @@ class Flags(Field):
         # because we need a list instead of simple var here
         self._value = {}
         for flag in self._ordered_fields:
-            self._value[flag] = BitField(flag)
+            self._value[flag] = BitField(flag, False)
 
     def fillout(self):
         """
@@ -740,28 +737,7 @@ class BitField(Field):
     """
 
     bits = 1
-    def __init__(self, name, value=None, auto=None):
-        """
-        Create a new BitField().
-
-        @type name: C{str}
-        @param name: name of the field.
-
-        @type value: Optional
-        @param value: predefined value of the field.
-
-        @type auto: Optional C{bool}
-        @param auto: information for users if the field can be auto-filling
-        """
-
-        super(BitField, self).__init__(name, value, BitField.bits, auto)
-        
-        # we store value as a _default_view, it's necessary by generic
-        # fillout, so for most of cases we don't need to make subclasses with
-        # distinct fillout() method
-        self._default_value = value
-        if self._default_value:
-            self.auto = True
+    auto = False
 
     def __str__(self):
         """
@@ -770,7 +746,7 @@ class BitField(Field):
         @return: the part of the whole tree which accords to the field.
         """
 
-        return "| |  -{ %-23s }\t\t%d" % (self.name, int(self._value))
+        return "| |  -{ %-23s }\t\t%d" % (self.name, int(bool(self._value)))
 
     def get(self):
         """
@@ -779,6 +755,8 @@ class BitField(Field):
         @return: the current value of the field.
         """
 
+        if self._value is None:
+            return self._value
         return bool(self._value)
 
     def fillout(self):
@@ -813,22 +791,6 @@ class BitField(Field):
         # always True because it's bool type
         return True
 
-    def _generate_value(self):
-        """
-        Generate value of bit.
-        
-        By default, check if self._default_value is defined,
-        if so return this value.
-        
-        For more complex action, create subclass and override this method.
-        """
-
-        if self._default_value:
-            return bool(self._default_value)
-        else:
-            raise UMPAException("value is not defined or _generate_value() "
-                                                "method is not implemented.")
-
     def _raw_value(self):
         """
         Convert the value to the raw mode.
@@ -839,7 +801,4 @@ class BitField(Field):
         @return: raw value of the field.
         """
 
-        if self._value:
-            return 1
-        else:
-            return 0
+        return int(bool(self.get()))

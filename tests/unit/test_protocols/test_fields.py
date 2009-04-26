@@ -393,6 +393,9 @@ class TestFlags(TestField):
         assert f.get('b') == [False]
         assert f.get('c') == [True]
 
+        py.test.raises(UMPAAttributeException, self.cls_field, 'foobar', bits,
+                                                            b=True, xxx=True)
+
     def test_get(self):
         bits = ['a', 'b', 'c']
         f = self.cls_field('foobar', bits, b=False, c=True)
@@ -441,7 +444,11 @@ class TestFlags(TestField):
         bits = ['a', 'b', 'c']
         f = self.cls_field('foobar', bits)
         
-        f.fillout() == 0
+        assert f.fillout() == 0
+        f.set('a')
+        assert f.fillout() == 4
+        f.set('b', 'c')
+        assert f.fillout() == 7
 
     def test_raw_value(self):
         bits = ['a', 'b', 'c']
@@ -458,3 +465,64 @@ class TestFlags(TestField):
         assert f.get('a') == [False]
 
         py.test.raises(UMPAAttributeException, f._set_bit, 'xxx', True)
+
+class TestBitField(TestField):
+    cls_field = BitField
+    
+    def test_init(self):
+        f = self.cls_field('foobar')
+        assert f._value is None
+        assert f.auto is False
+
+        f = self.cls_field('foobar', False)
+        assert f._value is False
+
+        f = self.cls_field('foobar', True)
+        assert f._value is True
+
+    def test_set(self):
+        f = self.cls_field('foobar')
+        assert f.get() is None
+        
+        f.set(False)
+        assert f.get() is False
+
+        f.set('aaa')
+        assert f.get() is True
+        
+        f.set(None)
+        assert f.get() is None
+
+    def test_get(self):
+        f = self.cls_field('foobar', 10)
+        assert f.get() is True
+        
+        f = self.cls_field('foobar')
+        assert f.get() is None
+
+    def test_fillout(self):
+        f = self.cls_field('foobar')
+
+        py.test.raises(UMPAException, f.fillout)
+
+        f.set(True)
+        assert f.fillout() == 1
+
+        f.set(False)
+        assert f.fillout() == 0
+
+    def test_raw_value(self):
+        f = self.cls_field('foobar', 5)
+        assert f._raw_value() == 1
+
+        f.set(0)
+        assert f._raw_value() == 0
+        f.set(False)
+        assert f._raw_value() == 0
+
+    def test_is_valid(self):
+        f = self.cls_field('foobar')
+        assert f._is_valid(True) is True
+        assert f._is_valid(False) is True
+        assert f._is_valid(None) is True
+        assert f._is_valid('xxx') is True

@@ -38,30 +38,30 @@ class TestExtensionXML(object):
                                 None
                         </_ihl>
                         <type_of_service type="bits">
-                                <relibility type="bool">
+                                <precedence0 type="bool">
                                         False
-                                </relibility>
-                                <reserved0 type="bool">
+                                </precedence0>
+                                <precedence1 type="bool">
                                         False
-                                </reserved0>
+                                </precedence1>
+                                <precedence2 type="bool">
+                                        False
+                                </precedence2>
                                 <delay type="bool">
                                         False
                                 </delay>
                                 <throughput type="bool">
                                         False
                                 </throughput>
+                                <relibility type="bool">
+                                        False
+                                </relibility>
+                                <reserved0 type="bool">
+                                        False
+                                </reserved0>
                                 <reserved1 type="bool">
                                         False
                                 </reserved1>
-                                <precedence2 type="bool">
-                                        False
-                                </precedence2>
-                                <precedence1 type="bool">
-                                        False
-                                </precedence1>
-                                <precedence0 type="bool">
-                                        False
-                                </precedence0>
                         </type_of_service>
                         <_total_length type="NoneType">
                                 None
@@ -70,15 +70,15 @@ class TestExtensionXML(object):
                                 0
                         </_identification>
                         <flags type="bits">
+                                <reserved type="bool">
+                                        False
+                                </reserved>
                                 <df type="bool">
                                         False
                                 </df>
                                 <mf type="bool">
                                         False
                                 </mf>
-                                <reserved type="bool">
-                                        False
-                                </reserved>
                         </flags>
                         <_fragment_offset type="int">
                                 0
@@ -123,21 +123,21 @@ class TestExtensionXML(object):
                                 0
                         </_reserved>
                         <control_bits type="bits">
-                                <psh type="bool">
-                                        False
-                                </psh>
                                 <urg type="bool">
                                         False
                                 </urg>
                                 <ack type="bool">
                                         False
                                 </ack>
-                                <syn type="bool">
-                                        True
-                                </syn>
+                                <psh type="bool">
+                                        False
+                                </psh>
                                 <rst type="bool">
                                         False
                                 </rst>
+                                <syn type="bool">
+                                        True
+                                </syn>
                                 <fin type="bool">
                                         False
                                 </fin>
@@ -185,21 +185,21 @@ class TestExtensionXML(object):
                                 0
                         </_reserved>
                         <control_bits type="bits">
-                                <psh type="bool">
-                                        False
-                                </psh>
                                 <urg type="bool">
                                         False
                                 </urg>
                                 <ack type="bool">
                                         False
                                 </ack>
-                                <syn type="bool">
+                                <psh type="bool">
                                         False
-                                </syn>
+                                </psh>
                                 <rst type="bool">
                                         False
                                 </rst>
+                                <syn type="bool">
+                                        False
+                                </syn>
                                 <fin type="bool">
                                         False
                                 </fin>

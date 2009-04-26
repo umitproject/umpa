@@ -76,10 +76,10 @@ def save(filename, packets):
                 # if Flags...we need care about BitFlags objects
                 if isinstance(proto.get_field(field), Flags):
                     f.setAttribute("type", "bits")
-                    for flag in proto.get_field(field).get():
+                    for flag in proto.get_field(field)._ordered_fields:
                         b = doc.createElement(flag)
                         f.appendChild(b)
-                        value = proto.get_field(field)._value[flag].get()
+                        value = proto.get_field(field).get(flag)[0]
                         b.appendChild(doc.createTextNode(str(value)))
                         b.setAttribute("type",
                             parse_str.match(str(type(value))).group(1))
