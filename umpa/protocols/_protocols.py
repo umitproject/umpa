@@ -176,7 +176,6 @@ class Protocol(object):
         for key in kwargs:
             if self._is_valid(key):
                 setattr(self, key, kwargs[key])
-            self.fields[key].set(kwargs[key])
 
     def set_flags(self, name, *args, **kwargs):
         """
