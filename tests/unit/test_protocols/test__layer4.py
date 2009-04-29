@@ -20,9 +20,12 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import py.test
-from tests.unit.test_protocols.test__fields import TestIntField
-from umpa.protocols._layer4 import Layer4ChecksumField
+
+from umpa.protocols import IP, TCP
+from umpa.protocols._layer4 import *
+from umpa.protocols._fields import *
 from umpa.utils.exceptions import UMPAException
+from tests.unit.test_protocols.test__fields import TestIntField
 
 class TestLayer4ChecksumField(TestIntField):
     cls_field = Layer4ChecksumField
@@ -36,3 +39,23 @@ class TestLayer4ChecksumField(TestIntField):
         assert f.fillout() == 0
         f = self.cls_field('foobar', 10)
         assert f.fillout() == 10
+
+class TestPseudoHeader(object):
+    def test_pre_raw(self):
+        p = PseudoHeader(0, 40)
+        p._pre_raw(0, 0, [], 0)
+        assert p.source_address == "127.0.0.1"
+        assert p.destination_address == "127.0.0.1"
+
+        p._pre_raw(0, 0, [IP(source_address="1.2.3.4")], 0)
+        assert p.source_address == "1.2.3.4"
+        assert p.destination_address == "127.0.0.1"
+
+        p._pre_raw(0, 0, [IP(source_address="1.2.3.4",
+                    destination_address="4.3.2.1"), TCP(source_port=123)], 0)
+        assert p.source_address == "1.2.3.4"
+        assert p.destination_address == "4.3.2.1"
+
+        p._pre_raw(0, 0, [TCP(source_port=123)], 0)
+        assert p.source_address == "127.0.0.1"
+        assert p.destination_address == "127.0.0.1"
