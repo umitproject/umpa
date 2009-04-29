@@ -86,6 +86,13 @@ class Field(object):
         else:
             return "| +-[ %-25s ]\t\t%s" % (self.name, str(self._value))
 
+    def __repr__(self):
+        """
+        Print name of the Field
+        """
+
+        return self.name
+
     def get(self):
         """
         Return the current value of the field.
