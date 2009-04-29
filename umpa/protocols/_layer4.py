@@ -101,8 +101,7 @@ class PseudoHeader(Protocol):
         @return: C{raw_value, bit}
         """
 
-        # we assign first localhost becuase if there is not IP instance
-        # than better 0 than nothing (for nonstrict users)
+        # assign localhost first becuase if there is none IP instance
         self.source_address = "127.0.0.1"
         self.destination_address = "127.0.0.1"
         # grabbing informations from the IP's header
