@@ -27,19 +27,20 @@ from umpa.protocols._fields import IntField, Flags
 from umpa.utils.exceptions import UMPAException, UMPAAttributeException
 
 class TestProtocol(object):
+    cls_proto = Protocol
     def test_init(self):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        p = Protocol(fake_fields)
+        p = self.cls_proto(fake_fields)
         assert p._fields == {}
 
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
         for i, k in enumerate(fake_ordered):
             assert p._fields[k] == fake_fields[i]
 
-        p = Protocol(fake_fields,a=100)
+        p = self.cls_proto(fake_fields,a=100)
         assert p.a == 100
         assert p.b == 1
         assert p.c == 1
@@ -47,8 +48,8 @@ class TestProtocol(object):
     def test_getattr(self):
         fake_fields = [IntField('foobar', 1, 8)]
         fake_ordered = ('a')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
         
         assert p.a == 1
         py.test.raises(UMPAAttributeException, "p.d")
@@ -56,8 +57,8 @@ class TestProtocol(object):
     def test_setattr(self):
         fake_fields = [IntField('foobar', 1, 8)]
         fake_ordered = ('a')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
 
         p.a = 10
         assert p.a == 10
@@ -69,8 +70,8 @@ class TestProtocol(object):
     def test_is_valid(self):
         fake_fields = [IntField('foobar', 1, 8)]
         fake_ordered = ('a')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
         
         assert p._is_valid('a')
         assert not p._is_valid('b')
@@ -81,8 +82,8 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
 
         for i, f in enumerate(p.get_fields_keys()):
             assert f == fake_ordered[i]
@@ -93,8 +94,8 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
 
         for i, f in enumerate(p.get_fields()):
             assert f == fake_fields[i]
@@ -105,8 +106,8 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
 
         for i, f in enumerate(fake_ordered):
             assert p.get_field(f) == fake_fields[i]
@@ -115,8 +116,8 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
         
         p.set_fields('a', 4, 'b',0)
         assert p.a == 4
@@ -138,8 +139,8 @@ class TestProtocol(object):
         bits = ['x', 'y', 'z']
         fake_fields = [IntField('foobar', 1, 8), Flags('flags', bits, y=True)]
         fake_ordered = ('a', 'b')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
         
         assert p.get_flags('b', 'x', 'y') == [False, True]
         assert p.get_flags('b') == [False, True, False]
@@ -152,8 +153,8 @@ class TestProtocol(object):
         bits = ['x', 'y', 'z']
         fake_fields = [IntField('foobar', 1, 8), Flags('flags', bits, y=True)]
         fake_ordered = ('a', 'b')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
         
         p.set_flags('b', 'x', True, 'y', False)
         assert p.get_flags('b') == [True, False, False]
@@ -168,8 +169,8 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
 
         assert p.get_offset('a') == 0
         assert p.get_offset('b') == 8
@@ -190,8 +191,8 @@ class TestProtocol(object):
         assert p.get_offset(fake_fields[2]) == 16
 
         py.test.raises(UMPAException, p.get_offset, 10)
-        py.test.raises(UMPAException, p.get_offset, Protocol)
-        py.test.raises(UMPAException, "p.get_offset(Protocol('x'))")
+        py.test.raises(UMPAException, p.get_offset, self.cls_proto)
+        py.test.raises(UMPAException, "p.get_offset(self.cls_proto('x'))")
         py.test.raises(UMPAException, p.get_offset, False)
 
         py.test.raises(UMPAAttributeException, p.get_offset, 'd')
@@ -201,8 +202,8 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
 
         py.test.raises(NotImplementedError, p._pre_raw, 1, 2, 3, 4)
 
@@ -210,8 +211,8 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
 
         py.test.raises(NotImplementedError, p._post_raw, 1, 2, 3, 4)
 
@@ -219,19 +220,19 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
-        p = Protocol(fake_fields)
+        self.cls_proto._ordered_fields = fake_ordered
+        p = self.cls_proto(fake_fields)
 
         py.test.raises(NotImplementedError, p._pre_raw, 1, 2, 3, 4)
 
-        old_pre = Protocol._pre_raw
-        old_post = Protocol._post_raw
+        old_pre = self.cls_proto._pre_raw
+        old_post = self.cls_proto._post_raw
         def fake_fun(*args):
             return args[1], args[2]
-        Protocol._pre_raw = fake_fun
-        Protocol._post_raw = fake_fun
+        self.cls_proto._pre_raw = fake_fun
+        self.cls_proto._post_raw = fake_fun
 
-        p = Protocol(fake_fields)
+        p = self.cls_proto(fake_fields)
 
         # we can pass None for protocol_container and protocol_bits
         # because they are not being used here (see umpa.Packet)
@@ -242,23 +243,23 @@ class TestProtocol(object):
         p.a = 16
         assert p._raw(0, 0, None, None) == (0x100101, 24)
 
-        Protocol._pre_raw = old_pre
-        Protocol._post_raw = old_post
+        self.cls_proto._pre_raw = old_pre
+        self.cls_proto._post_raw = old_post
 
     def test_get_raw(self):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
-        Protocol._ordered_fields = fake_ordered
+        self.cls_proto._ordered_fields = fake_ordered
 
-        old_pre = Protocol._pre_raw
-        old_post = Protocol._post_raw
+        old_pre = self.cls_proto._pre_raw
+        old_post = self.cls_proto._post_raw
         def fake_fun(*args):
             return args[1], args[2]
-        Protocol._pre_raw = fake_fun
-        Protocol._post_raw = fake_fun
+        self.cls_proto._pre_raw = fake_fun
+        self.cls_proto._post_raw = fake_fun
 
-        p = Protocol(fake_fields)
+        p = self.cls_proto(fake_fields)
 
         # we can pass None for protocol_container and protocol_bits
         # because they are not being used here (see umpa.Packet)
@@ -270,5 +271,5 @@ class TestProtocol(object):
         p.get_field('a').bits = 4
         py.test.raises(UMPAException, p.get_raw, None, None)
 
-        Protocol._pre_raw = old_pre
-        Protocol._post_raw = old_post
+        self.cls_proto._pre_raw = old_pre
+        self.cls_proto._post_raw = old_post
