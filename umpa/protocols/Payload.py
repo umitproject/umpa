@@ -105,14 +105,24 @@ class Payload(Protocol):
     name = "Payload"
     _ordered_fields = ('data',)
 
-    def __init__(self, **kwargs):
+    def __init__(self, payload=None, **kwargs):
         """
         Create a new Payload().
 
+        @type payload: C{str}
+        @param payload: data for the protocol
+
         @param kwargs: pass to super-constructor.
+
+        @note: payload can be passed as a first argument (payload)
+        or as a keyword (data=). if both, then keyword data overwrite
+        former argument.
         """
 
         fields_list = [ _HData("Data"), ]
+
+        if payload is not None and 'data' not in kwargs:
+            kwargs['data'] = payload
 
         super(Payload, self).__init__(fields_list, **kwargs)
 
