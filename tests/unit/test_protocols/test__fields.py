@@ -399,8 +399,12 @@ class TestFlags(TestField):
     def test_get(self):
         bits = ['a', 'b', 'c']
         f = self.cls_field('foobar', bits, b=False, c=True)
+
         assert f.get(*bits) == [False, False, True]
         assert f.get() == [False, False, True]
+        
+        py.test.raises(UMPAAttributeException, f.get, 'd')
+        py.test.raises(UMPAAttributeException, f.get, 'a', 'd')
 
     def test_set(self):
         bits = ['a', 'b', 'c']

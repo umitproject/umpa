@@ -636,9 +636,11 @@ class Flags(Field):
         @return: list of passed bits values.
         """
 
-        # check if name of the field in the flag is correct
-        result = [ self._value[val].get() for val in names
-                                                    if self._is_valid(val) ]
+        for bit in names:
+            if not self._is_valid(bit):
+                raise UMPAAttributeException('no bit named ' + bit)
+
+        result = [ self._value[val].get() for val in names ]
 
         # if no results above return whole list of values
         if len(result) < 1:
