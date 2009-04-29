@@ -23,6 +23,8 @@
 IP (Internet Protocol) protocol implementation.
 """
 
+import sys
+
 from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
@@ -170,11 +172,30 @@ class _HTTL(_fields.EnumField):
         @return: auto-generated value of the field.
         """
 
-        # TODO: checking platform to set correct value of TTL
-        # unfortunately, there isn't any official document which described
-        # list of returns from sys.platform
-        # also, there is some changes in Python 2.6 about sys.platform
-        return _consts.TTL_LINUX
+        if sys.platform.find('linux') != -1:
+            result = 'linux'
+        elif sys.platform.find('darwin') != -1:
+            result = 'macos'
+        elif sys.platform.find('win') != -1:
+            result = 'windows'
+        elif sys.platform.find('freebsd') != -1:
+            result = 'freebsd'
+        elif sys.platform.find('os2') != -1:
+            result = 'os2'
+        elif sys.platform.find('sunos') != -1:
+            result = 'sunos'
+        elif sys.platform.find('aix') != -1:
+            result = 'aix'
+        elif sys.platform.find('irix') != -1:
+            result = 'irix'
+        elif sys.platform.find('solaris') != -1:
+            result = 'solaris'
+        elif sys.platform.find('ultrix') != -1:
+            result = 'ultrix'
+        elif sys.platform.find('dec') != -1:
+            result = 'dec'
+
+        return self.enumerable[result]
 
 class _HProtocol(_fields.SpecialIntField, _fields.EnumField):
     """
