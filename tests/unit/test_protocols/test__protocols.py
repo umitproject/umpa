@@ -32,6 +32,7 @@ class TestProtocol(object):
         fake_fields = [IntField('foobar', 1, 8), IntField('foobar', 1, 8), 
                                                 IntField('foobar', 1, 8)]
         fake_ordered = ('a', 'b', 'c')
+        self.cls_proto._ordered_fields = ()
         p = self.cls_proto(fake_fields)
         assert p._fields == {}
 
