@@ -383,7 +383,7 @@ class TestFlags(TestField):
     def test_init(self):
         bits = ['a', 'b', 'c']
         f = self.cls_field('foobar', bits)
-        f._ordered_fields == bits
+        assert f._ordered_fields == bits
         for b in bits:
             f._value.has_key(b)
         assert f.bits == len(bits)
