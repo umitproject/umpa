@@ -83,10 +83,7 @@ class Protocol(object):
         @return: value of the field.
         """
         
-        if self._is_valid(attr):
-            return self.get_field(attr).get()
-        else:
-            raise UMPAAttributeException(attr + ' is not allowed')
+        return self.get_field(attr).get()
 
     def __setattr__(self, attr, value):
         """
@@ -98,10 +95,7 @@ class Protocol(object):
         @param value: the new value.
         """
 
-        if self._is_valid(attr):
-            self.get_field(attr).set(value)
-        else:
-            raise UMPAAttributeException(attr + ' is not allowed')
+        self.get_field(attr).set(value)
 
     def __str__(self):
         """
@@ -119,6 +113,18 @@ class Protocol(object):
         print "\\-< %-27s >\t\tcontains %d fields" % (self.name,
                                                             len(self._fields))
         return super(Protocol, self).__str__()
+
+    def _is_valid(self, field):
+        """
+        Validate if the filed is allowed.
+
+        @param field: requested field.
+
+        @rtype: C{bool}
+        @return: result of the validation.
+        """
+
+        return field in self._fields
 
     @classmethod
     def get_fields_keys(cls):
@@ -170,12 +176,37 @@ class Protocol(object):
         @param kwargs: field_name=value.
         """
         
+        if len(args) % 2:
+            raise UMPAAttributeException('wrong amount of passed arguments')
         # converting args list to the dict and update our kwargs
         kwargs.update(_dict_from_sequence(args))
 
+        # first check if all keys are valid to avoid partial-changing
         for key in kwargs:
-            if self._is_valid(key):
-                setattr(self, key, kwargs[key])
+            if not self._is_valid(key):
+                raise UMPAAttributeException(key + ' is not allowed; '
+                                            'nothing has changed')
+
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+
+    def get_flags(self, name, *args):
+        """
+        Return flags of the field.
+
+        @type name: C{str}
+        @param name: name of the field.
+
+        @param args: names of flags.
+
+        @rtype: C{list}
+        @return: list of flags.
+        """
+
+        flag_field = self.get_field(name)
+        if not isinstance(flag_field, Flags):
+            raise UMPAAttributeException("No Flags instance for " + name)
+        return flag_field.get(*args)
 
     def set_flags(self, name, *args, **kwargs):
         """
@@ -193,6 +224,8 @@ class Protocol(object):
         @param kwargs: field_name=value.
         """
 
+        if len(args) % 2:
+            raise UMPAAttributeException('wrong amount of passed arguments')
         # converting args list to the dict and update our kwargs
         kwargs.update(_dict_from_sequence(args))
 
@@ -203,25 +236,6 @@ class Protocol(object):
                     flag_field.set(flag_name)
                 else:
                     flag_field.unset(flag_name)
-        else:
-            raise UMPAAttributeException("No Flags instance for " + name)
-
-    def get_flags(self, name, *args):
-        """
-        Return flags of the field.
-
-        @type name: C{str}
-        @param name: name of the field.
-
-        @param args: names of flags.
-
-        @rtype: C{list}
-        @return: list of flags.
-        """
-
-        flag_field = self.get_field(name)
-        if isinstance(flag_field, Flags):
-            return flag_field.get(*args)
         else:
             raise UMPAAttributeException("No Flags instance for " + name)
 
@@ -244,10 +258,10 @@ class Protocol(object):
         elif isinstance(field, Field):
             field_list = [ f for f in self.get_fields() ]
         else:
-            raise UMPAException(type(field) + ' unsupported')
+            raise UMPAException(str(type(field)) + ' unsupported')
     
         if field not in field_list:
-            raise UMPAAttributeException(field + ' is not allowed')
+            raise UMPAAttributeException(repr(field) + ' is not allowed')
 
         offset = 0
         for i, val in enumerate(field_list):
@@ -379,19 +393,7 @@ class Protocol(object):
 
         # protocol should return byte-compatible length
         if bit % BYTE != 0:
-            raise UMPAException('odd number of bits in ' + self.__name__)
+            raise UMPAException('odd number of bits in ' + str(self.name))
 
         self.__dict__['__raw_value'] = raw_value
         return raw_value, bit
-
-    def _is_valid(self, field):
-        """
-        Validate if the filed is allowed.
-
-        @param field: requested field.
-
-        @rtype: C{bool}
-        @return: result of the validation.
-        """
-
-        return field in self._fields
