@@ -174,7 +174,6 @@ class TestIPAddrField(TestAddrField):
         self.cls_field.base = 0
         self.cls_field.piece_size = 0
         self.cls_field.pieces_amount = 0
-        self.cls_field.bits = 0
 
     def test_set(self):
         f = self.cls_field('foobar')
@@ -286,6 +285,7 @@ class TestIPv4AddrField(TestIPAddrField):
         self.cls_field.separator = "."
         self.cls_field.piece_size = 8
         self.cls_field.base = 10
+        self.cls_field.bits = 32
 
     def test_set(self):
         f = self.cls_field('foobar')
@@ -322,6 +322,7 @@ class TestIPv6AddrField(TestIPAddrField):
         self.cls_field.separator = ":"
         self.cls_field.piece_size = 16
         self.cls_field.base = 16
+        self.cls_field.bits = 128
 
     def test_set(self):
         f = self.cls_field('foobar')
