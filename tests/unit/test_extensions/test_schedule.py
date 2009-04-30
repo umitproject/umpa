@@ -27,11 +27,17 @@ import py.test
 import umpa
 from umpa.protocols import IP
 from umpa.extensions import schedule
+from umpa.utils.exceptions import UMPAException
 
 
 class TestExtensionSchedule(object):
     def test_send_schedule_attr(self):
         assert hasattr(umpa.Socket, 'send_schedule')
+
+    def test_wrong_arg(self):
+        py.test.raises(UMPAException, "schedule.send(0, bad_args=None)")
+        py.test.raises(UMPAException,
+                            "schedule.send(0, interval=10, bad_args=None)")
 
 class TestExtensionScheduleRoot(object):
     def setup_class(cls):
