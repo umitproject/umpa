@@ -26,3 +26,5 @@ rem echo "#### STATS FOR UMPA [ START ] ####"
 rem %cur%/tests/coverage.py -r %m --omit=/usr/lib,%cur%/tests,%cur%/py 
 rem echo "#### STATS FOR UMPA [ FINISH ] ####"
 rem cd %cur%
+
+pause
