@@ -20,6 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 from cStringIO import StringIO
+import tempfile
 
 import umpa
 from umpa.protocols import IP, TCP, Payload
@@ -298,6 +299,13 @@ class TestExtensionXML(object):
         a = output.getvalue()
         b = self.example_xml.replace('        ','\t')
         assert a == b
+
+        output = tempfile.NamedTemporaryFile(mode='w+t')
+        XML.save(output.name, (self.example_packet,))
+        a = output.read()
+        b = self.example_xml.replace('        ','\t')
+        assert a == b
+        output.close()
 
     def test_xml_save_multiple(self):
         output = StringIO()
