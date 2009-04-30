@@ -398,7 +398,7 @@ class IPAddrField(AddrField):
         """
 
         # convert list to tuple
-        if isinstance(value, list):
+        if isinstance(value, types.ListType):
             value = tuple(value)
 
         super(IPAddrField, self).set(value)
@@ -444,9 +444,9 @@ class IPAddrField(AddrField):
         @return: result of the validation.
         """
 
-        if isinstance(value, str):
+        if isinstance(value, types.StringType):
             pieces = value.split(self.separator)
-        elif isinstance(value, tuple):
+        elif isinstance(value, types.TupleType):
             pieces = value
         else:
             return False
@@ -551,7 +551,7 @@ class PaddingField(SpecialIntField):
         @return: result of the validation.
         """
 
-        if isinstance(value, int) and 0 <= value <= self._word:
+        if isinstance(value, types.IntType) and 0 <= value <= self._word:
             return True
         return False
 
