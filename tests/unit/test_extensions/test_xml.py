@@ -19,8 +19,11 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import py.test
+
 from cStringIO import StringIO
 import tempfile
+import os
 
 import umpa
 from umpa.protocols import IP, TCP, Payload
@@ -300,6 +303,9 @@ class TestExtensionXML(object):
         b = self.example_xml.replace('        ','\t')
         assert a == b
 
+    def test_xml_save_filename(self):
+        if os.name != 'posix':
+            py.test.skip('only for POSIX platforms')
         output = tempfile.NamedTemporaryFile(mode='w+t')
         XML.save(output.name, (self.example_packet,))
         a = output.read()
