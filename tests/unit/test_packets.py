@@ -19,8 +19,10 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import sys
 from umpa import Packet
 from umpa.protocols import IP, TCP, UDP, Payload
+from umpa.protocols import _consts
 from umpa.utils.exceptions import UMPAException, UMPAStrictException
 from umpa._packets import StrictWarning
 
@@ -85,9 +87,35 @@ class TestUMPAPacketsOutput(object):
                     _identification=1000,
                     _header_checksum=0x7900))
 
-        assert ("\x45\x00\x00\x14\x03\xe8\x00\x00"
-                "\x40\x00\x79\x00\x7f\x00\x00\x01"
-                "\x7f\x00\x00\x01") == p.get_raw()
+        if sys.platform.find('linux') != -1:
+            ttl = _consts.TTL_LINUX
+        elif sys.platform.find('darwin') != -1:
+            ttl = _consts.TTL_MACOS
+        elif sys.platform.find('win') != -1:
+            ttl = _consts.TTL_WINDOWS
+        elif sys.platform.find('freebsd') != -1:
+            ttl = _consts.TTL_FREEBSD
+        elif sys.platform.find('os2') != -1:
+            ttl = _consts.TTL_OS2
+        elif sys.platform.find('sunos') != -1:
+            ttl = _consts.TTL_SUNOS
+        elif sys.platform.find('aix') != -1:
+            ttl = _consts.TTL_AIX
+        elif sys.platform.find('irix') != -1:
+            ttl = _consts.TTL_IRIX
+        elif sys.platform.find('solaris') != -1:
+            ttl = _consts.TTL_SOLARIS
+        elif sys.platform.find('ultrix') != -1:
+            ttl = _consts.TTL_ULTRIX
+        elif sys.platform.find('dec') != -1:
+            ttl = _consts.TTL_DEC
+        else:
+            ttl = _consts.TTL_LINUX
+
+        expected = ("\x45\x00\x00\x14\x03\xe8\x00\x00"
+                    "%c\x00\x79\x00\x7f\x00\x00\x01"
+                    "\x7f\x00\x00\x01") % chr(ttl)
+        assert expected == p.get_raw()
 
     def test_get_raw__tcp(self):
         p = Packet()
@@ -98,6 +126,35 @@ class TestUMPAPacketsOutput(object):
                 "\xae\x1d\x00\x00") == p.get_raw()
 
     def test_get_raw(self):
+        if sys.platform.find('linux') != -1:
+            ttl = _consts.TTL_LINUX
+        elif sys.platform.find('darwin') != -1:
+            ttl = _consts.TTL_MACOS
+        elif sys.platform.find('win') != -1:
+            ttl = _consts.TTL_WINDOWS
+        elif sys.platform.find('freebsd') != -1:
+            ttl = _consts.TTL_FREEBSD
+        elif sys.platform.find('os2') != -1:
+            ttl = _consts.TTL_OS2
+        elif sys.platform.find('sunos') != -1:
+            ttl = _consts.TTL_SUNOS
+        elif sys.platform.find('aix') != -1:
+            ttl = _consts.TTL_AIX
+        elif sys.platform.find('irix') != -1:
+            ttl = _consts.TTL_IRIX
+        elif sys.platform.find('solaris') != -1:
+            ttl = _consts.TTL_SOLARIS
+        elif sys.platform.find('ultrix') != -1:
+            ttl = _consts.TTL_ULTRIX
+        elif sys.platform.find('dec') != -1:
+            ttl = _consts.TTL_DEC
+        else:
+            ttl = _consts.TTL_LINUX
+
+        expected = ("\x45\x00\x00\x28\x03\xe8\x00\x00"
+                    "%c\x06\x79\x00\x7f\x00\x00\x01"
+                    "\x7f\x00\x00\x01") % chr(ttl)
+
         p = Packet()
         p.include(IP(source_address="127.0.0.1",
                     destination_address="127.0.0.1",
@@ -105,19 +162,19 @@ class TestUMPAPacketsOutput(object):
                     _header_checksum=0x7900))
         p.include(TCP(source_port=123,destination_port=321,control_bits='psh'))
 
-        assert ("\x45\x00\x00\x28\x03\xe8\x00\x00"
-                "\x40\x06\x79\x00\x7f\x00\x00\x01"
-                "\x7f\x00\x00\x01"
-                "\x00\x7b\x01\x41\x00\x00\x00\x00"
-                "\x00\x00\x00\x01\x50\x08\x02\x00"
-                "\xae\x1d\x00\x00") == p.get_raw()
+        expected += ("\x00\x7b\x01\x41\x00\x00\x00\x00"
+                    "\x00\x00\x00\x01\x50\x08\x02\x00"
+                    "\xae\x1d\x00\x00")
+        assert expected == p.get_raw()
 
         p.include(Payload(data="UMPA"))
 
-        assert ("\x45\x00\x00\x2c\x03\xe8\x00\x00"
-                "\x40\x06\x79\x00\x7f\x00\x00\x01"
-                "\x7f\x00\x00\x01"
-                "\x00\x7b\x01\x41\x00\x00\x00\x00"
-                "\x00\x00\x00\x01\x50\x08\x02\x00"
-                "\x08\x8b\x00\x00"
-                "\x55\x4d\x50\x41") == p.get_raw()
+        expected = ("\x45\x00\x00\x2c\x03\xe8\x00\x00"
+                    "%c\x06\x79\x00\x7f\x00\x00\x01"
+                    "\x7f\x00\x00\x01"
+                    "\x00\x7b\x01\x41\x00\x00\x00\x00"
+                    "\x00\x00\x00\x01\x50\x08\x02\x00"
+                    "\x08\x8b\x00\x00") % chr(ttl)
+
+        expected += "\x55\x4d\x50\x41"
+        assert expected == p.get_raw()
