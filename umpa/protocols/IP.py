@@ -194,6 +194,8 @@ class _HTTL(_fields.EnumField):
             result = 'ultrix'
         elif sys.platform.find('dec') != -1:
             result = 'dec'
+        else:
+            result = 'linux'
 
         return self.enumerable[result]
 
