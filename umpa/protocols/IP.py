@@ -309,9 +309,6 @@ class IP(_protocols.Protocol):
         #   - support for fragmentation
         #       defaulty we don't use fragmentation but we should support it
         #       if user choose this option
-        #   - checking platform for TTL value
-        #       to be more reliable we should generate default value depends on
-        #       user platform. does anyone know every values of sys.platform?:)
         fields_list = [ _HVersion("Version", 4),
                         _HIHL("IHL"),
                         _fields.Flags("TOS", tos, **tos_predefined),
@@ -319,7 +316,7 @@ class IP(_protocols.Protocol):
                         _HIdentification("Identification", 0),
                         _fields.Flags("Flags", flags, **flags_predefined),
                         _HFragmentOffset("Fragment Offset", 0),
-                        _HTTL("TTL", _consts.TTL_LINUX),
+                        _HTTL("TTL"),
                         _HProtocol("Protocol"),
                         _HHeaderChecksum("_Header Checksum", 0),
                         _fields.IPv4AddrField("Source Address", "127.0.0.1"),

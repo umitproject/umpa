@@ -84,8 +84,8 @@ class TestExtensionXML(object):
                         <_fragment_offset type="int">
                                 0
                         </_fragment_offset>
-                        <time_to_live type="int">
-                                64
+                        <time_to_live type="NoneType">
+                                None
                         </time_to_live>
                         <_protocol type="NoneType">
                                 None
