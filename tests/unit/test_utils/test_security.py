@@ -33,10 +33,11 @@ class TestUtilSecurity(object):
     def setup_class(cls):
         if os.name == 'posix' and os.geteuid() != 0:
             py.test.skip('root-priviliges are needed')
+        if os.name != 'posix':
+            py.test.skip('only for POSIX platforms')
 
     def teardown_method(self, method):
-        if os.name == 'posix':
-            os.seteuid(0)
+        os.seteuid(0)
 
     def test_drop(self):
         import pwd
