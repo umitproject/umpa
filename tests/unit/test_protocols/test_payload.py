@@ -21,7 +21,7 @@
 
 import py.test
 
-from umpa.protocols.Payload import _HData
+from umpa.protocols.Payload import _HData, Payload
 from umpa.utils.exceptions import UMPAException
 from tests.unit.test_protocols.test__fields import TestField
 
@@ -78,3 +78,14 @@ class TestHData(TestField):
 
         f = self.cls_field('foobar')
         py.test.raises(UMPAException, f.fillout)
+
+class TestPayload(object):
+    def test_init(self):
+        p = Payload('test1')
+        assert p.data == 'test1'
+
+        p = Payload(data='test2')
+        assert p.data == 'test2'
+
+        p = Payload('test1', data='test2')
+        assert p.data == 'test2'
