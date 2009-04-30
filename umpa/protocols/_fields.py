@@ -29,6 +29,8 @@ provided by this module).
 Use these fields' classes to create new implementation of any protocols.
 """
 
+import types
+
 from umpa.utils.exceptions import UMPAException, UMPAAttributeException
 
 class Field(object):
@@ -414,7 +416,7 @@ class IPAddrField(AddrField):
         """
 
         # convert the value to the list if it's str
-        if type(self._value) is str:
+        if isinstance(self._value, types.StringType):
             pieces = self._value.split(self.separator)
         else:
             pieces = self._value
