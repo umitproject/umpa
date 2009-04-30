@@ -73,7 +73,13 @@ class Field(object):
 
         if bits is not None:
             self.bits = bits
-        self._value = value
+        if value is None:
+            self._value = None
+        # XXX hack for unitttests, normally Field is only super-class for others
+        elif self.__class__ is Field:
+            self._value = value
+        else:
+            self.set(value)
 
     def __str__(self):
         """

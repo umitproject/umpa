@@ -65,9 +65,12 @@ class TestField(object):
 class TestIntField(TestField):
     cls_field = IntField
 
-    def test_raw_value(self):
-        f = self.cls_field('foobar', 10)
-        assert f._raw_value() == 10
+    def test_get(self):
+        f = self.cls_field('foobar', 10, 8)
+        assert f.get() == 10
+        
+        f = self.cls_field('foobar')
+        assert f.get() is None
 
     def test_set(self): #_is_valid() tests included
         f = self.cls_field('foobar', 10, 5)
@@ -84,11 +87,20 @@ class TestIntField(TestField):
         f = self.cls_field('foobar', bits=3)
         py.test.raises(UMPAAttributeException, f.set, 10)
 
+    def test_clear(self):
+        f = self.cls_field('foobar', 10, 8)
+        f.clear()
+        assert f.get() is None
+
+    def test_raw_value(self):
+        f = self.cls_field('foobar', 10, 8)
+        assert f._raw_value() == 10
+
     def test_fillout(self):
         f = self.cls_field('foobar')
         py.test.raises(UMPAException, f.fillout)
 
-        f = self.cls_field('foobar', 10)
+        f = self.cls_field('foobar', 10, 8)
         assert f.fillout() == 10
 
 class TestSpecialIntField(TestIntField):
@@ -146,6 +158,24 @@ class TestAddrField(TestField):
 class TestIPAddrField(TestAddrField):
     cls_field = IPAddrField
 
+    def test_get(self):
+        self.cls_field.pieces_amount = 4
+        self.cls_field.separator = "."
+        self.cls_field.piece_size = 8
+        self.cls_field.base = 10
+
+        f = self.cls_field('foobar', "127.0.0.1")
+        assert f.get() == "127.0.0.1"
+        
+        f = self.cls_field('foobar')
+        assert f.get() is None
+
+        self.cls_field.separator = ""
+        self.cls_field.base = 0
+        self.cls_field.piece_size = 0
+        self.cls_field.pieces_amount = 0
+        self.cls_field.bits = 0
+
     def test_set(self):
         f = self.cls_field('foobar')
 
@@ -201,6 +231,23 @@ class TestIPAddrField(TestAddrField):
         check("0xFF.0xFF.0xFF.0xFF")
         py.test.raises(UMPAAttributeException, f.set, "0xG.0xFF.0xFF.0xFF")
 
+    def test_clear(self):
+        self.cls_field.pieces_amount = 4
+        self.cls_field.separator = "."
+        self.cls_field.piece_size = 8
+        self.cls_field.base = 10
+
+        f = self.cls_field('foobar', "127.0.0.1")
+        assert f.get() == "127.0.0.1"
+        f.clear()
+        assert f.get() is None
+
+        self.cls_field.separator = ""
+        self.cls_field.base = 0
+        self.cls_field.piece_size = 0
+        self.cls_field.pieces_amount = 0
+        self.cls_field.bits = 0
+
     def test_raw_value(self):
         f = self.cls_field('foobar')
         f.pieces_amount = 4
@@ -234,6 +281,12 @@ class TestIPAddrField(TestAddrField):
 class TestIPv4AddrField(TestIPAddrField):
     cls_field = IPv4AddrField
 
+    def setup_method(self, method):
+        self.cls_field.pieces_amount = 4
+        self.cls_field.separator = "."
+        self.cls_field.piece_size = 8
+        self.cls_field.base = 10
+
     def test_set(self):
         f = self.cls_field('foobar')
 
@@ -263,6 +316,12 @@ class TestIPv4AddrField(TestIPAddrField):
 
 class TestIPv6AddrField(TestIPAddrField):
     cls_field = IPv6AddrField
+
+    def setup_method(self, method):
+        self.cls_field.pieces_amount = 8
+        self.cls_field.separator = ":"
+        self.cls_field.piece_size = 16
+        self.cls_field.base = 16
 
     def test_set(self):
         f = self.cls_field('foobar')

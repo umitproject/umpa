@@ -35,8 +35,12 @@ class TestHData(TestField):
         f = self.cls_field('foobar', 'xxx')
         assert f.get() == 'xxx'
 
+    def test_get(self):
         f = self.cls_field('foobar', 10)
         assert f.get() == '10'
+        
+        f = self.cls_field('foobar')
+        assert f.get() is None
 
     def test_set(self):
         f = self.cls_field('foobar', 'test')
