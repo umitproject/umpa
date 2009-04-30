@@ -35,7 +35,8 @@ class TestUtilSecurity(object):
             py.test.skip('root-priviliges are needed')
 
     def teardown_method(self, method):
-        os.seteuid(0)
+        if os.name == 'posix':
+            os.seteuid(0)
 
     def test_drop(self):
         import pwd
