@@ -486,24 +486,24 @@ class IPv4AddrField(IPAddrField):
     base = 10
     bits = 32
 
-class IPv6AddrField(IPAddrField):
-    """
-    Address in IPv6 style.
-
-    Handle with 2 types of data:
-     1. strings as "0:0:0:0:0:0:0:1"
-     2. tuples as (0,0,0,0,0,0,0,1)
-
-    @note: This field is really limited and you can't use address
-    like 2001:db8::1428:57ab. All groups have to be pass.
-    This issue should be fixed soon.
-    """
-
-    separator = ":"
-    piece_size = 16
-    pieces_amount = 8
-    base = 16
-    bits = 128
+#class IPv6AddrField(IPAddrField):
+#    """
+#    Address in IPv6 style.
+#
+#    Handle with 2 types of data:
+#     1. strings as "0:0:0:0:0:0:0:1"
+#     2. tuples as (0,0,0,0,0,0,0,1)
+#
+#    @note: This field is really limited and you can't use address
+#    like 2001:db8::1428:57ab. All groups have to be pass.
+#    This issue should be fixed soon.
+#    """
+#
+#    separator = ":"
+#    piece_size = 16
+#    pieces_amount = 8
+#    base = 16
+#    bits = 128
 
 class PaddingField(SpecialIntField):
     """

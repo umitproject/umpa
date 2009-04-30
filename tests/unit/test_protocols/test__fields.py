@@ -315,7 +315,10 @@ class TestIPv4AddrField(TestIPAddrField):
         py.test.raises(UMPAAttributeException, f.set, ("10.0.0.0",))
 
 class TestIPv6AddrField(TestIPAddrField):
-    cls_field = IPv6AddrField
+    #cls_field = IPv6AddrField
+
+    def setup_class(cls):
+        py.test.skip('IPv6 support is disabled at the moment')
 
     def setup_method(self, method):
         self.cls_field.pieces_amount = 8
