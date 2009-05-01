@@ -6,7 +6,7 @@ How plugins system works in UMPA and how to write your own extension or protocol
 
 === Overview ===
 
-UMPA has not (yet?) a real plugin system. But there is a imitation of this and it works very well.
+UMPA has not a real plugin system. But there is an imitation of this and it works very well.
 
 There are 2 independent groups of plugins:
  1. protocols
