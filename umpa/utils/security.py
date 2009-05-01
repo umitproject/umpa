@@ -40,7 +40,7 @@ def drop_priviliges(euid=None):
     this function doesn't do anything.
 
     @type euid: C{int}
-    @param fun: UID number candidate (default: nobody)
+    @param euid: UID number candidate (default: nobody)
     """
 
     # checking if it's UNIX-family OS
