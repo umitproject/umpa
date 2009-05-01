@@ -1,6 +1,6 @@
 @ echo off
 
-mode con: cols=150 lines=50
+rem mode con: cols=150 lines=50
 cls
 
 rem cd %temp%
@@ -19,7 +19,7 @@ rem )
 
 echo "#### TESTS FOR UMPA [ START ] ####"
 rem %cur%/tests/coverage.py -x %cur%/py/bin/py.test %* %cur%/tests
-py\bin\win32\py.test tests
+call py\bin\win32\py.test tests
 echo "#### TESTS FOR UMPA [ FINISH ] ####"
 
 rem echo "#### STATS FOR UMPA [ START ] ####"
