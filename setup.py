@@ -25,6 +25,34 @@ from distutils.core import setup
 
 UMPA_VERSION = '0.1'
 
+
+TESTS_DIR = [
+    os.path.join('tests', 'system'),
+    os.path.join('tests', 'unit'),
+    os.path.join('tests', 'unit', 'test_extensions'),
+    os.path.join('tests', 'unit', 'test_protocols'),
+    os.path.join('tests', 'unit', 'test_utils')
+]
+
+test_files = []
+for dir in TESTS_DIR:
+    test_files = test_files + [ (os.path.join('share','umpa', dir),
+                                 glob.glob(os.path.join(dir,'*.py')))]
+    
+data_files = [  (os.path.join('share','umpa','examples'),
+                            glob.glob(os.path.join('examples','*'))),
+                (os.path.join('share','umpa','scripts'),
+                    glob.glob(os.path.join('install_scripts','*.sh'))),
+                (os.path.join('share','doc','umpa','API'),
+                    glob.glob(os.path.join('docs','API','*'))),
+                (os.path.join('share','umpa','tests'),
+                    ('run_tests.sh', 'run_tests.bat')),
+                (os.path.join('share','umpa','tests'),
+                 glob.glob(os.path.join('tests','*.py')), 'README'),
+                (os.path.join('share','doc','umpa'),
+                    ('README', 'COPYING', 'AUTHORS', 'TODO', 'CHANGES',
+                    'INSTALL')),
+            ] + test_files
 setup(  name            = "UMPA",
         version         = UMPA_VERSION,
         description     = "Umit's Manipulations of Packets Art",
@@ -38,18 +66,6 @@ setup(  name            = "UMPA",
                             "umpa.extensions",
                             "umpa.utils",
                             ],
-        data_files = [  (os.path.join('share','umpa','examples'),
-                                    glob.glob(os.path.join('examples','*'))),
-                        (os.path.join('share','umpa','scripts'),
-                            glob.glob(os.path.join('install_scripts','*.sh'))),
-                        (os.path.join('share','doc','umpa','API'),
-                            glob.glob(os.path.join('docs','API','*'))),
-                        (os.path.join('share','umpa','tests'),
-                            glob.glob(os.path.join('tests','*'))),
-                        (os.path.join('share','umpa','tests'),
-                            ('run_tests.sh', 'run_tests.bat')),
-                        (os.path.join('share','doc','umpa'),
-                            ('README', 'COPYING', 'AUTHORS', 'TODO', 'CHANGES',
-                            'INSTALL')),
-                    ]
+        data_files = data_files
+
 )
