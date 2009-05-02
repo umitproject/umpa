@@ -1,10 +1,7 @@
-== before next release ==
-- tests (in progress)
-
-== after next release ==
 - ICMP implementation
 - Blank Protocol
 - Ethernet layer support
 - asynchronous system
 - sniffing
 - template system
+- finish some auto-generation for some fields in IP/TCP
