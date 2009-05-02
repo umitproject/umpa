@@ -1,10 +1,20 @@
 UMPA Version History
 ====================
 Version 0.1.1:
-  * create testsuite (26 tests)
-  * #308 - new API for schedule.send()
+  * create testsuite (174 tests)
+  * #310 - disable IPv6 (it was unusable; should be enable in another release)
+  * #318 - better validity for passed values to fields
   * new func argument for utils.security.drop_priviliges(euid=None)
-  * bug fixing: #306, #307
+  * IP.TTL auto-detection
+  * improve Payload passing data
+  * refactoring of Flags and BitFlags
+
+  * #303 - new optional argument for utils.bits.split_number_into_chunks
+           and fix occured bugs
+  * #306 - fix XML issue - Flags fields didn't parse correctly
+  * #307 - fix XML issue - multiple loading
+  * #308 - new API for schedule.send()
+  * fixing minor bugs and typos
 
 Version 0.1:
   * first release (2009/02/14)
