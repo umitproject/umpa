@@ -1,6 +1,8 @@
 #!/bin/bash
 
-cur=`pwd`
+old_pwd=`pwd`
+cur=`pwd`/$0
+cur=`dirname $cur`
 cd /tmp
 
 rm -f .coverage 2>/dev/null
@@ -26,4 +28,4 @@ echo "#### TESTS FOR UMPA [ FINISH ] ####"
 echo "#### STATS FOR UMPA [ START ] ####"
 $cur/tests/coverage.py -r $m --omit=/usr/lib,$cur/tests,$cur/py
 echo "#### STATS FOR UMPA [ FINISH ] ####"
-cd $cur
+cd $old_pwd
