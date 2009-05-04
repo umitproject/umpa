@@ -23,7 +23,7 @@ import glob
 import os.path
 from distutils.core import setup
 
-UMPA_VERSION = '0.1'
+UMPA_VERSION = '0.1.1'
 
 
 TESTS_DIR = [
