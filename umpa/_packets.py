@@ -98,6 +98,21 @@ class Packet(object):
         self.raw = None
         self.bits = 0
 
+    def __getattr__(self, name):
+        """
+        Return the protocol with the name
+
+        @type name: C{str}
+        @param name: name of the protocol
+        
+        @return: protocol object
+        """
+
+        for proto in self.protos:
+            if proto.name.lower() == name.lower():
+                return proto
+        raise AttributeError(name)
+
     def __str__(self):
         """
         Print in human-readable tree-style a content of the packet.

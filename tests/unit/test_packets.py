@@ -43,6 +43,25 @@ class TestUMPAPacketsBasic(object):
         py.test.raises(UMPAException, Packet, foo=False)
         py.test.raises(UMPAException, Packet, strict=True, foo=False, bar=True)
 
+    def test_proto_access(self):
+        p = Packet(IP(), TCP())
+        assert isinstance(p.protos[0], IP)
+        assert isinstance(p.protos[1], TCP)
+        assert isinstance(p.ip, IP)
+        assert isinstance(p.tcp, TCP)
+
+    def test_proto_access_edit(self):
+        p = Packet(IP(source_address="1.2.3.4"), TCP())
+        assert p.ip.source_address == "1.2.3.4"
+        p.ip.source_address = "10.0.0.1"
+        assert p.ip.source_address == "10.0.0.1"
+
+        ip = IP(source_address="127.0.0.1")
+        p = Packet(ip)
+        p.ip.source_address = "10.0.0.1"
+        assert p.ip.source_address == "10.0.0.1"
+        assert ip.source_address == "10.0.0.1"
+
 class TestUMPAPackets(object):
     def test_add_new_protocols__strict(self):
         py.test.raises(UMPAStrictException, Packet, TCP(), IP())
