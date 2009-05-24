@@ -38,6 +38,7 @@ and official website U{http://umpa.umitproject.org}
 import os
 import sys
 
+from umpa._config import config
 from umpa._packets import Packet
 from umpa._sockets import Socket
 
