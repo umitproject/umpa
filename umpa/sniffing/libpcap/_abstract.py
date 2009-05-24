@@ -33,8 +33,8 @@ def findalldevs():
     @return: list of network devices
     """
 
-    raise NotImplementedError("this is abstract module. "
-                                "can't be used directly")
+    raise NotImplementedError("not implemented method for the "
+                    "selected libpcap backend or abstract module")
 
 def lookupdev():
     """
@@ -44,16 +44,16 @@ def lookupdev():
     @return: name of the device
     """
 
-    raise NotImplementedError("this is abstract module. "
-                                "can't be used directly")
+    raise NotImplementedError("not implemented method for the "
+                    "selected libpcap backend or abstract module")
 
 def open_offline(fname):
     """
     Open a file in tcpdump format for reading.
     """
 
-    raise NotImplementedError("this is abstract module. "
-                                "can't be used directly")
+    raise NotImplementedError("not implemented method for the "
+                    "selected libpcap backend or abstract module")
 
 class open_live(object):
     """
@@ -76,8 +76,8 @@ class open_live(object):
         @param to_ms: read timeout in miliseconds
         """
 
-        raise NotImplementedError("this is abstract module. "
-                                    "can't be used directly")
+        raise NotImplementedError("not implemented method for the "
+                        "selected libpcap backend or abstract module")
 
     def dispatch(self, cnt, callback, *user):
         """
@@ -94,7 +94,7 @@ class open_live(object):
         """
 
         raise NotImplementedError("not implemented method for the "
-                                        "selected libpcap backend")
+                        "selected libpcap backend or abstract module")
 
     def loop(self, cnt, callback, *user):
         """
@@ -109,7 +109,7 @@ class open_live(object):
         @param user: additional arguments for callback functions
         """
         raise NotImplementedError("not implemented method for the "
-                                        "selected libpcap backend")
+                        "selected libpcap backend or abstract module")
 
     def next(self):
         """
@@ -119,7 +119,7 @@ class open_live(object):
         """
 
         raise NotImplementedError("not implemented method for the "
-                                        "selected libpcap backend")
+                        "selected libpcap backend or abstract module")
 
     def setfilter(self, filter):
         """
@@ -132,8 +132,8 @@ class open_live(object):
         """
 
         raise NotImplementedError("not implemented method for the "
-                                        "selected libpcap backend")
+                        "selected libpcap backend or abstract module")
 
     def dump_open(self):
         raise NotImplementedError("not implemented method for the "
-                                        "selected libpcap backend")
+                        "selected libpcap backend or abstract module")
