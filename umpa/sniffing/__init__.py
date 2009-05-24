@@ -22,3 +22,6 @@
 import umpa
 
 wrapper = umpa.config['libpcap']
+modulepath = "umpa.sniffing.libpcap.%s" % wrapper
+libpcap = __import__(modulepath, fromlist=[None])
+libpcap._backend = wrapper
