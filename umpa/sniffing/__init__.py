@@ -23,5 +23,19 @@ import umpa
 
 wrapper = umpa.config['libpcap']
 modulepath = "umpa.sniffing.libpcap.%s" % wrapper
-libpcap = __import__(modulepath, fromlist=[None])
-libpcap._backend = wrapper
+lpcap = __import__(modulepath, fromlist=[None])
+lpcap._backend = wrapper
+
+def get_available_devices():
+    """
+    REturn list of network devices.
+
+    These devices are suitable for packets capturing.
+
+    @note: There may be network devices that cannot be used for capturing
+    because e.g. that process might not have sufficent priviliges.
+    
+    @return: list of network devices
+    """
+
+    return libpcap.findalldevs()

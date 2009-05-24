@@ -25,4 +25,9 @@ import umpa.sniffing
 class TestSniffing(object):
     def test_import_backend(self):
         assert hasattr(umpa.sniffing, 'libpcap')
-        assert umpa.sniffing.libpcap._backend == umpa.config['libpcap']
+        assert umpa.sniffing.lpcap._backend == umpa.config['libpcap']
+
+    def test_get_available_devices(self):
+        if umpa.config['libpcap'] == 'pypcap':
+            from umpa.sniffing.libpcap import pypcap
+            assert umpa.sniffing.get_available_devices()==pypcap.findalldevs()
