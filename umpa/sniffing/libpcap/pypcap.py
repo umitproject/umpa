@@ -38,6 +38,13 @@ def lookupdev():
         raise UMPASniffingException(msg)
     return result
 
+def findalldevs():
+    try:
+        result = pcap.findalldevs()
+    except OSError, msg:
+        raise UMPASniffingException(msg)
+    return result
+
 class open_live(open_live):
     def __init__(self, device=None, snaplen=1024, promisc=True, to_ms=0):
         if device is None:

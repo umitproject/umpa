@@ -62,6 +62,13 @@ class TestPypcap(object):
             py.test.skip("no suitable devices for sniffing found. "
                         "propably not sufficent priviliges.")
 
+    def test_findalldevs(self):
+        try:
+            assert pypcap.findalldevs() == pcap.findalldevs()
+        except UMPASniffingException:
+            py.test.skip("no suitable devices for sniffing found. "
+                        "propably not sufficent priviliges.")
+
     def test_loop_and_filter(self):
         # XXX it would rather looped than failing
         def cbk(timestamp, pkt, *args):
