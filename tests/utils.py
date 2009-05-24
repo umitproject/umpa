@@ -19,18 +19,18 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import threading
+import time
+
 import umpa
-import umpa.sniffing
 
-class TestSniffing(object):
-    def test_import_backend(self):
-        assert hasattr(umpa.sniffing, 'libpcap')
-        assert umpa.sniffing.lpcap._backend == umpa.config['libpcap']
-
-    def test_get_available_devices(self):
-        if umpa.config['libpcap'] == 'pypcap':
-            from umpa.sniffing.libpcap import pypcap
-            assert umpa.sniffing.get_available_devices()==pypcap.findalldevs()
-
-    def test_sniff(self):
-        pass
+class SendPacket(threading.Thread):
+    def __init__(self, packet, amount=1):
+        super(SendPacket, self).__init__()
+        self._packet = packet
+        self._amount = amount
+    def run(self):
+        s = umpa.Socket()
+        for i in xrange(self._amount):
+            time.sleep(2)
+            s.send(self._packet)
