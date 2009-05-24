@@ -21,10 +21,10 @@
 
 import umpa
 
-wrapper = umpa.config['libpcap']
-modulepath = "umpa.sniffing.libpcap.%s" % wrapper
+modulepath = "umpa.sniffing.libpcap.%s" % umpa.config['libpcap']
 lpcap = __import__(modulepath, fromlist=[None])
-lpcap._backend = wrapper
+lpcap._backend = umpa.config['libpcap']
+del modulepath
 
 def get_available_devices():
     """
@@ -38,4 +38,4 @@ def get_available_devices():
     @return: list of network devices
     """
 
-    return libpcap.findalldevs()
+    return lpcap.findalldevs()
