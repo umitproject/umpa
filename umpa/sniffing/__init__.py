@@ -28,7 +28,7 @@ del modulepath
 
 def get_available_devices():
     """
-    REturn list of network devices.
+    Return list of network devices.
 
     These devices are suitable for packets capturing.
 
