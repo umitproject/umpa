@@ -19,9 +19,6 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import threading
-import time
-
 import pcap
 import py.test
 
@@ -29,17 +26,7 @@ import umpa
 from umpa.protocols import IP, TCP
 from umpa.sniffing.libpcap import pypcap
 from umpa.utils.exceptions import UMPASniffingException
-
-class SendPacket(threading.Thread):
-    def __init__(self, packet, amount=1):
-        super(SendPacket, self).__init__()
-        self._packet = packet
-        self._amount = amount
-    def run(self):
-        s = umpa.Socket()
-        for i in xrange(self._amount):
-            time.sleep(2)
-            s.send(self._packet)
+from tests.utils import SendPacket
 
 class TestPypcap(object):
     # tests are tivial...but it's a wrapper, right?

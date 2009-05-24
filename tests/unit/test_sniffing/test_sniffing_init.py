@@ -31,6 +31,3 @@ class TestSniffing(object):
         if umpa.config['libpcap'] == 'pypcap':
             from umpa.sniffing.libpcap import pypcap
             assert umpa.sniffing.get_available_devices()==pypcap.findalldevs()
-
-    def test_sniff(self):
-        pass
