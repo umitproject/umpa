@@ -102,9 +102,6 @@ def _load_local_protocols():
             module = __import__(
                     "umpa_plugins.protocols.%s"  % fname.replace(".py",""),
                     fromlist=[None])
-
-            for proto in module.protocols:
-                globals()[proto.__name__] = proto
             items.extend(module.protocols)
         except Exception, err:
             msg = "Can't load the extension.\n" + repr(err) + "\n..ignoring."

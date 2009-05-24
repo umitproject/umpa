@@ -55,7 +55,6 @@ def load_extension(name):
 
     try:
         module = __import__(module_path, fromlist=[None])
-        globals()[name] = module
     except Exception, err:
         msg = "Can't load the extension.\n" + repr(err) + "\n..ignoring."
         warnings.simplefilter('always', ImportWarning)
