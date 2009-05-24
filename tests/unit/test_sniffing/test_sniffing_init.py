@@ -21,6 +21,8 @@
 
 import umpa
 import umpa.sniffing
+from umpa.protocols import IP, TCP
+from tests.utils import SendPacket
 
 class TestSniffing(object):
     def test_import_backend(self):
@@ -31,3 +33,10 @@ class TestSniffing(object):
         if umpa.config['libpcap'] == 'pypcap':
             from umpa.sniffing.libpcap import pypcap
             assert umpa.sniffing.get_available_devices()==pypcap.findalldevs()
+
+    def test_sniff(self):
+        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
+                                    TCP(source_port=99)))
+        th.start()
+        result = umpa.sniffing.sniff(1, device='any')
+        print result

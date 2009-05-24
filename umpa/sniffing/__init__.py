@@ -39,3 +39,25 @@ def get_available_devices():
     """
 
     return lpcap.findalldevs()
+
+def sniff(count, filter=None, device=None, callback=None, timeout=0,
+                                        snaplen=1024, promisc=True):
+    session = lpcap.open_live(device, snaplen, promisc, timeout)
+    if filter:
+        session.setfilter(filter)
+    captured = []
+    for i in xrange(count):
+        captured.append(session.next())
+    return captured
+
+def sniff_any():
+    pass
+
+def sniff_next():
+    pass
+
+def from_file():
+    pass
+
+def to_file():
+    pass
