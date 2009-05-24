@@ -24,14 +24,9 @@ import pcap
 from umpa.sniffing.libpcap._abstract import *
 from umpa.utils.exceptions import UMPASniffingException
 
+# see umpa.sniffing.libpcap._abstract for docstrings
+
 def lookupdev():
-    """
-    Return the name of the first network device that is suitable for
-    packet capture
-
-    @return: name of the device
-    """
-
     try:
         result = pcap.lookupdev()
     except OSError, msg:
