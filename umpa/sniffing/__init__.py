@@ -33,7 +33,7 @@ def get_available_devices():
     These devices are suitable for packets capturing.
 
     @note: There may be network devices that cannot be used for capturing
-    because e.g. that process might not have sufficent priviliges.
+    because e.g. that process might not have sufficient privileges.
     
     @return: list of network devices
     """
