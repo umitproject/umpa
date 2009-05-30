@@ -26,7 +26,7 @@ from tests.utils import SendPacket
 
 class TestSniffing(object):
     def test_import_backend(self):
-        assert hasattr(umpa.sniffing, 'libpcap')
+        assert hasattr(umpa.sniffing, 'lpcap')
         assert umpa.sniffing.lpcap._backend == umpa.config['libpcap']
 
     def test_get_available_devices(self):
