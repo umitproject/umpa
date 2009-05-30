@@ -22,12 +22,20 @@
 import umpa
 import umpa.sniffing
 from umpa.protocols import IP, TCP
+from umpa.utils.exceptions import UMPASniffingException
 from tests.utils import SendPacket
+
+import py.test
 
 class TestSniffing(object):
     def test_import_backend(self):
         assert hasattr(umpa.sniffing, 'lpcap')
         assert umpa.sniffing.lpcap._backend == umpa.config['libpcap']
+
+        oldlpcap = umpa.config['libpcap']
+        umpa.config['libpcap'] = "foobar"
+        py.test.raises(UMPASniffingException, "reload(umpa.sniffing)")
+        umpa.config['libpcap'] = oldlpcap
 
     def test_get_available_devices(self):
         if umpa.config['libpcap'] == 'pypcap':

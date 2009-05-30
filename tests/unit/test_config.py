@@ -19,26 +19,18 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-# __________________________
-# libpcap wrapper
+import umpa
 
-try:
-    import pcap
-    if hasattr(pcap, 'pcap'):
-        libpcap = 'pypcap'
-    elif hasattr(pcap, 'pcapObject'):
-        libpcap = 'pylibpcap'
-    else:
-        libpcap = None
-except ImportError:
-    try:
-        import pcapy
-        libpcap = 'pcapy'
-    except ImportError:
-        libpcap = None
-
-config = {
-    'libpcap' : libpcap,
-}
-
-del libpcap
+class TestConfig(object):
+    def test_libpcap_wrapper(self):
+        try:
+            import pcap
+            assert umpa.config['libpcap'] == 'pypcap' or \
+                    umpa.config['libpcap'] == 'pylibpcap'
+        except ImportError:
+            try:
+                import pcapy
+                assert umpa.config['libpcap'] == 'pcapy'
+            except ImportError:
+                assert umpa.config['libpcap'] is None
+        assert not hasattr(umpa, 'libpcap')

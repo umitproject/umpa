@@ -20,11 +20,18 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import umpa
+from umpa.utils.exceptions import UMPASniffingException
 
-modulepath = "umpa.sniffing.libpcap.%s" % umpa.config['libpcap']
-lpcap = __import__(modulepath, fromlist=[None])
-lpcap._backend = umpa.config['libpcap']
-del modulepath
+if umpa.config['libpcap']:
+    modulepath = "umpa.sniffing.libpcap.%s" % umpa.config['libpcap']
+    try:
+        lpcap = __import__(modulepath, fromlist=[None])
+    except ImportError, err:
+        raise UMPASniffingException("unknown libpcap's wrapper.\n" + str(err))
+    lpcap._backend = umpa.config['libpcap']
+    del modulepath
+else:
+    raise UMPASniffingException("unknown/missing libpcap's wrapper")
 
 def get_available_devices():
     """
