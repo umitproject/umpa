@@ -68,11 +68,13 @@ class TestPypcap(object):
                                         TCP(source_port=99)))
             th.start()
             p.loop(1, cbk, "foobar")
+            th.join()
 
             th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
                                         TCP(source_port=99)), 5)
             th.start()
             p.loop(5, cbk, "foobar")
+            th.join()
         except UMPASniffingException:
             py.test.skip("no suitable devices for sniffing found. "
                         "propably not sufficent priviliges.")
@@ -92,3 +94,5 @@ class TestPypcap(object):
         except UMPASniffingException:
             py.test.skip("no suitable devices for sniffing found. "
                         "propably not sufficent priviliges.")
+        finally:
+            th.join()

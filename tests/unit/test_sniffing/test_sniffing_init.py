@@ -47,6 +47,7 @@ class TestSniffing(object):
                                     TCP(source_port=99)))
         th.start()
         result = umpa.sniffing.sniff(1, device='any')
+        th.join()
         print result
 
     def test_sniff_loop(self):
