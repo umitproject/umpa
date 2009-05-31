@@ -40,7 +40,7 @@ def findalldevs():
         raise UMPASniffingException(msg)
     return result
 
-class open_live(open_live):
+class open_pcap(open_pcap):
     def __init__(self, device=None, snaplen=1024, promisc=True, to_ms=0):
         if device is None:
             self.device = lookupdev()

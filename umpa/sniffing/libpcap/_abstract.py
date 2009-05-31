@@ -47,17 +47,11 @@ def lookupdev():
     raise NotImplementedError("not implemented method for the "
                     "selected libpcap backend or abstract module")
 
-def open_offline(fname):
-    """
-    Open a file in tcpdump format for reading.
-    """
-
-    raise NotImplementedError("not implemented method for the "
-                    "selected libpcap backend or abstract module")
-
-class open_live(object):
+class open_pcap(object):
     """
     Packet capture descriptor.
+
+    This is for online and offline capturing.
     """
 
     def __init__(self, device=None, snaplen=1024, promisc=True, to_ms=0):

@@ -89,3 +89,6 @@ class TestSniffing(object):
                         filter="src 1.2.3.6", device='any', callback=cbk,
                         callback_args=[2,1] )
         th.join()
+
+    def test_from_file(self):
+        py.test.skip("implement to_file first")

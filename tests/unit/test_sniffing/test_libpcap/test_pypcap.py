@@ -41,9 +41,9 @@ class TestPypcap(object):
 
     def test_openlive(self):
         try:
-            obj = pypcap.open_live()
+            obj = pypcap.open_pcap()
             assert obj.device == pcap.lookupdev()
-            obj = pypcap.open_live(device="any") # XXX can we use 'any'?
+            obj = pypcap.open_pcap(device="any") # XXX can we use 'any'?
             assert obj.device == "any"
         except UMPASniffingException:
             py.test.skip("no suitable devices for sniffing found. "
@@ -62,7 +62,7 @@ class TestPypcap(object):
             assert args[0] == "foobar" # stupid isn't it? :)
 
         try:
-            p = pypcap.open_live("any", to_ms=100)
+            p = pypcap.open_pcap("any", to_ms=100)
             p.setfilter("src host 1.2.3.4 and src port 99")
             th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
                                         TCP(source_port=99)))
@@ -87,7 +87,7 @@ class TestPypcap(object):
                                     TCP(source_port=99)), amount)
         th.start()
         try:
-            p = pypcap.open_live("any", to_ms=100)
+            p = pypcap.open_pcap("any", to_ms=100)
             p.setfilter("src host 1.2.3.4 and src port 99")
             for i in xrange(amount):
                 packet = p.next()
