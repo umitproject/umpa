@@ -49,6 +49,29 @@ def get_available_devices():
 
 def sniff(count, filter=None, device=None, timeout=0, snaplen=1024,
                                                         promisc=True):
+    """
+    Sniff packets and return list of them.
+
+    @type count: C{int}
+    @param count: number of sniffing packets
+
+    @type filter: C{str}
+    @param filter: BPF filter
+
+    @type device: C{str}
+    @param device: interface for sniffing
+
+    @type device: C{int}
+    @param timeout: timeout for sniffing
+
+    @type snaplen: C{int}
+    @param snaplen: maximum number of bytes to capture of each packet
+                    (default: I{1024})
+
+    @type promisc: C{bool}
+    @param promisc: promiscous mode sniffing
+    """
+
     session = lpcap.open_live(device, snaplen, promisc, timeout)
     if filter:
         session.setfilter(filter)
@@ -59,6 +82,35 @@ def sniff(count, filter=None, device=None, timeout=0, snaplen=1024,
 
 def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
                         promisc=True, callback=None, callback_args=None):
+    """
+    Sniff packets and call a callback function for each.
+
+    @type count: C{int}
+    @param count: number of sniffing packets; 0 means infinity (default: I{0})
+
+    @type filter: C{str}
+    @param filter: BPF filter
+
+    @type device: C{str}
+    @param device: interface for sniffing
+
+    @type device: C{int}
+    @param timeout: timeout for sniffing
+
+    @type snaplen: C{int}
+    @param snaplen: maximum number of bytes to capture of each packet
+                    (default: I{1024})
+
+    @type promisc: C{bool}
+    @param promisc: promiscous mode sniffing
+
+    @type callback: C{func}
+    @param callback: function with (timestamp, pkt, *callback_args) prototype
+
+    @type callback_args: C{list}
+    @param callback_args: additional arguments for callback function
+    """
+
     session = lpcap.open_live(device, snaplen, promisc, timeout)
     if filter:
         session.setfilter(filter)
