@@ -47,8 +47,8 @@ def get_available_devices():
 
     return lpcap.findalldevs()
 
-def sniff(count, filter=None, device=None, callback=None, timeout=0,
-                                        snaplen=1024, promisc=True):
+def sniff(count, filter=None, device=None, timeout=0, snaplen=1024,
+                                                        promisc=True):
     session = lpcap.open_live(device, snaplen, promisc, timeout)
     if filter:
         session.setfilter(filter)
@@ -56,6 +56,13 @@ def sniff(count, filter=None, device=None, callback=None, timeout=0,
     for i in xrange(count):
         captured.append(session.next())
     return captured
+
+def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
+                        promisc=True, callback=None, callback_args=None):
+    session = lpcap.open_live(device, snaplen, promisc, timeout)
+    if filter:
+        session.setfilter(filter)
+    session.loop(count, callback, *callback_args)
 
 def sniff_any():
     pass

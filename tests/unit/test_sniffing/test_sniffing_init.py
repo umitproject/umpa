@@ -48,3 +48,26 @@ class TestSniffing(object):
         th.start()
         result = umpa.sniffing.sniff(1, device='any')
         print result
+
+    def test_sniff_loop(self):
+        def cbk(ts, pkt, *args):
+            # XXX it's stupid. should be rewritten when full sniffing
+            # will be available
+            print pkt
+            if args[0] > args[1]:
+                raise UMPASniffingException("test")
+
+        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.6"),
+                                    TCP(source_port=99)))
+        th.start()
+        umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
+                                            callback=cbk, callback_args=[1,2])
+        th.join()
+
+        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.6"),
+                                    TCP(source_port=99)))
+        th.start()
+        py.test.raises(UMPASniffingException, umpa.sniffing.sniff_loop, 1,
+                        filter="src 1.2.3.6", device='any', callback=cbk,
+                        callback_args=[2,1] )
+        th.join()
