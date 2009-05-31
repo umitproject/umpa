@@ -50,6 +50,23 @@ class TestSniffing(object):
         th.join()
         print result
 
+    def test_sniff_next(self):
+        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
+                                    TCP(source_port=99)))
+        th.start()
+        result = umpa.sniffing.sniff_next(device='any')
+        th.join()
+        print result
+
+        # send more, sniff one
+        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
+                                    TCP(source_port=99)), 5)
+        th.start()
+        result = umpa.sniffing.sniff_next(device='any')
+        th.join()
+        print result
+
+
     def test_sniff_loop(self):
         def cbk(ts, pkt, *args):
             # XXX it's stupid. should be rewritten when full sniffing

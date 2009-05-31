@@ -80,6 +80,28 @@ def sniff(count, filter=None, device=None, timeout=0, snaplen=1024,
         captured.append(session.next())
     return captured
 
+def sniff_next(filter=None, device=None, timeout=0, snaplen=1024,promisc=True):
+    """
+    Sniff one packet and return it.
+
+    @type filter: C{str}
+    @param filter: BPF filter
+
+    @type device: C{str}
+    @param device: interface for sniffing
+
+    @type device: C{int}
+    @param timeout: timeout for sniffing
+
+    @type snaplen: C{int}
+    @param snaplen: maximum number of bytes to capture of each packet
+                    (default: I{1024})
+
+    @type promisc: C{bool}
+    @param promisc: promiscous mode sniffing
+    """
+    return sniff(1, filter, device, timeout, snaplen, promisc)[0]
+
 def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
                         promisc=True, callback=None, callback_args=None):
     """
@@ -117,9 +139,6 @@ def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
     session.loop(count, callback, *callback_args)
 
 def sniff_any():
-    pass
-
-def sniff_next():
     pass
 
 def from_file():
