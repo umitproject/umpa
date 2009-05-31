@@ -139,7 +139,11 @@ def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
     session.loop(count, callback, *callback_args)
 
 def sniff_any():
-    pass
+    """
+    Sniff any first upcoming packet and return it.
+    """
+
+    return sniff(1, device='any')
 
 def from_file():
     pass
