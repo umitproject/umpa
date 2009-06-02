@@ -74,12 +74,22 @@ class TestSniffing(object):
             print pkt
             if args[0] > args[1]:
                 raise UMPASniffingException("test")
-
+        
+        def cbk2(ts, pkt, *args):
+            print pkt
+            
         th = SendPacket(umpa.Packet(IP(source_address="1.2.3.6"),
                                     TCP(source_port=99)))
         th.start()
         umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
                                             callback=cbk, callback_args=[1,2])
+        th.join()
+
+        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.6"),
+                                    TCP(source_port=99)))
+        th.start()
+        umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
+                                                            callback=cbk2)
         th.join()
 
         th = SendPacket(umpa.Packet(IP(source_address="1.2.3.6"),
@@ -91,4 +101,7 @@ class TestSniffing(object):
         th.join()
 
     def test_from_file(self):
+        py.test.skip("implement to_file first")
+
+    def test_from_file_loop(self):
         py.test.skip("implement to_file first")

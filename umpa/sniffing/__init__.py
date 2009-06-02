@@ -105,7 +105,7 @@ def sniff_next(filter=None, device=None, timeout=0, snaplen=1024,promisc=True):
     return sniff(1, filter, device, timeout, snaplen, promisc)[0]
 
 def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
-                        promisc=True, callback=None, callback_args=None):
+                            promisc=True, callback=None, callback_args=None):
     """
     Sniff packets and call a callback function for each.
 
@@ -135,6 +135,9 @@ def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
     @param callback_args: additional arguments for callback function
     """
 
+    if callback_args is None:
+        callback_args = []
+
     session = lpcap.open_pcap(device, snaplen, promisc, timeout)
     if filter:
         session.setfilter(filter)
@@ -147,8 +150,40 @@ def sniff_any():
 
     return sniff(1, device='any')
 
-def from_file(filename, count=0, filter=None, callback=None,
-                                                        callback_args=None):
+def from_file(filename, count=0, filter=None):
+    """
+    Load data from pcap file instead of sniffing online.
+
+    Call callback for each or return list of packets.
+
+    @type filename: C{str}
+    @param filename: path to a file in pcap format
+
+    @type count: C{int}
+    @param count: number of sniffing packets; 0 means infinity (default: I{0})
+
+    @type filter: C{str}
+    @param filter: BPF filter
+    """
+
+    if os.path.isfile(filename):
+        f = lpcap.open_pcap(filename)
+    else:
+        raise UMPASniffingException("can't open file: %s" % filename)
+
+    if filter:
+        f.setfilter(filter)
+    if count > 0:
+        packets = []
+        for i in xrange(count):
+            packets.append(f.next())
+    else:
+        packets = f.readpkts()
+
+    return packets
+
+def from_file_loop(filename, count=0, filter=None, callback=None,
+                                                callback_args=None):
     """
     Load data from pcap file instead of sniffing online.
 
@@ -170,6 +205,9 @@ def from_file(filename, count=0, filter=None, callback=None,
     @param callback_args: additional arguments for callback function
     """
 
+    if callback_args is None:
+        callback_args = []
+
     if os.path.isfile(filename):
         f = lpcap.open_pcap(filename)
     else:
@@ -177,16 +215,7 @@ def from_file(filename, count=0, filter=None, callback=None,
 
     if filter:
         f.setfilter(filter)
-    if callback is not None:
-        f.loop(count, callback, *callback_args)
-    elif count > 0:
-        packets = []
-        for i in xrange(count):
-            packets.append(f.next())
-    else:
-        packets = f.readpkts()
-
-    return packets
+    f.loop(count, callback, *callback_args)
 
 def to_file():
     pass
