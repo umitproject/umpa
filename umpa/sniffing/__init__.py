@@ -50,7 +50,7 @@ def get_available_devices():
     return lpcap.findalldevs()
 
 def sniff(count, filter=None, device=None, timeout=0, snaplen=1024,
-                                                        promisc=True):
+                                            promisc=True, dump=None):
     """
     Sniff packets and return list of them.
 
@@ -72,17 +72,28 @@ def sniff(count, filter=None, device=None, timeout=0, snaplen=1024,
 
     @type promisc: C{bool}
     @param promisc: promiscous mode sniffing
+
+    @type dump: C{str}
+    @param dump: path to file where store the result
     """
 
     session = lpcap.open_pcap(device, snaplen, promisc, timeout)
     if filter:
         session.setfilter(filter)
+    d = None
+    if dump is not None:
+        d = lpcap.dumper(session, dump)
     captured = []
     for i in xrange(count):
         captured.append(session.next())
+        if d is not None:
+            d.dump()
+    if d is not None:
+        d.flush()
     return captured
 
-def sniff_next(filter=None, device=None, timeout=0, snaplen=1024,promisc=True):
+def sniff_next(filter=None, device=None, timeout=0, snaplen=1024,promisc=True,
+                                                                    dump=None):
     """
     Sniff one packet and return it.
 
@@ -101,8 +112,11 @@ def sniff_next(filter=None, device=None, timeout=0, snaplen=1024,promisc=True):
 
     @type promisc: C{bool}
     @param promisc: promiscous mode sniffing
+
+    @type dump: C{str}
+    @param dump: path to file where store the result
     """
-    return sniff(1, filter, device, timeout, snaplen, promisc)[0]
+    return sniff(1, filter, device, timeout, snaplen, promisc, dump)[0]
 
 def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
                             promisc=True, callback=None, callback_args=None):
@@ -143,12 +157,15 @@ def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
         session.setfilter(filter)
     session.loop(count, callback, *callback_args)
 
-def sniff_any():
+def sniff_any(dump=None):
     """
     Sniff any first upcoming packet and return it.
+
+    @type dump: C{str}
+    @param dump: path to file where store the result
     """
 
-    return sniff(1, device='any')
+    return sniff(1, device='any', dump=dump)
 
 def from_file(filename, count=0, filter=None):
     """
@@ -217,5 +234,31 @@ def from_file_loop(filename, count=0, filter=None, callback=None,
         f.setfilter(filter)
     f.loop(count, callback, *callback_args)
 
-def to_file():
-    pass
+def to_file(fname, count, filter=None, device=None, timeout=0, snaplen=1024,
+                                                                promisc=True):
+    """
+    Sniff packets and store them into a file.
+
+    @type fname: C{str}
+    @param fname: path to a file
+
+    @type count: C{int}
+    @param count: number of sniffing packets
+
+    @type filter: C{str}
+    @param filter: BPF filter
+
+    @type device: C{str}
+    @param device: interface for sniffing
+
+    @type device: C{int}
+    @param timeout: timeout for sniffing
+
+    @type snaplen: C{int}
+    @param snaplen: maximum number of bytes to capture of each packet
+                    (default: I{1024})
+
+    @type promisc: C{bool}
+    @param promisc: promiscous mode sniffing
+    """
+    sniff(count, filter, device, timeout, snaplen, promisc, fname)

@@ -19,6 +19,8 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import tempfile
+
 import umpa
 import umpa.sniffing
 from umpa.protocols import IP, TCP
@@ -101,7 +103,25 @@ class TestSniffing(object):
         th.join()
 
     def test_from_file(self):
-        py.test.skip("implement to_file first")
+        py.test.skip("implement decoding first")
 
     def test_from_file_loop(self):
-        py.test.skip("implement to_file first")
+        py.test.skip("implement decoding first")
+
+    def test_to_file(self):
+        py.test.skip("implement decoding first")
+        #TODO: add some checks when decoding will be done
+        dump_file = tempfile.NamedTemporaryFile(mode="w")
+        amount = 5
+
+        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
+                                    TCP(source_port=99)), amount)
+        th.start()
+        try:
+            umpa.sniffing.to_file(dump_file.name, amount,
+                    "src host 1.2.3.4 and src port 99", "any")
+        except UMPASniffingException:
+            py.test.skip("no suitable devices for sniffing found. "
+                        "propably not sufficent priviliges.")
+        finally:
+            th.join()
