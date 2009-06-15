@@ -128,6 +128,53 @@ class open_pcap(object):
         raise NotImplementedError("not implemented method for the "
                         "selected libpcap backend or abstract module")
 
-    def dump_open(self):
+class dumper(object):
+    """
+    Store sniffed packtes into a savefile.
+    """
+    def __init__(self, pcap=None, fname=None):
+        """
+        Both arguments are optional. If they are passed open() is called then.
+
+        @type pcap: C{open_pcap}
+        @param pcap: open_pcap object's for which store packets
+
+        @type dump_file: C{str}
+        @param dump_file: path to file where packets will be stored
+        """
+        raise NotImplementedError("not implemented method for the "
+                        "selected libpcap backend or abstract module")
+
+    def open(self, pcap=None, fname=None):
+        """
+        Open a savefile for storing packets.
+
+        @type pcap: C{open_pcap}
+        @param pcap: open_pcap object's for which store packets
+
+        @type dump_file: C{str}
+        @param dump_file: path to file where packets will be stored
+        """
+        raise NotImplementedError("not implemented method for the "
+                        "selected libpcap backend or abstract module")
+
+    def dump(self):
+        """
+        Output a packet to a savefile.
+        """
+        raise NotImplementedError("not implemented method for the "
+                        "selected libpcap backend or abstract module")
+
+    def flush(self):
+        """
+        Flush to a savefile packets dumped.
+        """
+        raise NotImplementedError("not implemented method for the "
+                        "selected libpcap backend or abstract module")
+
+    def close(self):
+        """
+        Close a savefile being written to.
+        """
         raise NotImplementedError("not implemented method for the "
                         "selected libpcap backend or abstract module")
