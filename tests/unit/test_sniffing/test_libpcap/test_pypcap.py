@@ -19,6 +19,7 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import tempfile
 import pcap
 import py.test
 
@@ -39,19 +40,20 @@ class TestPypcap(object):
         else:
             assert pypcap.lookupdev() == pcap.lookupdev()
 
+    def test_findalldevs(self):
+        try:
+            assert pypcap.findalldevs() == pcap.findalldevs()
+        except UMPASniffingException:
+            py.test.skip("no suitable devices for sniffing found. "
+                        "propably not sufficent priviliges.")
+
+class TestOpenPcap(object):
     def test_openlive(self):
         try:
             obj = pypcap.open_pcap()
             assert obj.device == pcap.lookupdev()
             obj = pypcap.open_pcap(device="any") # XXX can we use 'any'?
             assert obj.device == "any"
-        except UMPASniffingException:
-            py.test.skip("no suitable devices for sniffing found. "
-                        "propably not sufficent priviliges.")
-
-    def test_findalldevs(self):
-        try:
-            assert pypcap.findalldevs() == pcap.findalldevs()
         except UMPASniffingException:
             py.test.skip("no suitable devices for sniffing found. "
                         "propably not sufficent priviliges.")
