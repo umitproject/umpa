@@ -98,3 +98,33 @@ class TestOpenPcap(object):
                         "propably not sufficent priviliges.")
         finally:
             th.join()
+
+class TestDumper(object):
+    def test_dump(self):
+        amount = 5
+        dump_file = tempfile.NamedTemporaryFile(mode="w")
+        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
+                                    TCP(source_port=99)), amount)
+        th.start()
+        try:
+            p = pypcap.open_pcap("any", to_ms=100)
+            p.setfilter("src host 1.2.3.4 and src port 99")
+            d = pypcap.dumper()
+            d.open(p, dump_file.name)
+            pkts = []
+            for i in xrange(amount):
+                pkts.append(p.next())
+                d.dump()
+        except UMPASniffingException:
+            assert False
+            py.test.skip("no suitable devices for sniffing found. "
+                        "propably not sufficent priviliges.")
+        finally:
+            th.join()
+        d.close()
+        p = pypcap.open_pcap(dump_file.name)
+        p.setfilter("src host 1.2.3.4 and src port 99")
+        for i, pkt in enumerate(p):
+            assert pkt[0] == pkts[i][0]
+            # not sure if the below should be equivalent
+            assert str(pkt[1]) == str(pkts[i][1])

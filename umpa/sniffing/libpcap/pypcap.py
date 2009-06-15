@@ -52,7 +52,7 @@ class open_pcap(open_pcap):
 
         try:
             self._pcap = pcap.pcap(self.device, self.snaplen, self.promisc,
-                                                                    self.to_ms)
+                                                                self.to_ms)
         except OSError, msg:
             raise UMPASniffingException(msg)
 
@@ -70,3 +70,45 @@ class open_pcap(open_pcap):
 
     def setfilter(self, filter):
         self._pcap.setfilter(filter)
+
+class dumper(dumper):
+    def __init__(self, pcap=None, fname=None):
+        self._dump = False
+        self._pcap = pcap
+        self.fname = fname
+
+        if self._pcap and self.fname:
+            self.open()
+
+    def open(self, pcap=None, fname=None):
+        if pcap is not None:
+            self._pcap = pcap
+        if fname is not None:
+            self.fname = fname
+
+        if self.fname is None:
+            raise UMPASniffingException("not dump file specified")
+        if self._pcap is None:
+            raise UMPASniffingException("not pcap object is specified")
+
+        self._pcap._pcap.dump_open(self.fname)
+        self._dump = True
+
+    def dump(self):
+        if not self._dump:
+            raise UMPASniffingException("not dump file is opened."
+                                        "use open() first.")
+        self._pcap._pcap.dump()
+
+    def flush(self):
+        if not self._dump:
+            raise UMPASniffingException("not dump file is opened."
+                                        "use open() first.")
+        self._pcap._pcap.dump_flush()
+
+    def close(self):
+        if not self._dump:
+            raise UMPASniffingException("not dump file is opened."
+                                        "use open() first.")
+        self._pcap._pcap.dump_close()
+        self._dump = False
