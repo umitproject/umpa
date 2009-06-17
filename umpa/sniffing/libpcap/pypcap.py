@@ -74,6 +74,16 @@ class open_pcap(open_pcap):
 class dumper(dumper):
     def __init__(self, p=None, fname=None, open=True):
         if p is not None:
+            # XXX dirty hack
+            # the next line has a dirty hack and looks like some design problems
+            # feel free to propose better solution or send a patch
+            #
+            # anyway, Joao Medeiros proposed to put a quote here:
+            # "In Python, there isn't much of an idea of "Private"
+            # Python's philosophy is "We're all consenting adults here."
+            # Thus, there isn't much of an idea of "friends" either.
+            # In Java terminology, on a technical level everybody is already 
+            # friends with everybody else already." by Jeremy Bowers
             self._pcap = p._pcap
         else:
             self._pcap = None
@@ -82,6 +92,7 @@ class dumper(dumper):
 
     def open(self, p=None, fname=None):
         if p is not None:
+            # XXX dirty hack - same as above
             self._pcap = p._pcap
         if fname is not None:
             self.fname = fname
