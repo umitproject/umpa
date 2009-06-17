@@ -132,7 +132,7 @@ class dumper(object):
     """
     Store sniffed packtes into a savefile.
     """
-    def __init__(self, pcap=None, fname=None):
+    def __init__(self, pcap=None, fname=None, open=True):
         """
         Both arguments are optional. If they are passed open() is called then.
 
@@ -141,6 +141,9 @@ class dumper(object):
 
         @type dump_file: C{str}
         @param dump_file: path to file where packets will be stored
+
+        @type open: C{bool}
+        @param open: open a file (= open()) (default: I{True})
         """
         raise NotImplementedError("not implemented method for the "
                         "selected libpcap backend or abstract module")
