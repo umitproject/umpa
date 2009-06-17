@@ -116,7 +116,6 @@ class TestDumper(object):
                 pkts.append(p.next())
                 d.dump()
         except UMPASniffingException:
-            assert False
             py.test.skip("no suitable devices for sniffing found. "
                         "propably not sufficent priviliges.")
         finally:
