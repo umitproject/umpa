@@ -26,6 +26,11 @@ Modules which names start with '_' prefix are for developers
 and they are useful to implement new protocols.
 
 Available protocols are in modules without '_' prefix.
+
+Names of protocol's fields are inherited from wireshark filter:
+see: http://www.wireshark.org/docs/dfref/ for more.
+For these which are not defined and mostly they are used rarely (like Padding),
+names from RFC documents are used.
 """
 
 import sys
