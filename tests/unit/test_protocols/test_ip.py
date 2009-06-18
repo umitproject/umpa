@@ -29,7 +29,7 @@ class TestIP(object):
                     'first (like Identification)')
         # TODO more tests would be nice
         # this test pre/post raw methods as well
-        ip = IP(source_address='127.0.0.1', destination_address='127.0.0.1')
+        ip = IP(src='127.0.0.1', dst='127.0.0.1')
 
         assert ip._raw(0, 0, [ip], 0) == \
                 (0x450000149aa900004000e23e7f0000017f000001, 160)

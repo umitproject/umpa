@@ -51,16 +51,16 @@ class TestUMPAPacketsBasic(object):
         assert isinstance(p.tcp, TCP)
 
     def test_proto_access_edit(self):
-        p = Packet(IP(source_address="1.2.3.4"), TCP())
-        assert p.ip.source_address == "1.2.3.4"
-        p.ip.source_address = "10.0.0.1"
-        assert p.ip.source_address == "10.0.0.1"
+        p = Packet(IP(src="1.2.3.4"), TCP())
+        assert p.ip.src == "1.2.3.4"
+        p.ip.src = "10.0.0.1"
+        assert p.ip.src == "10.0.0.1"
 
-        ip = IP(source_address="127.0.0.1")
+        ip = IP(src="127.0.0.1")
         p = Packet(ip)
-        p.ip.source_address = "10.0.0.1"
-        assert p.ip.source_address == "10.0.0.1"
-        assert ip.source_address == "10.0.0.1"
+        p.ip.src = "10.0.0.1"
+        assert p.ip.src == "10.0.0.1"
+        assert ip.src == "10.0.0.1"
 
 class TestUMPAPackets(object):
     def test_add_new_protocols__strict(self):
@@ -101,10 +101,10 @@ class TestUMPAPackets(object):
 class TestUMPAPacketsOutput(object):
     def test_get_raw__ip(self):
         p = Packet()
-        p.include(IP(source_address="127.0.0.1",
-                    destination_address="127.0.0.1",
-                    _identification=1000,
-                    _header_checksum=0x7900))
+        p.include(IP(src="127.0.0.1",
+                    dst="127.0.0.1",
+                    _id=1000,
+                    _checksum=0x7900))
 
         if sys.platform.find('linux') != -1:
             ttl = _consts.TTL_LINUX
@@ -138,7 +138,7 @@ class TestUMPAPacketsOutput(object):
 
     def test_get_raw__tcp(self):
         p = Packet()
-        p.include(TCP(source_port=123,destination_port=321,control_bits='psh'))
+        p.include(TCP(srcport=123,dstport=321,flags='psh'))
 
         assert ("\x00\x7b\x01\x41\x00\x00\x00\x00"
                 "\x00\x00\x00\x01\x50\x08\x02\x00"
@@ -175,11 +175,11 @@ class TestUMPAPacketsOutput(object):
                     "\x7f\x00\x00\x01") % chr(ttl)
 
         p = Packet()
-        p.include(IP(source_address="127.0.0.1",
-                    destination_address="127.0.0.1",
-                    _identification=1000,
-                    _header_checksum=0x7900))
-        p.include(TCP(source_port=123,destination_port=321,control_bits='psh'))
+        p.include(IP(src="127.0.0.1",
+                    dst="127.0.0.1",
+                    _id=1000,
+                    _checksum=0x7900))
+        p.include(TCP(srcport=123, dstport=321, flags='psh'))
 
         expected += ("\x00\x7b\x01\x41\x00\x00\x00\x00"
                     "\x00\x00\x00\x01\x50\x08\x02\x00"

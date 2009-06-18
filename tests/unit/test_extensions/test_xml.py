@@ -38,10 +38,10 @@ class TestExtensionXML(object):
                         <_version type="int">
                                 4
                         </_version>
-                        <_ihl type="NoneType">
+                        <_hdr_len type="NoneType">
                                 None
-                        </_ihl>
-                        <type_of_service type="bits">
+                        </_hdr_len>
+                        <tos type="bits">
                                 <precedence0 type="bool">
                                         False
                                 </precedence0>
@@ -57,26 +57,26 @@ class TestExtensionXML(object):
                                 <throughput type="bool">
                                         False
                                 </throughput>
-                                <relibility type="bool">
+                                <reliability type="bool">
                                         False
-                                </relibility>
+                                </reliability>
                                 <reserved0 type="bool">
                                         False
                                 </reserved0>
                                 <reserved1 type="bool">
                                         False
                                 </reserved1>
-                        </type_of_service>
-                        <_total_length type="NoneType">
+                        </tos>
+                        <_len type="NoneType">
                                 None
-                        </_total_length>
-                        <_identification type="int">
+                        </_len>
+                        <_id type="int">
                                 0
-                        </_identification>
+                        </_id>
                         <flags type="bits">
-                                <reserved type="bool">
+                                <rb type="bool">
                                         False
-                                </reserved>
+                                </rb>
                                 <df type="bool">
                                         False
                                 </df>
@@ -84,49 +84,49 @@ class TestExtensionXML(object):
                                         False
                                 </mf>
                         </flags>
-                        <_fragment_offset type="int">
+                        <_frag_offset type="int">
                                 0
-                        </_fragment_offset>
-                        <time_to_live type="NoneType">
+                        </_frag_offset>
+                        <ttl type="NoneType">
                                 None
-                        </time_to_live>
-                        <_protocol type="NoneType">
+                        </ttl>
+                        <_proto type="NoneType">
                                 None
-                        </_protocol>
-                        <_header_checksum type="int">
+                        </_proto>
+                        <_checksum type="int">
                                 0
-                        </_header_checksum>
-                        <source_address type="str">
+                        </_checksum>
+                        <src type="str">
                                 127.0.0.1
-                        </source_address>
-                        <destination_address type="str">
+                        </src>
+                        <dst type="str">
                                 67.205.14.183
-                        </destination_address>
+                        </dst>
                         <options type="bits"/>
                         <_padding type="int">
                                 0
                         </_padding>
                 </protocol>
                 <protocol class="umpa.protocols.TCP.TCP">
-                        <source_port type="int">
+                        <srcport type="int">
                                 2958
-                        </source_port>
-                        <destination_port type="int">
+                        </srcport>
+                        <dstport type="int">
                                 0
-                        </destination_port>
-                        <_sequence_number type="NoneType">
+                        </dstport>
+                        <_seq type="NoneType">
                                 None
-                        </_sequence_number>
-                        <_acknowledgment_number type="NoneType">
+                        </_seq>
+                        <_ack type="NoneType">
                                 None
-                        </_acknowledgment_number>
+                        </_ack>
                         <_data_offset type="NoneType">
                                 None
                         </_data_offset>
                         <_reserved type="int">
                                 0
                         </_reserved>
-                        <control_bits type="bits">
+                        <flags type="bits">
                                 <urg type="bool">
                                         False
                                 </urg>
@@ -145,10 +145,10 @@ class TestExtensionXML(object):
                                 <fin type="bool">
                                         False
                                 </fin>
-                        </control_bits>
-                        <_window type="NoneType">
+                        </flags>
+                        <_window_size type="NoneType">
                                 None
-                        </_window>
+                        </_window_size>
                         <_checksum type="NoneType">
                                 None
                         </_checksum>
@@ -170,25 +170,25 @@ class TestExtensionXML(object):
 """
     example_xml2 = """        <packet id="1" strict="True">
                 <protocol class="umpa.protocols.TCP.TCP">
-                        <source_port type="int">
+                        <srcport type="int">
                                 123
-                        </source_port>
-                        <destination_port type="int">
+                        </srcport>
+                        <dstport type="int">
                                 321
-                        </destination_port>
-                        <_sequence_number type="NoneType">
+                        </dstport>
+                        <_seq type="NoneType">
                                 None
-                        </_sequence_number>
-                        <_acknowledgment_number type="NoneType">
+                        </_seq>
+                        <_ack type="NoneType">
                                 None
-                        </_acknowledgment_number>
+                        </_ack>
                         <_data_offset type="NoneType">
                                 None
                         </_data_offset>
                         <_reserved type="int">
                                 0
                         </_reserved>
-                        <control_bits type="bits">
+                        <flags type="bits">
                                 <urg type="bool">
                                         False
                                 </urg>
@@ -207,10 +207,10 @@ class TestExtensionXML(object):
                                 <fin type="bool">
                                         False
                                 </fin>
-                        </control_bits>
-                        <_window type="NoneType">
+                        </flags>
+                        <_window_size type="NoneType">
                                 None
-                        </_window>
+                        </_window_size>
                         <_checksum type="NoneType">
                                 None
                         </_checksum>
@@ -232,14 +232,14 @@ class TestExtensionXML(object):
 """
 
     ip = IP()
-    ip.source_address = "127.0.0.1"
-    ip.destination_address = "67.205.14.183"
+    ip.src = "127.0.0.1"
+    ip.dst = "67.205.14.183"
 
     # TCP header
     tcp = TCP()
-    tcp.source_port = 2958
-    tcp.destination_port = 0
-    tcp.set_flags('control_bits', syn=True)
+    tcp.srcport = 2958
+    tcp.dstport = 0
+    tcp.set_flags('flags', syn=True)
 
     # Payload
     data = Payload()
@@ -249,9 +249,9 @@ class TestExtensionXML(object):
     example_packet = umpa.Packet(ip, tcp, data)
     
     tcp2 = TCP()
-    tcp2.source_port = 123
-    tcp2.destination_port = 321
-    tcp2.set_flags('control_bits', syn=False)
+    tcp2.srcport = 123
+    tcp2.dstport = 321
+    tcp2.set_flags('flags', syn=False)
     data2 = Payload()
     data2.data = "another umpa packet!"
     example_packet2 = umpa.Packet(tcp2, data2, strict=True)

@@ -59,7 +59,7 @@ class PseudoHeader(Protocol):
     It's prefixed to the protocol header before calculating.
     """
 
-    _ordered_fields = ('source_address', 'destination_address', 'reserved',
+    _ordered_fields = ('src', 'dst', 'reserved',
                     'protocol_id', 'total_length')
 
     def __init__(self, protocol_id, total_length):
@@ -102,14 +102,14 @@ class PseudoHeader(Protocol):
         """
 
         # assign localhost first becuase if there is none IP instance
-        self.source_address = "127.0.0.1"
-        self.destination_address = "127.0.0.1"
+        self.src = "127.0.0.1"
+        self.dst = "127.0.0.1"
         # grabbing informations from the IP's header
         it = iter(protocol_container)
         for proto in it:
             if isinstance(proto, IP):
-                self.source_address = proto.source_address
-                self.destination_address = proto.destination_address
+                self.src = proto.src
+                self.dst = proto.dst
                 break
 
         return raw_value, bit

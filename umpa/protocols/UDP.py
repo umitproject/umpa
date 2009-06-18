@@ -284,8 +284,7 @@ class UDP(_protocols.Protocol):
     protocol_id = _consts.PROTOCOL_UDP
     name = "UDP"
 
-    _ordered_fields = ('source_port', 'destination_port', '_length',
-                                                                '_checksum')
+    _ordered_fields = ('srcport', 'dstport', '_length', '_checksum')
 
     def __init__(self, **kwargs):
         """
@@ -302,9 +301,9 @@ class UDP(_protocols.Protocol):
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self.get_field('source_port').set_doc("The source port number. "
+        self.get_field('srcport').set_doc("The source port number. "
             "See RFC 768 for more.")
-        self.get_field('destination_port').set_doc("The destination port "
+        self.get_field('dstport').set_doc("The destination port "
             "number. See RFC 768 for more.")
         self.get_field('_checksum').set_doc("Checksum of Pseudo Header, UDP "
             "header and data. See RFC 768 for more.")

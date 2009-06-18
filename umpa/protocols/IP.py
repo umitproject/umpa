@@ -289,11 +289,9 @@ class IP(_protocols.Protocol):
     protocol_id = _consts.ETHERTYPE_IP
     name = "IP"
 
-    _ordered_fields = ('_version', '_ihl', 'type_of_service', '_total_length',
-                    '_identification', 'flags', '_fragment_offset',
-                    'time_to_live', '_protocol', '_header_checksum',
-                    'source_address', 'destination_address', 'options',
-                    '_padding',)
+    _ordered_fields = ('_version', '_hdr_len', 'tos', '_len', '_id', 'flags',
+                    '_frag_offset', 'ttl', '_proto', '_checksum', 'src', 'dst',
+                    'options', '_padding',)
 
     def __init__(self, **kwargs):
         """
@@ -301,10 +299,10 @@ class IP(_protocols.Protocol):
         """
 
         tos = ('precedence0', 'precedence1', 'precedence2', 'delay',
-                'throughput', 'relibility', 'reserved0', 'reserved1')
+                'throughput', 'reliability', 'reserved0', 'reserved1')
         tos_predefined = dict.fromkeys(tos, 0)
 
-        flags = ('reserved', 'df', 'mf')
+        flags = ('rb', 'df', 'mf')
         flags_predefined = dict.fromkeys(flags, 0)
 
         # TODO:
@@ -332,14 +330,14 @@ class IP(_protocols.Protocol):
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self.get_field('type_of_service').set_doc("The Type of Service "
+        self.get_field('tos').set_doc("The Type of Service "
             "provides an indication of the abstract parameters of the quality "
             "of service desired. See RFC 791 for more.")
         self.get_field('flags').set_doc("Various Control Flags. See RFC 791 " 
             "for more.")
-        self.get_field('source_address').set_doc("The source address. "
+        self.get_field('src').set_doc("The source address. "
             "See RFC 791 for more.")
-        self.get_field('destination_address').set_doc("The destination "
+        self.get_field('dst').set_doc("The destination "
             "address. See RFC 791 for more.")
         self.get_field('options').set_doc("The options may appear or not in "
             "datagrams. See RFC 791 for more.")
@@ -376,13 +374,13 @@ class IP(_protocols.Protocol):
         # we store sum of option and padding bits in the _temp_value
         # we can't overwrite _value because user might set his own value there
         # later, generate_value() will return correct value
-        self.get_field('_ihl')._tmp_value = \
+        self.get_field('_hdr_len')._tmp_value = \
             self.get_field('options').bits + self.get_field('_padding').bits
 
         # Total Length
         # we sum length of upper layers and IP layer
-        self.get_field('_total_length')._tmp_value = \
-            self.get_field('_ihl').fillout()*32 + protocol_bits
+        self.get_field('_len')._tmp_value = \
+            self.get_field('_hdr_len').fillout()*32 + protocol_bits
 
         # Protocol
         # field indicates the next level protocol used in the data
@@ -391,7 +389,7 @@ class IP(_protocols.Protocol):
             proto_id = self.payload.protocol_id
         else:
             proto_id = 0 # FIXME: what's the default value for non-upper layer?
-        self.get_field('_protocol')._tmp_value = proto_id
+        self.get_field('_proto')._tmp_value = proto_id
 
         return raw_value, bit
 
@@ -418,11 +416,11 @@ class IP(_protocols.Protocol):
 
         # Header Checksum
         # a checksum on the header only.
-        cksum_offset = bit - self.get_offset('_header_checksum') - \
-                                    self.get_field('_header_checksum').bits
+        cksum_offset = bit - self.get_offset('_checksum') - \
+                                    self.get_field('_checksum').bits
         # check if user doesn't provide own values of bits
         if _bits.get_bits(raw_value,
-                        self.get_field('_header_checksum').bits,
+                        self.get_field('_checksum').bits,
                         cksum_offset,
                         rev_offset=True) == 0:
             # calculate and add checksum to the raw_value

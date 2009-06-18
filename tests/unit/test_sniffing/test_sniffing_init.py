@@ -45,24 +45,24 @@ class TestSniffing(object):
             assert umpa.sniffing.get_available_devices()==pypcap.findalldevs()
 
     def test_sniff(self):
-        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
-                                    TCP(source_port=99)))
+        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+                                    TCP(srcport=99)))
         th.start()
         result = umpa.sniffing.sniff(1, device='any')
         th.join()
         print result
 
     def test_sniff_next(self):
-        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
-                                    TCP(source_port=99)))
+        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+                                    TCP(srcport=99)))
         th.start()
         result = umpa.sniffing.sniff_next(device='any')
         th.join()
         print result
 
         # send more, sniff one
-        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
-                                    TCP(source_port=99)), 5)
+        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+                                    TCP(srcport=99)), 5)
         th.start()
         result = umpa.sniffing.sniff_next(device='any')
         th.join()
@@ -80,22 +80,22 @@ class TestSniffing(object):
         def cbk2(ts, pkt, *args):
             print pkt
             
-        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.6"),
-                                    TCP(source_port=99)))
+        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
+                                    TCP(srcport=99)))
         th.start()
         umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
                                             callback=cbk, callback_args=[1,2])
         th.join()
 
-        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.6"),
-                                    TCP(source_port=99)))
+        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
+                                    TCP(srcport=99)))
         th.start()
         umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
                                                             callback=cbk2)
         th.join()
 
-        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.6"),
-                                    TCP(source_port=99)))
+        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
+                                    TCP(srcport=99)))
         th.start()
         py.test.raises(UMPASniffingException, umpa.sniffing.sniff_loop, 1,
                         filter="src 1.2.3.6", device='any', callback=cbk,
@@ -114,8 +114,8 @@ class TestSniffing(object):
         dump_file = tempfile.NamedTemporaryFile(mode="w")
         amount = 5
 
-        th = SendPacket(umpa.Packet(IP(source_address="1.2.3.4"),
-                                    TCP(source_port=99)), amount)
+        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+                                    TCP(srcport=99)), amount)
         th.start()
         try:
             umpa.sniffing.to_file(dump_file.name, amount,

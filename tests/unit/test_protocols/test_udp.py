@@ -25,7 +25,7 @@ class TestUDP(object):
     def test_get_raw(self):
         # TODO more tests would be nice
         # this test pre/post raw methods as well
-        ip = IP(source_address='127.0.0.1', destination_address='127.0.0.1')
-        p = UDP(source_port=0, destination_port=10)
+        ip = IP(src='127.0.0.1', dst='127.0.0.1')
+        p = UDP(srcport=0, dstport=10)
 
         assert p._raw(0, 0, [ip, p], 0) == (0xa000801d2, 64)

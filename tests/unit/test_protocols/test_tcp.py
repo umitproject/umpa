@@ -25,8 +25,8 @@ class TestTCP(object):
     def test_get_raw(self):
         # TODO more tests would be nice
         # this test pre/post raw methods as well
-        ip = IP(source_address='127.0.0.1', destination_address='127.0.0.1')
-        tcp = TCP(source_port=0, destination_port=10)
+        ip = IP(src='127.0.0.1', dst='127.0.0.1')
+        tcp = TCP(srcport=0, dstport=10)
 
         assert tcp._raw(0, 0, [ip, tcp], 0) == \
                 (0xa000000000000000150000200afd70000, 160)

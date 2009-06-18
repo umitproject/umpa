@@ -473,10 +473,9 @@ class TCP(_protocols.Protocol):
     protocol_id = _consts.PROTOCOL_TCP
     name = "TCP"
 
-    _ordered_fields = ('source_port', 'destination_port', '_sequence_number',
-                    '_acknowledgment_number', '_data_offset', '_reserved',
-                    'control_bits', '_window', '_checksum', '_urgent_pointer',
-                    'options', '_padding',)
+    _ordered_fields = ('srcport', 'dstport', '_seq', '_ack', '_data_offset', 
+                    '_reserved', 'flags', '_window_size', '_checksum',
+                    '_urgent_pointer', 'options', '_padding',)
 
     def __init__(self, **kwargs):
         """
@@ -505,11 +504,11 @@ class TCP(_protocols.Protocol):
 
         # set __doc__ for fields - it's important if you want to get hints
         # in some frontends. E.g. Umit Project provides one...
-        self.get_field('source_port').set_doc("The source port number. "
+        self.get_field('srcport').set_doc("The source port number. "
             "See RFC 793 for more.")
-        self.get_field('destination_port').set_doc("The destination port "
+        self.get_field('dstport').set_doc("The destination port "
             "number. See RFC 793 for more.")
-        self.get_field('control_bits').set_doc("URG, ACK, PSH, RST, SYN, FIN "
+        self.get_field('flags').set_doc("URG, ACK, PSH, RST, SYN, FIN "
             "flags. See RFC 793 for more.")
         self.get_field('_checksum').set_doc("Checksum of Pseudo Header, TCP "
             "header and data. See RFC 793 for more.")

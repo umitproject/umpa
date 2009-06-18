@@ -44,18 +44,18 @@ class TestPseudoHeader(object):
     def test_pre_raw(self):
         p = PseudoHeader(0, 40)
         p._pre_raw(0, 0, [], 0)
-        assert p.source_address == "127.0.0.1"
-        assert p.destination_address == "127.0.0.1"
+        assert p.src == "127.0.0.1"
+        assert p.dst == "127.0.0.1"
 
-        p._pre_raw(0, 0, [IP(source_address="1.2.3.4")], 0)
-        assert p.source_address == "1.2.3.4"
-        assert p.destination_address == "127.0.0.1"
+        p._pre_raw(0, 0, [IP(src="1.2.3.4")], 0)
+        assert p.src == "1.2.3.4"
+        assert p.dst == "127.0.0.1"
 
-        p._pre_raw(0, 0, [IP(source_address="1.2.3.4",
-                    destination_address="4.3.2.1"), TCP(source_port=123)], 0)
-        assert p.source_address == "1.2.3.4"
-        assert p.destination_address == "4.3.2.1"
+        p._pre_raw(0, 0, [IP(src="1.2.3.4",
+                    dst="4.3.2.1"), TCP(srcport=123)], 0)
+        assert p.src == "1.2.3.4"
+        assert p.dst == "4.3.2.1"
 
-        p._pre_raw(0, 0, [TCP(source_port=123)], 0)
-        assert p.source_address == "127.0.0.1"
-        assert p.destination_address == "127.0.0.1"
+        p._pre_raw(0, 0, [TCP(srcport=123)], 0)
+        assert p.src == "127.0.0.1"
+        assert p.dst == "127.0.0.1"

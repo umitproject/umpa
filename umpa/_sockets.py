@@ -102,4 +102,4 @@ class Socket(object):
         if not proto:
             raise UMPAException("There is not prototocol from 3rd layer.")
 
-        return proto.destination_address
+        return proto.dst
