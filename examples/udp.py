@@ -38,14 +38,14 @@ umpa.utils.security.drop_priviliges()
 # create new IP object
 ip = IP()
 # setting some fields
-ip.source_address = "127.0.0.1"
-ip.destination_address = "67.205.14.183"
+ip.src = "127.0.0.1"
+ip.dst = "67.205.14.183"
 
 # create new UDP object
 udp = UDP()
 # setting some fields
-udp.source_port = 0
-udp.destination_port = 7
+udp.srcport = 0
+udp.dstport = 7
 
 # create a new packet and include protocols
 packet = umpa.Packet(ip, udp)

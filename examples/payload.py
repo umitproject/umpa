@@ -39,17 +39,17 @@ umpa.utils.security.drop_priviliges()
 # create new IP object
 ip = IP()
 # setting some fields
-ip.source_address = "127.0.0.1"
-ip.destination_address = "67.205.14.183"
+ip.src = "127.0.0.1"
+ip.dst = "67.205.14.183"
 
 # the same for TCP
 tcp = TCP()
 # setting some fields
-tcp.source_port = 2958
-tcp.destination_port = 0
+tcp.srcport = 2958
+tcp.dstport = 0
 
 # also, SYN flag will be set up. here SYN
-tcp.set_flags('control_bits', syn=True)
+tcp.set_flags('flags', syn=True)
 
 # create payload object and set the data while calling constructor
 payload = Payload(data="something here")
