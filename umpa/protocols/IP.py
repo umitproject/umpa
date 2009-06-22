@@ -318,7 +318,7 @@ class IP(_protocols.Protocol):
                         _HFragmentOffset("Fragment Offset", 0),
                         _HTTL("TTL"),
                         _HProtocol("Protocol"),
-                        _HHeaderChecksum("_Header Checksum", 0),
+                        _HHeaderChecksum("Header Checksum", 0),
                         _fields.IPv4AddrField("Source Address", "127.0.0.1"),
                         _fields.IPv4AddrField("Destination Address",
                                                                 "127.0.0.1"),
