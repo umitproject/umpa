@@ -23,6 +23,19 @@
 Only constant vars related to any protocols and network issues.
 """
 
+import umpa.sniffing
+
+DLT_ARCNET = umpa.sniffing.lpcap.consts['DLT_ARCNET']
+DLT_EN10MB = umpa.sniffing.lpcap.consts['DLT_EN10MB']
+DLT_FDDI = umpa.sniffing.lpcap.consts['DLT_FDDI']
+DLT_IEEE802 = umpa.sniffing.lpcap.consts['DLT_IEEE802']
+DLT_LINUX_SLL = umpa.sniffing.lpcap.consts['DLT_LINUX_SLL']
+DLT_LOOP = umpa.sniffing.lpcap.consts['DLT_LOOP']
+DLT_NULL = umpa.sniffing.lpcap.consts['DLT_NULL']
+DLT_PPP = umpa.sniffing.lpcap.consts['DLT_PPP']
+DLT_RAW = umpa.sniffing.lpcap.consts['DLT_RAW']
+DLT_SLIP = umpa.sniffing.lpcap.consts['DLT_SLIP']
+
 BYTE = 8
 
 # Ether types (based on IEEE 802.1Q)
