@@ -84,6 +84,9 @@ class open_pcap(open_pcap):
     def setfilter(self, filter):
         self._pcap.setfilter(filter)
 
+    def datalink(self):
+        return self._pcap.datalink()
+
 class dumper(dumper):
     def __init__(self, p=None, fname=None, open=True):
         if p is not None:

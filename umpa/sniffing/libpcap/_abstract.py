@@ -130,6 +130,14 @@ class open_pcap(object):
         raise NotImplementedError("not implemented method for the "
                         "selected libpcap backend or abstract module")
 
+    def datalink(self):
+        """
+        Return datalink value.
+        """
+
+        raise NotImplementedError("not implemented method for the "
+                        "selected libpcap backend or abstract module")
+
 class dumper(object):
     """
     Store sniffed packtes into a savefile.
