@@ -118,6 +118,7 @@ class Field(object):
         Set a value for the field.
 
         The new value is validing before assigment.
+        'auto' parameter is unset.
 
         @param value: new value for the field.
         """
@@ -126,6 +127,9 @@ class Field(object):
             self._value = value
         else:
             raise UMPAAttributeException(str(value) + ' is not allowed')
+
+        if self.auto:
+            self.auto = False
 
     def clear(self):
         """

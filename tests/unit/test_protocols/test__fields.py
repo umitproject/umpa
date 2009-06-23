@@ -87,6 +87,13 @@ class TestIntField(TestField):
         f = self.cls_field('foobar', bits=3)
         py.test.raises(UMPAAttributeException, f.set, 10)
 
+        # __________________
+        # auto
+        f = self.cls_field('foobar', bits=4, auto=True)
+        assert f.auto is True
+        f.set(10)
+        assert f.auto is False
+
     def test_clear(self):
         f = self.cls_field('foobar', 10, 8)
         f.clear()
@@ -151,6 +158,13 @@ class TestEnumField(TestIntField):
         f.set(10)
         assert f.get() == 10
         assert f.get(True) == 'bar'
+
+        # __________________
+        # auto
+        f = self.cls_field('foobar', bits=4, auto=True)
+        assert f.auto is True
+        f.set(10)
+        assert f.auto is False
 
 class TestAddrField(TestField):
     cls_field = IPAddrField
