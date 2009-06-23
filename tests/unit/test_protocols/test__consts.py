@@ -23,7 +23,7 @@ import umpa
 from umpa.protocols import _consts
 
 class TestConsts(object):
-    if umpa.coding['libpcap'] == 'pypcap':
+    if umpa.config['libpcap'] == 'pypcap':
         from umpa.sniffing.libpcap import pypcap
         assert _consts.DLT_ARCNET == pypcap.pcap.DLT_ARCNET
         assert _consts.DLT_EN10MB == pypcap.pcap.DLT_EN10MB
