@@ -19,13 +19,14 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import types
-import umpa.protocols
+from umpa.protocols import Ethernet
 
-class TestProtocolInit(object):
-    def test_import_global_protos(self):
-        assert umpa.protocols.Ethernet
-        assert umpa.protocols.IP
-        assert umpa.protocols.UDP
-        assert umpa.protocols.TCP
-        assert umpa.protocols.Payload
+class TestEthernet(object):
+    def test_get_raw(self):
+        eth = Ethernet(src="aa:bb:cc:dd:ee:ff")
+        assert eth._raw(0, 0, [eth], 0) == (0x000000000000aabbccddeeff0000,112)
+
+        eth = Ethernet( dst="ff:ff:ff:00:00:00",
+                        src="aa:bb:cc:dd:ee:ff",
+                        _type=0xffff)
+        assert eth._raw(0, 0, [eth], 0) == (0xffffff000000aabbccddeeffffff,112)

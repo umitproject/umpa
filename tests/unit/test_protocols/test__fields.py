@@ -153,9 +153,6 @@ class TestEnumField(TestIntField):
         assert f.get(True) == 'bar'
 
 class TestAddrField(TestField):
-    pass
-
-class TestIPAddrField(TestAddrField):
     cls_field = IPAddrField
 
     def test_get(self):
@@ -277,6 +274,9 @@ class TestIPAddrField(TestAddrField):
         f.set("255.255.255.255")
         assert f.fillout() == 2**32-1
 
+class TestIPAddrField(TestAddrField):
+    pass
+
 class TestIPv4AddrField(TestIPAddrField):
     cls_field = IPv4AddrField
 
@@ -353,6 +353,46 @@ class TestIPv6AddrField(TestIPAddrField):
         py.test.raises(UMPAAttributeException, f.set,
                                     "FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF.FFFF")
         py.test.raises(UMPAAttributeException, f.set, "G:G:G:G:G:G:G:G")
+
+class TestMACAddrField(TestAddrField):
+    cls_field = MACAddrField
+
+    def setup_method(self, method):
+        self.cls_field.pieces_amount = 6
+        self.cls_field.separator = ":"
+        self.cls_field.piece_size = 8
+        self.cls_field.base = 16
+        self.cls_field.bits = 48
+
+    def test_set(self):
+        f = self.cls_field('foobar')
+
+        def check(val):
+            f.set(val)
+            assert f.get() == val
+
+        check("aa:bb:cc:dd:ee:ff")
+        check("00:00:00:00:00:00")
+        check(("aa","bb","cc","dd","ee","ff"))
+        check((0,0,0,0,0,0))
+        f.set(["aa",0,0,1,9,2])
+        assert f.get() == ("aa",0,0,1,9,2)
+        f.set([0,0,0,0,0,0])
+        assert f.get() == (0,0,0,0,0,0)
+
+        py.test.raises(UMPAAttributeException, f.set, "256:0:0:1:1:1")
+        py.test.raises(UMPAAttributeException, f.set, "127,0,0,1,1,1")
+        py.test.raises(UMPAAttributeException, f.set, "327,0,0,1,0,0")
+        py.test.raises(UMPAAttributeException, f.set, "127:0:0:")
+        py.test.raises(UMPAAttributeException, f.set, "127:0:0:0:0")
+        py.test.raises(UMPAAttributeException, f.set, "127")
+        py.test.raises(UMPAAttributeException, f.set, "A")
+        py.test.raises(UMPAAttributeException, f.set, "0xF.0xF.0xF.0xF.0xF.0xF")
+        py.test.raises(UMPAAttributeException, f.set, (500,))
+        py.test.raises(UMPAAttributeException, f.set, (500,0,0,0))
+        py.test.raises(UMPAAttributeException, f.set, ("10:0:0:0:0:0",))
+        py.test.raises(UMPAAttributeException, f.set, "qq:aa:bb:ee:dd:ff")
+        py.test.raises(UMPAAttributeException, f.set, "ii:aa:bb:ee:dd:ff")
 
 class TestPaddingField(TestSpecialIntField):
     cls_field = PaddingField

@@ -376,13 +376,6 @@ class AddrField(Field):
 
     Subclasses of this class are related to the different kinds of addresses
     as IP addresses for example.
-    """
-
-    pass
-
-class IPAddrField(AddrField):
-    """
-    Main class for IP-style adresses.
 
     Handle with 2 types of data:
      1. strings as "127.0.0.1" or "0:0:0:0:0:0:0:1"
@@ -407,7 +400,7 @@ class IPAddrField(AddrField):
         if isinstance(value, types.ListType):
             value = tuple(value)
 
-        super(IPAddrField, self).set(value)
+        super(AddrField, self).set(value)
 
     def _raw_value(self):
         """
@@ -471,6 +464,12 @@ class IPAddrField(AddrField):
 
         return True
 
+class IPAddrField(AddrField):
+    """
+    Main class for IP-style adresses.
+    """
+    pass
+
 class IPv4AddrField(IPAddrField):
     """
     Address in IPv4 style.
@@ -504,6 +503,21 @@ class IPv4AddrField(IPAddrField):
 #    pieces_amount = 8
 #    base = 16
 #    bits = 128
+
+class MACAddrField(AddrField):
+    """
+    Hardware address in MAC style.
+
+    Handle with 2 types of data:
+    1. strings as "aa:bb:cc:dd:ee:ff"
+    2. tuples as ('aa','bb','cc',11,22,33)
+    """
+
+    separator = ":"
+    piece_size = 8
+    pieces_amount = 6
+    base = 16
+    bits = 48
 
 class PaddingField(SpecialIntField):
     """
