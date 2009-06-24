@@ -548,6 +548,8 @@ class PaddingField(SpecialIntField):
 
         self._word = word
         super(PaddingField, self).__init__(name, 0, *args, **kwargs)
+        self.auto = True    # XXX: super-class overrides it 
+                            # (should be fix with #314)
 
     def fillout(self):
         """
