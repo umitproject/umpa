@@ -46,6 +46,8 @@ class TestProtocol(object):
         assert p.b == 1
         assert p.c == 1
 
+        assert p.get_field('a')._shortname == 'a'
+
     def test_getattr(self):
         fake_fields = [IntField('foobar', 1, 8)]
         fake_ordered = ('a')
@@ -193,7 +195,6 @@ class TestProtocol(object):
 
         py.test.raises(UMPAException, p.get_offset, 10)
         py.test.raises(UMPAException, p.get_offset, self.cls_proto)
-        py.test.raises(UMPAException, "p.get_offset(self.cls_proto('x'))")
         py.test.raises(UMPAException, p.get_offset, False)
 
         py.test.raises(UMPAAttributeException, p.get_offset, 'd')

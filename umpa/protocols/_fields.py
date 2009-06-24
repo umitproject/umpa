@@ -89,10 +89,11 @@ class Field(object):
         """
 
         if self.auto:
-            return "| +-[ %-25s ]\t\t%s (auto - %s)" % (self.name,
-                                        str(self._value), str(self.fillout()))
+            return "| +-[ %-25s ]\t%-15s : %s (auto - %s)" % (self.name,
+                        self._shortname, str(self._value), str(self.fillout()))
         else:
-            return "| +-[ %-25s ]\t\t%s" % (self.name, str(self._value))
+            return "| +-[ %-25s ]\t%-15s : %s" % (self.name,
+                                            self._shortname, str(self._value))
 
     def __repr__(self):
         """
@@ -650,12 +651,12 @@ class Flags(Field):
         @return: the part of the whole tree which accords to the field.
         """
 
-        print "| +-[ %-25s ]" % self.name
+        print "| +-[ %-25s ]\t%s" % (self.name, self._shortname)
         print "| | \\"
         for bit in self._ordered_fields:
             print self._value[bit]
         print "| | /"
-        return "| \\-[ %-25s ]\t\tcontains %d bit flags" % (self.name,
+        return "| \\-[ %-25s ]\tcontains %d bit flags" % (self.name,
                                                     len(self._ordered_fields))
 
     def get(self, *names):
@@ -828,7 +829,7 @@ class BitField(Field):
         @return: the part of the whole tree which accords to the field.
         """
 
-        return "| |  -{ %-23s }\t\t%d" % (self.name, int(bool(self._value)))
+        return "| |  -{ %-23s }\t%d" % (self.name, int(bool(self._value)))
 
     def get(self):
         """

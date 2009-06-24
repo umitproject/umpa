@@ -73,6 +73,10 @@ class Protocol(object):
         for field in preset:
             setattr(self, field, preset[field])
 
+        # short-fieldname update
+        for field in fields:
+            self.get_field(field)._shortname = field
+
     def __getattr__(self, attr):
         """
         Return the value of the field.
@@ -110,7 +114,7 @@ class Protocol(object):
         print "| \\"
         for field in self.get_fields():
             print field
-        print "\\-< %-27s >\t\tcontains %d fields" % (self.name,
+        print "\\-< %-27s >\tcontains %d fields" % (self.name,
                                                             len(self._fields))
         return super(Protocol, self).__str__()
 
