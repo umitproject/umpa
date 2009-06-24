@@ -637,7 +637,7 @@ class Flags(Field):
             if preset[name] is True:
                 self.set(name)
             else:
-                self.unset(name)
+                self.set(False, name)
 
     def __str__(self):
         """
@@ -658,48 +658,93 @@ class Flags(Field):
 
     def get(self, *names):
         """
-        Return list of passed bits values.
+        Return a number which is n-bits value of bits
+        or a list of passed bits values.
 
-        If no names passed or no results, return the whole list with values
-        of every flag-bits.
+        If no names passed return a numeric value of all bits.
+        To return a list of all bits, pass [] as a first argument.
 
-        @type names: C{str}
-        @param names: names of bit-flags.
+        @type *names: C{str}
+        @param *names: names of bit-flags.
 
-        @return: list of passed bits values.
+        @return: a numeric-value or list of passed bits values.
         """
 
-        for bit in names:
-            if not self._is_valid(bit):
-                raise UMPAAttributeException('no bit named ' + bit)
+        try:
+            result = [ self._value[val].get() for val in names ]
+        except KeyError, msg:
+            raise UMPAAttributeException(msg)
+        except TypeError:
+            if len(names[0]) == 0:
+                result = [ self._value[bit].get() for bit in
+                                                        self._ordered_fields ]
+            else:
+                raise
 
-        result = [ self._value[val].get() for val in names ]
+        if not names:
+            result = 0
+            for bit in self._ordered_fields:
+                result += self._value[bit].get()
+                result <<= 1
+            result >>= 1
 
-        # if no results above return whole list of values
-        if len(result) < 1:
-            result = [ self._value[bit].get() for bit in self._ordered_fields ]
         return result
 
 
-    def set(self, *names):
+    def set(self, value, *args, **kwargs):
         """
-        Set logical True for passed bit-flags.
+        Set value of bits.
 
-        @type names: C{str}
-        @param names: names of bit-flags.
+        This function is pretty complex and handles with many cases.
+        
+        @note: *args overrides value, and **kwargs overrids each.
+        
+        @param value: for C{int}: value of all bits,
+        for C{list}: True for bits from the list,
+        for C{dict}: bitname=value,
+        for C{str}: merging with *args
+        for C{False} or C{True}: bits from *args are set to True/False
+
+        @param *args: True for bits from the list
+        @param **kwargs: bitname=value
         """
 
-        self._set_bit(names, True)
+        # Protocol.__setattr__ call Field.set()
+        # for Flags case we have to handle different types
+        # 1) numeric-value 2) lists 3) dicts
 
-    def unset(self, *names):
-        """
-        Set logical False for passed bit-flags.
+        if value in (None, False, True):
+            pass
+        elif isinstance(value, types.IntType):
+            # check if a value exceeds flags's length
+            if value > 2**self.bits - 1:
+                raise UMPAAttributeException('%d is not allowed. %d is '
+                            'a maximum value' % (value, 2**self.bits-1))
 
-        @type names: C{str}
-        @param names: names of bit-flags.
-        """
+            mask = 1
+            for bit in reversed(self._ordered_fields):
+                self._set_bit(bit, value & mask)
+                mask <<= 1
+        elif isinstance(value, (types.ListType, types.TupleType)):
+            value = list(value)
+            value.extend(args)  # to keep an order
+            args = value
+        elif isinstance(value, types.DictType):
+            value.update(kwargs) # to keep an order
+            kwargs = value
+        elif isinstance(value, (types.StringType, types.UnicodeType)):
+            args = list(args)
+            args.insert(0, value)
+        else:
+            raise UMPAAttributeException(value + ' is wrong type.')
 
-        self._set_bit(names, False)
+        # update bits for *args and **kwargs
+        if value is False:
+            self._set_bit(args, False)
+        else:
+            self._set_bit(args, True)
+        for bit in kwargs:
+            self._set_bit(bit, kwargs[bit])
 
     def clear(self):
         """

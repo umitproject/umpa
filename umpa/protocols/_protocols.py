@@ -206,6 +206,9 @@ class Protocol(object):
         flag_field = self.get_field(name)
         if not isinstance(flag_field, Flags):
             raise UMPAAttributeException("No Flags instance for " + name)
+
+        if not args:
+            return flag_field.get([])
         return flag_field.get(*args)
 
     def set_flags(self, name, *args, **kwargs):
@@ -235,7 +238,7 @@ class Protocol(object):
                 if kwargs[flag_name]:
                     flag_field.set(flag_name)
                 else:
-                    flag_field.unset(flag_name)
+                    flag_field.set(False, flag_name)
         else:
             raise UMPAAttributeException("No Flags instance for " + name)
 

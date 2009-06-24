@@ -169,7 +169,7 @@ def load(filename, proto_only=False):
                                     protocol.get_field(field_name).set(
                                                                     bit_name)
                                 else:
-                                    protocol.get_field(field_name).unset(
+                                    protocol.get_field(field_name).set(False,
                                                                     bit_name)
             packet.include(protocol)
 

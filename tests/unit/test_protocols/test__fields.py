@@ -516,37 +516,62 @@ class TestFlags(TestField):
     def test_get(self):
         bits = ['a', 'b', 'c']
         f = self.cls_field('foobar', bits, b=False, c=True)
+        assert f.get() == 0x01
 
+        f = self.cls_field('foobar', bits, a=True, c=True)
+        assert f.get() == 0x05
+
+        f = self.cls_field('foobar', bits, b=False, c=True)
         assert f.get(*bits) == [False, False, True]
-        assert f.get() == [False, False, True]
-        
+        assert f.get([]) == [False, False, True]
+        #assert f.get(()) == [False, False, True]
+        assert f.get('a','c') == [False, True]
+
         py.test.raises(UMPAAttributeException, f.get, 'd')
+        py.test.raises(UMPAAttributeException, f.get, '')
         py.test.raises(UMPAAttributeException, f.get, 'a', 'd')
+        py.test.raises(UMPAAttributeException, 'f.get(Flags(None,[]))')
 
     def test_set(self):
         bits = ['a', 'b', 'c']
         f = self.cls_field('foobar', bits)
-        assert f.get() == [False, False, False]
+
+        assert f.get() == 0x00
+        f.set(0x05)
+        assert f.get() == 0x05
+        f.set({'a':False})
+        assert f.get() == 0x01
+        f.set('a','b','c')
+        assert f.get() == 0x07
+        f.set(['a','b'], 'c')
+        assert f.get() == 0x07
+        f.set(['a','b'], 'c', 'a')
+        assert f.get() == 0x07
+        f.set(0x05, 'b', a=False, b=False)
+        assert f.get() == 0x01
+
+        f.set(False, 'b', 'c', a=True)
+        assert f.get() == 0x04
+        f.set(True, 'a', b=True, c=True)
+        assert f.get() == 0x07
+        f.set(True, 'a', b=False, c=True, a=False)
+        assert f.get() == 0x01
+
         f.set('b')
         assert f.get('b') == [True]
         f.set('a', 'c')
         assert f.get('a', 'b') == [True, True]
-        
-    def test_unset(self):
-        bits = ['a', 'b', 'c']
-        f = self.cls_field('foobar', bits, a=True, b=True, c=True)
-        assert f.get() == [True, True, True]
-        f.unset('b')
-        assert f.get('b') == [False]
-        f.unset('a', 'c')
-        assert f.get('a', 'b') == [False, False]
+
+        py.test.raises(UMPAAttributeException, "f.set(0x08)")
+        py.test.raises(UMPAAttributeException, "f.set(0xFF)")
+        py.test.raises(UMPAAttributeException, "f.set(0x01, 'd')")
 
     def test_clear(self):
         bits = ['a', 'b', 'c']
         f = self.cls_field('foobar', bits, a=True, b=False, c=True)
-        assert f.get() == [True, False, True]
+        assert f.get([]) == [True, False, True]
         f.clear()
-        assert f.get() == [False, False, False]
+        assert f.get([]) == [False, False, False]
 
     def test_is_valid(self):
         bits = ['a', 'b', 'c']
