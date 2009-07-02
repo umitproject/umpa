@@ -23,20 +23,25 @@
 Only constant vars related to any protocols and network issues.
 """
 
-import umpa.sniffing
-
-DLT_ARCNET = umpa.sniffing.lpcap.consts['DLT_ARCNET']
-DLT_EN10MB = umpa.sniffing.lpcap.consts['DLT_EN10MB']
-DLT_FDDI = umpa.sniffing.lpcap.consts['DLT_FDDI']
-DLT_IEEE802 = umpa.sniffing.lpcap.consts['DLT_IEEE802']
-DLT_LINUX_SLL = umpa.sniffing.lpcap.consts['DLT_LINUX_SLL']
-DLT_LOOP = umpa.sniffing.lpcap.consts['DLT_LOOP']
-DLT_NULL = umpa.sniffing.lpcap.consts['DLT_NULL']
-DLT_PPP = umpa.sniffing.lpcap.consts['DLT_PPP']
-DLT_RAW = umpa.sniffing.lpcap.consts['DLT_RAW']
-DLT_SLIP = umpa.sniffing.lpcap.consts['DLT_SLIP']
+import sys
 
 BYTE = 8
+
+# DLT values (based on pcap/bpf.h)
+DLT_ARCNET = 7
+DLT_EN10MB = 1
+DLT_FDDI = 10
+DLT_IEEE802 = 6
+DLT_LINUX_SLL = 113
+DLT_NULL = 0
+DLT_PPP = 9
+DLT_SLIP = 8
+if sys.platform.find('openbsd') != -1:
+    DLT_RAW = 14
+    DLT_LOOP = 12
+else:
+    DLT_RAW = 12
+    DLT_LOOP = 108
 
 # Ether types (based on IEEE 802.1Q)
 ETHERTYPE_ARP = 0x0806

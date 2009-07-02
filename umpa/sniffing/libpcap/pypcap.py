@@ -26,19 +26,6 @@ from umpa.utils.exceptions import UMPASniffingException
 
 # see umpa.sniffing.libpcap._abstract for docstrings
 
-consts = {
-            'DLT_ARCNET'    : pcap.DLT_ARCNET,
-            'DLT_EN10MB'    : pcap.DLT_EN10MB,
-            'DLT_FDDI'      : pcap.DLT_FDDI,
-            'DLT_IEEE802'   : pcap.DLT_IEEE802,
-            'DLT_LINUX_SLL' : pcap.DLT_LINUX_SLL,
-            'DLT_LOOP'      : pcap.DLT_LOOP,
-            'DLT_NULL'      : pcap.DLT_NULL,
-            'DLT_PPP'       : pcap.DLT_PPP,
-            'DLT_RAW'       : pcap.DLT_RAW,
-            'DLT_SLIP'      : pcap.DLT_SLIP,
-        }
-
 def lookupdev():
     try:
         result = pcap.lookupdev()
