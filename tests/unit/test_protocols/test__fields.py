@@ -566,6 +566,15 @@ class TestFlags(TestField):
         py.test.raises(UMPAAttributeException, "f.set(0xFF)")
         py.test.raises(UMPAAttributeException, "f.set(0x01, 'd')")
 
+        # longer names (iterable issue)
+        bits = ['aa', 'bb', 'cc']
+        f = self.cls_field('foobar', bits)
+        assert f.get() == 0x00
+        f.set(0x05)
+        assert f.get() == 0x05
+        f.set(True, 'bb', aa=False, cc=True)
+        assert f.get() == 0x03
+
     def test_clear(self):
         bits = ['a', 'b', 'c']
         f = self.cls_field('foobar', bits, a=True, b=False, c=True)

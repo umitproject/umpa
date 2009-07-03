@@ -713,7 +713,7 @@ class Flags(Field):
         """
 
         # Protocol.__setattr__ call Field.set()
-        # for Flags case we have to handle different types
+        # for Flags we have to handle different types
         # 1) numeric-value 2) lists 3) dicts
 
         if value in (None, False, True):
@@ -726,7 +726,8 @@ class Flags(Field):
 
             mask = 1
             for bit in reversed(self._ordered_fields):
-                self._set_bit(bit, value & mask)
+                # cast to list because str is iterable (avoid iter over chars)
+                self._set_bit([bit], value & mask)
                 mask <<= 1
         elif isinstance(value, (types.ListType, types.TupleType)):
             value = list(value)
@@ -747,7 +748,8 @@ class Flags(Field):
         else:
             self._set_bit(args, True)
         for bit in kwargs:
-            self._set_bit(bit, kwargs[bit])
+            # cast to list because str is iterable (avoid iter over chars)
+            self._set_bit([bit], kwargs[bit])
 
     def clear(self):
         """
