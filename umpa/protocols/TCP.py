@@ -473,7 +473,7 @@ class TCP(_protocols.Protocol):
     protocol_id = _consts.PROTOCOL_TCP
     name = "TCP"
 
-    _ordered_fields = ('srcport', 'dstport', '_seq', '_ack', '_data_offset', 
+    _ordered_fields = ('srcport', 'dstport', '_seq', '_ack', '_hdr_len', 
                     '_reserved', 'flags', '_window_size', '_checksum',
                     '_urgent_pointer', 'options', '_padding',)
 
@@ -489,7 +489,7 @@ class TCP(_protocols.Protocol):
                         _HPort("Destination Port", 0),
                         _HSequenceNumber("Sequence Number"),
                         _HAcknowledgmentNumber("Acknowledgment Number"),
-                        _HDataOffset("DataOffset"),
+                        _HDataOffset("Data Offset"),
                         _HReserved("Reserved", 0),
                         _fields.Flags("Control Bits", control_bits,
                         **control_bits_predefined),
@@ -545,7 +545,7 @@ class TCP(_protocols.Protocol):
                                                 self.get_field('options').bits
 
         # Data Offset
-        self.get_field('_data_offset')._tmp_value = \
+        self.get_field('_hdr_len')._tmp_value = \
             self.get_field('options').bits + self.get_field('_padding').bits
 
         return raw_value, bit
@@ -591,7 +591,7 @@ class TCP(_protocols.Protocol):
             # Pseudo Header
             #
             # TCP header length...converted to bits unit
-            total_length = self.get_field('_data_offset').fillout()*32
+            total_length = self.get_field('_hdr_len').fillout()*32
             # add payload
             total_length += protocol_bits
             # conversion to bytes unit

@@ -120,9 +120,9 @@ class TestExtensionXML(object):
                         <_ack type="NoneType">
                                 None
                         </_ack>
-                        <_data_offset type="NoneType">
+                        <_hdr_len type="NoneType">
                                 None
-                        </_data_offset>
+                        </_hdr_len>
                         <_reserved type="int">
                                 0
                         </_reserved>
@@ -182,9 +182,9 @@ class TestExtensionXML(object):
                         <_ack type="NoneType">
                                 None
                         </_ack>
-                        <_data_offset type="NoneType">
+                        <_hdr_len type="NoneType">
                                 None
-                        </_data_offset>
+                        </_hdr_len>
                         <_reserved type="int">
                                 0
                         </_reserved>
