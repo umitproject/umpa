@@ -86,7 +86,6 @@ def get_all():
 
     return both
 
-# loading local protocols (from $HOME/.umpa/umpa_plugins/protocols)
 def _load_local_protocols():
     """
     Load local protocols.
