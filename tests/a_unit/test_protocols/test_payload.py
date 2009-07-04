@@ -23,7 +23,7 @@ import py.test
 
 from umpa.protocols.Payload import _HData, Payload
 from umpa.utils.exceptions import UMPAException
-from tests.unit.test_protocols.test__fields import TestField
+from tests.a_unit.test_protocols.test__fields import TestField
 
 class TestHData(TestField):
     cls_field = _HData

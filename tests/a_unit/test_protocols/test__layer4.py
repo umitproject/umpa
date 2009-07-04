@@ -25,7 +25,7 @@ from umpa.protocols import IP, TCP
 from umpa.protocols._layer4 import *
 from umpa.protocols._fields import *
 from umpa.utils.exceptions import UMPAException
-from tests.unit.test_protocols.test__fields import TestIntField
+from tests.a_unit.test_protocols.test__fields import TestIntField
 
 class TestLayer4ChecksumField(TestIntField):
     cls_field = Layer4ChecksumField

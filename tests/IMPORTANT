@@ -1,0 +1,5 @@
+a_test/test_0init.py has to be the first one file in order of the testsuite.
+Otherwise most tests may fail (there are some magic technics to tests
+$HOME there).
+
+Note that there is a_ and 0 at the beginning of the filenames because of that.
