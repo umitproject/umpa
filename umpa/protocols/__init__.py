@@ -39,6 +39,7 @@ import warnings
 
 # loading global protocols
 from Ethernet import Ethernet
+from SLL import SLL
 from IP import IP
 # from ICMP import ICMP
 from TCP import TCP

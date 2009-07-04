@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import umpa
-from umpa.protocols import Ethernet, IP, TCP, UDP, Payload
+from umpa.protocols import Ethernet, SLL, IP, TCP, UDP, Payload
 from umpa.protocols import _consts as consts
 
 def decode(buffer, linktype):
@@ -35,11 +35,10 @@ def decode(buffer, linktype):
         header = Ethernet()
         buffer = header.load_raw(buffer)
         next_type = header._type
-    #elif linktype == consts.DLT_LINUX_SLL:
-    #    raise Exception("got SLL")
-    #    header = SLL()
-    #    header.load_raw(buffer)
-    #    next_type = header.ltype
+    elif linktype == consts.DLT_LINUX_SLL:
+        header = SLL()
+        buffer = header.load_raw(buffer)
+        next_type = header._etype
     else:
         header = Payload()
         header.load_raw(buffer)
