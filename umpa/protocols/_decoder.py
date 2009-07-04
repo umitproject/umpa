@@ -27,7 +27,7 @@ def decode(buffer, linktype):
     # TODO: rewrite to check what protocols are available (also local from $HOME)
     # and keep it in a dict
     # XXX propably type of upper layer should be unified
-    packet = umpa.Packet()
+    packet = umpa.Packet(strict=False)
 
     # 2nd layer
     next_type = None
@@ -78,8 +78,9 @@ def decode(buffer, linktype):
     packet.include(header)
 
     # payload
-    data = Payload()
-    data.load_raw(buffer)
-    packet.include(data)
+    if len(buffer) > 0:
+        data = Payload()
+        data.load_raw(buffer)
+        packet.include(data)
 
     return packet
