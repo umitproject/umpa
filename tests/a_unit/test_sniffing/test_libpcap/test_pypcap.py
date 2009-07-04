@@ -47,6 +47,9 @@ class TestPypcap(object):
             py.test.skip("no suitable devices for sniffing found. "
                         "propably not sufficent priviliges.")
 
+    def test_lookupdev_findall(self):
+        assert pcap.lookupdev() in pcap.findalldevs()
+
 class TestOpenPcap(object):
     def test_openlive(self):
         try:
