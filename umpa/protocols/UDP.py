@@ -23,6 +23,8 @@
 UDP (Uset Datagram Protocol) protocol implementation.
 """
 
+import struct
+
 from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
@@ -385,5 +387,23 @@ class UDP(_protocols.Protocol):
             raw_value |= raw_cksum << cksum_rev_offset
 
         return raw_value, bit
+
+    def load_raw(self, buffer):
+        """
+        Load raw and update a protocol's fields.
+
+        @return: raw payload
+        """
+        
+        header_size = 8
+        header_format = '!4H'
+        fields = struct.unpack(header_format, buffer[:header_size])
+
+        self.srcport = fields[0]
+        self.dstport = fields[1]
+        self._length = fields[2]
+        self._checksum = fields[3]
+
+        return buffer[header_size:]
 
 protocols = [ UDP, ]

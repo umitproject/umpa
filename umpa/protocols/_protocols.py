@@ -404,3 +404,13 @@ class Protocol(object):
 
         self.__dict__['__raw_value'] = raw_value
         return raw_value, bit
+
+    def load_raw(self, buffer):
+        """
+        Load raw and update a protocol's fields.
+
+        @return: raw payload
+        """
+
+        raise UMPAException("protocol doesn't support decoding "
+                            "or an abstract class.")

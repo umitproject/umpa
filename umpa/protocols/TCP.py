@@ -23,6 +23,8 @@
 TCP (Transmission Control Protocol) protocol implementation.
 """
 
+import struct
+
 from umpa.protocols import _consts
 from umpa.protocols import _fields
 from umpa.protocols import _protocols
@@ -496,7 +498,7 @@ class TCP(_protocols.Protocol):
                         _HWindow("Window"),
                         _layer4.Layer4ChecksumField("Checksum"),
                         _HUrgentPointer("Urgent Pointer"),
-                        _fields.Flags("Options", ()),
+                        _fields.IntField("Options", 0),
                         _fields.PaddingField("Padding") ]
 
         # we call super.__init__ after prepared necessary data
@@ -609,5 +611,44 @@ class TCP(_protocols.Protocol):
             raw_value |= raw_cksum << cksum_rev_offset
 
         return raw_value, bit
+
+    def load_raw(self, buffer):
+        """
+        Load raw and update a protocol's fields.
+
+        @return: raw payload
+        """
+        
+        header_size = 20
+        header_format = '!HHIIBBHHH'
+        fields = struct.unpack(header_format, buffer[:header_size])
+
+        self.srcport = fields[0]
+        self.dstport = fields[1]
+        self._seq = fields[2]
+        self._ack = fields[3]
+        self._hdr_len = fields[4] >> 4
+        self._reserved = fields[4] & 0x0f
+        self.flags = fields[5]
+        self._window_size = fields[6]
+        self._checksum = fields[7]
+        self._urgent_pointer = fields[8]
+
+        # check if options are not missed
+        # include padding to options
+        rest = self._hdr_len*4 - header_size
+        if rest > 0:
+            options_format = '!%dB' % rest
+            options = struct.unpack(options_format,
+                                    buffer[header_size:header_size+rest])
+            new_value = 0
+            for chunk in options:
+                new_value += chunk
+                new_value <<= 8
+            new_value >>= 8
+            self.get_field('options').bits = rest*8
+            self.options = new_value
+
+        return buffer[self._hdr_len*4 + rest:]
 
 protocols = [ TCP, ]

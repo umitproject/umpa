@@ -172,4 +172,10 @@ class Payload(Protocol):
 
         return raw_value, bit
 
+    def load_raw(self, buffer):
+        """
+        Load raw and update a protocol's fields.
+        """
+        self.data = buffer
+
 protocols = [ Payload, ]

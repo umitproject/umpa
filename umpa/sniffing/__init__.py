@@ -22,6 +22,7 @@
 import os.path
 
 import umpa
+from umpa.protocols._decoder import decode
 from umpa.utils.exceptions import UMPASniffingException
 
 if umpa.config['libpcap']:
@@ -85,7 +86,8 @@ def sniff(count, filter=None, device=None, timeout=0, snaplen=1024,
         d = lpcap.dumper(session, dump)
     captured = []
     for i in xrange(count):
-        captured.append(session.next())
+        p = decode(session.next()[1], session.datalink())
+        captured.append(p)
         if d is not None:
             d.dump()
     if d is not None:

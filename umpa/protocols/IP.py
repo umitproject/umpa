@@ -24,6 +24,7 @@ IP (Internet Protocol) protocol implementation.
 """
 
 import sys
+import struct
 
 from umpa.protocols import _consts
 from umpa.protocols import _fields
@@ -322,7 +323,7 @@ class IP(_protocols.Protocol):
                         _fields.IPv4AddrField("Source Address", "127.0.0.1"),
                         _fields.IPv4AddrField("Destination Address",
                                                                 "127.0.0.1"),
-                        _fields.Flags("Options", ()),
+                        _fields.IntField("Options", 0),
                         _fields.PaddingField("Padding") ]
 
         # we call super.__init__ after prepared necessary data
@@ -428,5 +429,46 @@ class IP(_protocols.Protocol):
             raw_value |= cksum << cksum_offset
 
         return raw_value, bit
+
+    def load_raw(self, buffer):
+        """
+        Load raw and update a protocol's fields.
+
+        @return: raw payload
+        """
+
+        header_size = 20
+        header_format = '!BBHHHBBH4B4B'
+        fields = struct.unpack(header_format, buffer[:header_size])
+
+        self._version = fields[0] >> 4
+        self._hdr_len = fields[0] & 0x0f
+        self.tos = fields[1]
+        self._len = fields[2]
+        self._id = fields[3]
+        self.flags = (fields[4] & 0xE000) >> 13
+        self._frag_offset = (fields[4] & 0x1fff)
+        self.ttl = fields[5]
+        self._proto = fields[6]
+        self._checksum = fields[7]
+        self.src = '%d.%d.%d.%d' % (fields[8:12])
+        self.dst = '%d.%d.%d.%d' % (fields[12:16])
+
+        # check if options are not missed
+        # include padding to options
+        rest = self._hdr_len*4 - header_size
+        if rest > 0:
+            options_format = '!%dB' % rest
+            options = struct.unpack(options_format,
+                                    buffer[header_size:header_size+rest])
+            new_value = 0
+            for chunk in options:
+                new_value += chunk
+                new_value <<= 8
+            new_value >>= 8
+            self.get_field('options').bits = rest*8
+            self.options = new_value
+
+        return buffer[self._hdr_len*4 + rest:]
 
 protocols = [ IP, ]

@@ -102,7 +102,9 @@ class TestExtensionXML(object):
                         <dst type="str">
                                 67.205.14.183
                         </dst>
-                        <options type="bits"/>
+                        <options type="int">
+                                0
+                        </options>
                         <_padding type="int">
                                 0
                         </_padding>
@@ -155,7 +157,9 @@ class TestExtensionXML(object):
                         <_urgent_pointer type="NoneType">
                                 None
                         </_urgent_pointer>
-                        <options type="bits"/>
+                        <options type="int">
+                                0
+                        </options>
                         <_padding type="int">
                                 0
                         </_padding>
@@ -217,7 +221,9 @@ class TestExtensionXML(object):
                         <_urgent_pointer type="NoneType">
                                 None
                         </_urgent_pointer>
-                        <options type="bits"/>
+                        <options type="int">
+                                0
+                        </options>
                         <_padding type="int">
                                 0
                         </_padding>

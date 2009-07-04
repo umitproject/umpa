@@ -23,6 +23,8 @@
 Ethernet protocol implementation.
 """
 
+import struct
+
 from umpa.protocols import _protocols
 from umpa.protocols import _fields
 from umpa.protocols import _consts
@@ -129,5 +131,22 @@ class Ethernet(_protocols.Protocol):
         """
 
         return raw_value, bit
+
+    def load_raw(self, buffer):
+        """
+        Load raw and update a protocol's fields.
+
+        @return: raw payload
+        """
+
+        header_size = 14
+        header_format = '!6B6BH'
+        fields = struct.unpack(header_format, buffer[:header_size])
+
+        self.dst = ':'.join(['%.2x'] * 6) % (fields[0:6])
+        self.src = ':'.join(['%.2x'] * 6) % (fields[6:12])
+        self._type = fields[12]
+
+        return buffer[header_size:]
 
 protocols = [ Ethernet, ]
