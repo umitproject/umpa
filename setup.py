@@ -23,22 +23,26 @@ import glob
 import os.path
 from distutils.core import setup
 
-UMPA_VERSION = '0.1.1'
+UMPA_VERSION = '0.2'
 
 
 TESTS_DIR = [
+    os.path.join('tests'),
     os.path.join('tests', 'system'),
-    os.path.join('tests', 'unit'),
-    os.path.join('tests', 'unit', 'test_extensions'),
-    os.path.join('tests', 'unit', 'test_protocols'),
-    os.path.join('tests', 'unit', 'test_utils')
+    os.path.join('tests', 'system', 'test_sndrcv'),
+    os.path.join('tests', 'a_unit'),
+    os.path.join('tests', 'a_unit', 'test_extensions'),
+    os.path.join('tests', 'a_unit', 'test_protocols'),
+    os.path.join('tests', 'a_unit', 'test_utils'),
+    os.path.join('tests', 'a_unit', 'test_sniffing'),
+    os.path.join('tests', 'a_unit', 'test_sniffing', 'test_libpcap'),
 ]
 
 test_files = []
 for dir in TESTS_DIR:
     test_files = test_files + [ (os.path.join('share','umpa', dir),
-                                 glob.glob(os.path.join(dir,'*.py')))]
-    
+                                glob.glob(os.path.join(dir,'*.py')))]
+
 data_files = [  (os.path.join('share','umpa','examples'),
                             glob.glob(os.path.join('examples','*'))),
                 (os.path.join('share','umpa','scripts'),
@@ -47,12 +51,13 @@ data_files = [  (os.path.join('share','umpa','examples'),
                     glob.glob(os.path.join('docs','API','*'))),
                 (os.path.join('share','umpa',),
                     ('run_tests.sh', 'run_tests.bat')),
-                (os.path.join('share','umpa','tests'),
-                 glob.glob(os.path.join('tests','*.py')), 'README'),
                 (os.path.join('share','doc','umpa'),
                     ('README', 'COPYING', 'AUTHORS', 'TODO', 'CHANGES',
                     'INSTALL')),
+                (os.path.join('share','umpa','tests'),
+                (os.path.join('tests','README'), os.path.join('tests','IMPORTANT'))),
             ] + test_files
+
 setup(  name            = "UMPA",
         version         = UMPA_VERSION,
         description     = "Umit's Manipulations of Packets Art",
@@ -63,6 +68,8 @@ setup(  name            = "UMPA",
         platforms       = ["Platform Independent"],
         packages        = [ "umpa",
                             "umpa.protocols",
+                            "umpa.sniffing",
+                            "umpa.sniffing.libpcap",
                             "umpa.extensions",
                             "umpa.utils",
                             ],
