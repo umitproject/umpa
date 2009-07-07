@@ -5,8 +5,6 @@ for milestones etc. (check the site if you are interested about roadmap).
 
 - ICMP implementation
 - Blank Protocol
-- Ethernet layer support
 - asynchronous system
-- sniffing
 - template system
 - finish some auto-generation for some fields in IP/TCP
