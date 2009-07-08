@@ -33,3 +33,13 @@ class TestUtilNet(object):
                     (0xe34f2396442799f3, 0x1aff),
                     ):
             yield check, i, j
+class TestUtilParseIPv4(object):
+    def test_parse(self):
+        def check(ip, result):
+            assert parse_ipv4(ip) == result
+            for i in result:
+                assert i <=255 
+        yield check, "192.168.1.1", [192, 168, 1,1]
+        yield check, "255.255.255.0", [255, 255, 255,0]
+        yield check, "194.22.11.21", [194, 22, 11,21]
+            

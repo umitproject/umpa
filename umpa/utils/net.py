@@ -57,3 +57,17 @@ def in_cksum(data, cksum=0):
 
     cksum = ~cksum
     return int(cksum & 0xffff)
+
+def parse_ipv4(ip):
+    """
+    Return 4 numbers of an IPv4
+    
+    192.168.1.2 -> [192, 168, 1, 2]
+
+    @type ip: C{str}
+    @param ip: the ip to parse.
+
+    @rtype: C{int}
+    @return: 4 numbers.
+    """
+    return [ int(x) for x in ip.split('.') ]
