@@ -116,5 +116,5 @@ def _list_local_extensions():
                                             'umpa_plugins', 'extensions'))
             if ext.endswith('.py') and not ext.startswith('_') ]
     
-_gextensions = [ "XML", "schedule" ]
+_gextensions = [ "XML", "schedule", "route" ]
 _lextensions = _list_local_extensions()
