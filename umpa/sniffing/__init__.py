@@ -196,13 +196,13 @@ def from_file(filename, count=0, filter=None):
 
     if filter:
         f.setfilter(filter)
-    if count > 0:
-        packets = []
-        for i in xrange(count):
-            packets.append(f.next())
-    else:
-        packets = f.readpkts()
 
+    packets = []
+    for i, pkt in enumerate(f):
+        if i == count and count != 0:
+            break
+        p = decode(pkt[1], f.datalink())
+        packets.append(p)
     return packets
 
 def from_file_loop(filename, count=0, filter=None, callback=None,
