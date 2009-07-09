@@ -69,7 +69,6 @@ class TestUMPAPackets(object):
         py.test.raises(UMPAStrictException, Packet, TCP(), Payload(), IP())
         py.test.raises(UMPAStrictException, Packet, TCP(),  IP(), Payload())
         py.test.raises(UMPAStrictException, Packet, Payload(), TCP())
-        py.test.raises(UMPAStrictException, Packet, Payload(), TCP())
         py.test.raises(UMPAStrictException, Packet, UDP(), TCP())
 
         p = Packet(TCP())

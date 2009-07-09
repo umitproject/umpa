@@ -19,13 +19,28 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import types
+import os
 import umpa.protocols
 
 class TestProtocolInit(object):
     def test_import_global_protos(self):
         assert umpa.protocols.Ethernet
+        assert umpa.protocols.SLL
         assert umpa.protocols.IP
         assert umpa.protocols.UDP
         assert umpa.protocols.TCP
         assert umpa.protocols.Payload
+
+    def test_get_locals(self):
+        for file in os.listdir(os.path.join(os.path.expanduser('~'),
+                            '.umpa', 'umpa_plugins', 'protocols')):
+            if file.startswith('_'):
+                continue
+            assert file[:-3] in umpa.protocols.get_locals().keys()
+
+    def test_import_local_protos(self):
+        for file in os.listdir(os.path.join(os.path.expanduser('~'),
+                            '.umpa', 'umpa_plugins', 'protocols')):
+            if file.startswith('_'):
+                continue
+            assert getattr(umpa.protocols, file[:-3])

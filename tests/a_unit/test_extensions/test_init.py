@@ -20,49 +20,27 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import os
-import shutil
-import tempfile
-
 import umpa.extensions
-
-old_expanduser = os.path.expanduser
 
 class TestExtensionInit(object):
     def test_load_global(self):
         umpa.extensions.load_extension('XML')
         assert umpa.extensions.XML
-    
-class TestExtensionInitLocal(object):
-    disabled = True
-    def setup_class(cls):
-        # this code is similar for tests/unit/test_0init.py
-        def expanduser(path):
-            return cls.tmp_dir
 
-        cls.tmp_dir = tempfile.mkdtemp()
-        os.path.expanduser = expanduser
-
-    def teardown_class(cls):
-        os.path.expanduser = old_expanduser
-        shutil.rmtree(cls.tmp_dir)
+        umpa.extensions.load_extension('route')
+        assert umpa.extensions.route
 
     def test_load_local(self):
-        def newpackage(path):
-            print path
-            os.makedirs(path)
-            open(os.path.join(path, '__init__.py'), 'w').close()
-            print os.listdir(path)
-
-        local_path = os.path.join(os.path.expanduser('~'), '.umpa')
-        newpackage(os.path.join(local_path, 'umpa_plugins'))
-        newpackage(os.path.join(local_path, 'umpa_plugins', 'extensions'))
-
-        open(os.path.join(local_path, 'umpa_plugins', 'extensions',
-                                                            'foobar.py'), 'w')
-        print os.listdir(os.path.join(local_path, "umpa_plugins/extensions"))
-        umpa.extensions.load_extension('foobar')
-        print local_path
-        print dir(umpa.extensions)
-        assert umpa.extensions.foobar
-        
-
+        for file in os.listdir(os.path.join(os.path.expanduser('~'),
+                            '.umpa', 'umpa_plugins', 'extensions')):
+            if file.startswith('_'):
+                continue
+            umpa.extensions.load_extension(file[:-3])
+            assert getattr(umpa.extensions, file[:-3])
+    
+    def test_get_locals(self):
+        for file in os.listdir(os.path.join(os.path.expanduser('~'),
+                            '.umpa', 'umpa_plugins', 'extensions')):
+            if file.startswith('_'):
+                continue
+            assert file[:-3] in umpa.extensions.get_locals()

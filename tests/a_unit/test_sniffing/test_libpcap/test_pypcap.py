@@ -19,7 +19,9 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+import sys
 import tempfile
+
 import pcap
 import py.test
 
@@ -48,6 +50,11 @@ class TestPypcap(object):
                         "propably not sufficent priviliges.")
 
     def test_lookupdev_findall(self):
+        # current pypcap shows diffent names for findalldevs() and lookupdev()
+        # under windows, so skip it
+        if sys.platform.find('win') != -1:
+            py.test.skip("not supported by windows")
+
         assert pcap.lookupdev() in pcap.findalldevs()
 
 class TestOpenPcap(object):
