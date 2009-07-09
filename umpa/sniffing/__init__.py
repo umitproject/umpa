@@ -124,6 +124,10 @@ def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
                             promisc=True, callback=None, callback_args=None):
     """
     Sniff packets and call a callback function for each.
+    
+    @note: sniffed packets in callback function is not decoded.
+    To get decoded packets use umpa.protocols._decoder.decode() function
+    or other sniff's functions (without a loop feature).
 
     @type count: C{int}
     @param count: number of sniffing packets; 0 means infinity (default: I{0})
@@ -207,6 +211,10 @@ def from_file_loop(filename, count=0, filter=None, callback=None,
     Load data from pcap file instead of sniffing online.
 
     Call callback for each or return list of packets.
+
+    @note: sniffed packets in callback function is not decoded.
+    To get decoded packets use umpa.protocols._decoder.decode() function
+    or other sniff's functions (without a loop feature).
 
     @type filename: C{str}
     @param filename: path to a file in pcap format
