@@ -79,25 +79,18 @@ class TestSniffing(object):
 
     def test_sniff_loop(self):
         def cbk(ts, pkt, *args):
-            #decoded = decode(pkt, 
+            assert pkt.ip.src == "1.2.3.6"
+            assert pkt.tcp.srcport == 99
+            assert ts > 0
+            assert len(args) == 2
             if args[0] > args[1]:
                 raise UMPASniffingException("test")
-        
-        def cbk2(ts, pkt, *args):
-            print pkt
-            
+
         th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
-                                    TCP(srcport=99)))
+                                    TCP(srcport=99)), 2)
         th.start()
         umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
                                             callback=cbk, callback_args=[1,2])
-        th.join()
-
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
-                                    TCP(srcport=99)))
-        th.start()
-        umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
-                                                            callback=cbk2)
         th.join()
 
         th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
@@ -107,6 +100,8 @@ class TestSniffing(object):
                         filter="src 1.2.3.6", device='any', callback=cbk,
                         callback_args=[2,1] )
         th.join()
+
+        py.test.raises(UMPASniffingException, umpa.sniffing.sniff_loop, 1)
 
     def test_from_file(self):
         dump_file = tempfile.NamedTemporaryFile(mode="w")
@@ -132,7 +127,35 @@ class TestSniffing(object):
 
 
     def test_from_file_loop(self):
-        py.test.skip("how to deal with callback?")
+        global idx
+        idx = 0
+        def cbk(ts, pkt, *args):
+            global idx
+            assert pkt.ip.src == "1.2.3.6"
+            assert pkt.tcp.srcport == 99
+            assert ts > 0
+            assert len(args) == 1
+            idx += 1
+
+        dump_file = tempfile.NamedTemporaryFile(mode="w")
+        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
+                                    TCP(srcport=99)), 3)
+        th.start()
+        umpa.sniffing.sniff(3, device="any", dump=dump_file.name,
+                            filter="src host 1.2.3.6 and src port 99")
+        th.join()
+
+        idx = 0
+        amount = 3
+        umpa.sniffing.from_file_loop(dump_file.name, callback=cbk,
+                                    callback_args=[amount,])
+        assert idx == amount
+
+        idx = 0
+        amount = 2
+        umpa.sniffing.from_file_loop(dump_file.name, 2, callback=cbk,
+                                            callback_args=[amount,])
+        assert idx == amount
 
     def test_to_file(self):
         dump_file = tempfile.NamedTemporaryFile(mode="w")

@@ -121,14 +121,10 @@ def sniff_next(filter=None, device=None, timeout=0, snaplen=1024,promisc=True,
     return sniff(1, filter, device, timeout, snaplen, promisc, dump)[0]
 
 def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
-                            promisc=True, callback=None, callback_args=None):
+                promisc=True, dump=None, callback=None, callback_args=None):
     """
     Sniff packets and call a callback function for each.
     
-    @note: sniffed packets in callback function is not decoded.
-    To get decoded packets use umpa.protocols._decoder.decode() function
-    or other sniff's functions (without a loop feature).
-
     @type count: C{int}
     @param count: number of sniffing packets; 0 means infinity (default: I{0})
 
@@ -148,12 +144,18 @@ def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
     @type promisc: C{bool}
     @param promisc: promiscous mode sniffing
 
+    @type dump: C{str}
+    @param dump: path to file where store the result
+
     @type callback: C{func}
     @param callback: function with (timestamp, pkt, *callback_args) prototype
 
     @type callback_args: C{list}
     @param callback_args: additional arguments for callback function
     """
+    
+    if callback is None:
+        raise UMPASniffingException("no callback function is passed.")
 
     if callback_args is None:
         callback_args = []
@@ -161,7 +163,22 @@ def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
     session = lpcap.open_pcap(device, snaplen, promisc, timeout)
     if filter:
         session.setfilter(filter)
-    session.loop(count, callback, *callback_args)
+    d = None
+    if dump is not None:
+        d = lpcap.dumper(session, dump)
+
+    i = 0
+    while 1:
+        if i == count and count > 0:
+            break
+        ts, pkt = session.next()
+        decoded_pkt = decode(pkt, session.datalink())
+        if d is not None:
+            d.dump()
+        callback(ts, decoded_pkt, *callback_args)
+        i += 1
+    if d is not None:
+        d.flush()
 
 def sniff_any(dump=None):
     """
@@ -199,7 +216,7 @@ def from_file(filename, count=0, filter=None):
 
     packets = []
     for i, pkt in enumerate(f):
-        if i == count and count != 0:
+        if i == count and count > 0:
             break
         p = decode(pkt[1], f.datalink())
         packets.append(p)
@@ -232,6 +249,9 @@ def from_file_loop(filename, count=0, filter=None, callback=None,
     @param callback_args: additional arguments for callback function
     """
 
+    if callback is None:
+        raise UMPASniffingException("no callback function is passed.")
+
     if callback_args is None:
         callback_args = []
 
@@ -242,7 +262,13 @@ def from_file_loop(filename, count=0, filter=None, callback=None,
 
     if filter:
         f.setfilter(filter)
-    f.loop(count, callback, *callback_args)
+
+    for i, p in enumerate(f):
+        if i == count and count > 0:
+            break
+        ts, pkt = p
+        decoded_pkt = decode(pkt, f.datalink())
+        callback(ts, decoded_pkt, *callback_args)
 
 def to_file(fname, count, filter=None, device=None, timeout=0, snaplen=1024,
                                                                 promisc=True):
