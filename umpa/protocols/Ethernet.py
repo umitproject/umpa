@@ -65,6 +65,7 @@ class Ethernet(_protocols.Protocol):
 
     layer = 2       # layer of OSI
     protocol_id = _consts.DLT_EN10MB
+    payload_fieldname = '_type'
     name = "Ethernet"
 
     _ordered_fields = ('dst', 'src', '_type')

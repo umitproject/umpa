@@ -20,62 +20,52 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import umpa
-from umpa.protocols import Ethernet, SLL, IP, TCP, UDP, Payload
-from umpa.protocols import _consts as consts
+import umpa.protocols
+from umpa.protocols import Payload
+
+def _prepare_protos():
+    d = {2:[], 3:[], 4:[], 5:[]}
+    for cls in umpa.protocols.get_all().values():
+        d[cls.layer].append(cls)
+    return d
 
 def decode(buffer, linktype):
-    # TODO: rewrite to check what protocols are available (also local from $HOME)
-    # and keep it in a dict
-    # XXX propably type of upper layer should be unified
+    """
+    Decode raw buffer of packet and return umpa.Packet's object.
+    
+    @param buffer: raw buffer
+
+    @type linktype: C{int}
+    @param linktype: datalink of 2nd layer
+    (return by datalink() method of pcap session)
+
+    @rtype: C{umpa.Packet}
+    @return: decoded packet
+    """
+
+    protos = _prepare_protos()
     packet = umpa.Packet(strict=False)
 
-    # 2nd layer
-    next_type = None
-    if linktype == consts.DLT_EN10MB:
-        header = Ethernet()
-        buffer = header.load_raw(buffer)
-        next_type = header._type
-    elif linktype == consts.DLT_LINUX_SLL:
-        header = SLL()
-        buffer = header.load_raw(buffer)
-        next_type = header._etype
-    else:
-        header = Payload()
-        header.load_raw(buffer)
-        packet.include(header)
-        return packet
-    packet.include(header)
-
-    # 3rd layer
-    if next_type == consts.ETHERTYPE_IP:
-        header = IP()
-        buffer = header.load_raw(buffer)
-        next_type = header._proto
-    #elif next_type == consts.ETHERTYPE_IPV6:
-    #    header = IPv6()
-    #    header.load_raw(buffer)
-    #    next_type = header.nxt
-    else:
-        header = Payload()
-        header.load_raw(buffer)
-        packet.include(header)
-        return packet
-    packet.include(header)
-
-    # 4th layer
-    if next_type == consts.PROTOCOL_TCP:
-        header = TCP()
-        buffer = header.load_raw(buffer)
-    elif next_type == consts.PROTOCOL_UDP:
-        header = UDP()
-        buffer = header.load_raw(buffer)
-    else:
-        header = Payload()
-        header.load_raw(buffer)
-        packet.include(header)
-        return packet
-    packet.include(header)
-
+    # XXX: currently there is no protocols in upper layers (above 4th layer)
+    #      propably if they would be implemented - some changes are needed
+    #      to detect what protocol it is
+    #      statical version of decode was existing till r5043
+    next_type = linktype
+    for layer in xrange(2, 5):
+        for proto in protos[layer]:
+            if next_type == proto.protocol_id:
+                header = proto()
+                buffer = header.load_raw(buffer)
+                if layer < 4:
+                    next_type = getattr(header, header.payload_fieldname)
+                packet.include(header)
+                break
+        else:
+            header = Payload()
+            header.load_raw(buffer)
+            packet.include(header)
+            return packet
+    
     # payload
     if len(buffer) > 0:
         data = Payload()

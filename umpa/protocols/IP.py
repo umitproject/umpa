@@ -288,6 +288,7 @@ class IP(_protocols.Protocol):
 
     layer = 3      # layer of OSI
     protocol_id = _consts.ETHERTYPE_IP
+    payload_fieldname = '_proto'
     name = "IP"
 
     _ordered_fields = ('_version', '_hdr_len', 'tos', '_len', '_id', 'flags',

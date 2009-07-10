@@ -96,6 +96,7 @@ class SLL(_protocols.Protocol):
 
     layer = 2   # layer of OSI
     protocol_id = _consts.DLT_LINUX_SLL
+    payload_fieldname = '_etype'
     name = "SLL"
 
     _ordered_fields = ('_pkttype', '_hatype', '_halen',
