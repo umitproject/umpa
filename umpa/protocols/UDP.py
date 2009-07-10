@@ -284,6 +284,7 @@ class UDP(_protocols.Protocol):
 
     layer = 4
     protocol_id = _consts.PROTOCOL_UDP
+    payload_fieldname = None
     name = "UDP"
 
     _ordered_fields = ('srcport', 'dstport', '_length', '_checksum')

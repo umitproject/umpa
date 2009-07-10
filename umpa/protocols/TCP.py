@@ -473,6 +473,7 @@ class TCP(_protocols.Protocol):
     
     layer = 4       # layer of the OSI
     protocol_id = _consts.PROTOCOL_TCP
+    payload_fieldname = None
     name = "TCP"
 
     _ordered_fields = ('srcport', 'dstport', '_seq', '_ack', '_hdr_len', 
