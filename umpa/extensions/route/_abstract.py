@@ -25,7 +25,7 @@ The goal of this extension is support an abstraction to
 Routing tables
 """
 
-class RouteAbstract:
+class Route:
     def __init__(self):
         pass
     def get_routes(self):

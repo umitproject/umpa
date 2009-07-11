@@ -24,7 +24,7 @@ from fcntl import ioctl
 import re
 
 from umpa.utils.net import parse_ipv4
-from umpa.extensions.route.RouteAbstract import RouteAbstract
+from umpa.extensions.route._abstract import Route
 """
 The goal of this extension is support an abstraction to 
 Routing Tables of kernel. 
@@ -86,6 +86,14 @@ class RouteEntry:
 	self._rt_genmask = mask
 	self._rt_dev = dev
     def encode(self):
+	"""
+	Return a routing entry structure (binary)
+	The struct is compatible with Linux Kernel
+    
+	@rtype: C{struct}
+	@return: rtentry (routing entry - linux).
+	"""
+	
 	pad1 = [0]
 	padding = [ 0,0,0,0,0,0,0,0]
 	socket_family = [socket.AF_INET]
@@ -109,11 +117,18 @@ class RouteEntry:
     
     
     
-class Route(RouteAbstract):
-    def __init__(self):
-        RouteAbstract.__init__(self)
-
+class Route(Route):
+    
     def add(self, dst, mask, gw, dev=''):
+	"""
+	Add an entry to a IPv4 network in Routing Table of Kernel
+	
+	@type dst: C{str}
+	@param dst: the ip to parse.
+    
+	@rtype: C{int}
+	@return: 4 numbers.
+	"""
 	try:
 	    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	

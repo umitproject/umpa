@@ -20,15 +20,22 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import sys
-PLATFORM = sys.platform
+platform = sys.platform
 
-LINUX= "linux2" or "linux1"
-DARWIN = "darwin"
-WINDOWS = "win32"
+linux= "linux2" or "linux1"
+darwin = "darwin"
+windows = "win32"
 
 
         
-if PLATFORM == LINUX:
-    from umpa.extensions.route.RouteLinux import Route
+if platform == linux:
+    from umpa.extensions.route.linux import Route
 else:
-    from umpa.extensions.route.RouteAbstract import RouteAbstract as Route
+    from umpa.extensions.route._abstract import Route
+    
+# Remove unnecessary vars
+del linux
+del platform
+del darwin
+del windows
+    
