@@ -49,135 +49,136 @@ PROC_ROUTE6="/proc/net/route6"
 class RouteEntry:
     """
     Routing Entry implementation 
-    
+
     rtentry - structure of an entry in the kernel routing table 
     This implementation simulate the rtentry in Linux Kernel
-    
-    
+
+
     struct rtentry 
     {
-	unsigned long	rt_pad1;
-	struct sockaddr	rt_dst;		/* target address		*/
-	struct sockaddr	rt_gateway;	/* gateway addr (RTF_GATEWAY)	*/
-	struct sockaddr	rt_genmask;	/* target network mask (IP)	*/
-	unsigned short	rt_flags;
-	short		rt_pad2;
-	unsigned long	rt_pad3;
-	void		*rt_pad4;
-	short		rt_metric;	/* +1 for binary compatibility!	*/
-	char *rt_dev;	/* forcing the device at add	*/
-	unsigned long	rt_mtu;		/* per route MTU/Window 	*/
-	unsigned long	rt_window;	/* Window clamping 		*/
-	unsigned short	rt_irtt;	/* Initial RTT			*/
+        unsigned long    rt_pad1;
+        struct sockaddr  rt_dst; /* target address */
+        struct sockaddr rt_gateway; /* gateway addr (RTF_GATEWAY) */
+        struct sockaddr rt_genmask; /* target network mask (IP) */
+        unsigned short rt_flags;
+        short rt_pad2;
+        unsigned long rt_pad3;
+        void *rt_pad4;
+        short rt_metric; /* +1 for binary compatibility! */
+        char *rt_dev; /* forcing the device at add */
+        unsigned long rt_mtu; /* per route MTU/Window */
+        unsigned long rt_window; /* Window clamping */
+        unsigned short rt_irtt;	/* Initial RTT*/
     };
     struct sockaddr {
-	sa_family_t	sa_family;	/* address family, AF_xxx	*/
-	char		sa_data[14];	/* 14 bytes of protocol address	*/
+        sa_family_t sa_family;/* address family, AF_xxx */
+        char sa_data[14]; /* 14 bytes of protocol address */
     };
 
     """
     def __init__(self,dst,mask,gw,flags, dev="" ):
-	"""
-	Create a new Route Entry
-	"""
-	self._rt_flags = flags
-	self._rt_dst = dst 
-	self._rt_gateway = gw 
-	self._rt_genmask = mask
-	self._rt_dev = dev
+        """
+        Create a new Route Entry
+        """
+        self._rt_flags = flags
+        self._rt_dst = dst 
+        self._rt_gateway = gw 
+        self._rt_genmask = mask
+        self._rt_dev = dev
+
     def encode(self):
-	"""
-	Return a routing entry structure (binary)
-	The struct is compatible with Linux Kernel
-    
-	@rtype: C{struct}
-	@return: rtentry (routing entry - linux).
-	"""
-	
-	pad1 = [0]
-	padding = [ 0,0,0,0,0,0,0,0]
-	socket_family = [socket.AF_INET]
-	dst =  socket_family + parse_ipv4(self._rt_dst) + padding
-	gw =  socket_family + parse_ipv4(self._rt_gateway) + padding
-	mask = socket_family + parse_ipv4(self._rt_genmask) + padding	
-	pad2 = [0]
-	pad3 = [0]
-	pad4 = [0]
-	metric = [0]
-	dev = [self._rt_dev]
-	mtu = [0]
-	window = [0]
-	irtt = [0]
-	
-	fields = pad1 + dst + gw + mask + [self._rt_flags] 
-	fields += pad2 +  pad3 + pad4 +  metric + dev + mtu + window + irtt 
-	s = struct.pack('LL12BL12BL12BHhLPhsLLL', 
-			*fields)
-	return s 
-    
-    
-    
+        """
+        Return a routing entry structure (binary)
+        The struct is compatible with Linux Kernel
+
+        @rtype: C{struct}
+        @return: rtentry (routing entry - linux).
+        """
+
+        pad1 = [0]
+        padding = [ 0,0,0,0,0,0,0,0]
+        socket_family = [socket.AF_INET]
+        dst =  socket_family + parse_ipv4(self._rt_dst) + padding
+        gw =  socket_family + parse_ipv4(self._rt_gateway) + padding
+        mask = socket_family + parse_ipv4(self._rt_genmask) + padding	
+        pad2 = [0]
+        pad3 = [0]
+        pad4 = [0]
+        metric = [0]
+        dev = [self._rt_dev]
+        mtu = [0]
+        window = [0]
+        irtt = [0]
+
+        fields = pad1 + dst + gw + mask + [self._rt_flags] 
+        fields += pad2 +  pad3 + pad4 +  metric + dev + mtu + window + irtt 
+        s = struct.pack('LL12BL12BL12BHhLPhsLLL', 
+                        *fields)
+        return s 
+
+
+
 class Route(Route):
-    
+
     def add(self, dst, mask, gw, dev=''):
-	"""
-	Add an entry to a IPv4 network in Routing Table of Kernel
-	
-	@type dst: C{str}
-	@param dst: the ip to parse.
-    
-	@rtype: C{int}
-	@return: 4 numbers.
-	"""
-	try:
-	    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	
-	    rt = RouteEntry(dst, mask, gw , RTF_GATEWAY | RTF_UP , dev)
-	    enc = rt.encode()
-	    r = ioctl(s, SIOCADDRT,enc) 
+        """
+        Add an entry to a IPv4 network in Routing Table of Kernel
 
-	except IOError:
-                pass
+        @type dst: C{str}
+        @param dst: the ip to parse.
+
+        @rtype: C{int}
+        @return: 4 numbers.
+        """
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+            rt = RouteEntry(dst, mask, gw , RTF_GATEWAY | RTF_UP , dev)
+            enc = rt.encode()
+            r = ioctl(s, SIOCADDRT,enc) 
+
+        except IOError:
+            pass
     def delete(self, dst):
-	try:
-	    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	    rt = RouteEntry(dst, "255.255.255.255", "0.0.0.0" ,
-			    RTF_UP | RTF_HOST)
-	    
-	    enc = rt.encode()
-	    r = ioctl(s, SIOCDELRT,enc) 
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            rt = RouteEntry(dst, "255.255.255.255", "0.0.0.0" ,
+                            RTF_UP | RTF_HOST)
 
-	except IOError:
-                pass
+            enc = rt.encode()
+            r = ioctl(s, SIOCDELRT,enc) 
+
+        except IOError:
+            pass
     def _get_ip(self, ip):
-	stack = []
-	i = 0
-	last_char = ''
-	for c in str(ip):
-	    if i%2 == 0:
-		last_char = c
-	    else:
-		stack.append(int(last_char+c, 16))
-	    i+=1
-	ip_addr=str(stack.pop())
-	while len(stack) > 0:
-	    ip_addr+="."+str(stack.pop())
-	return ip_addr
+        stack = []
+        i = 0
+        last_char = ''
+        for c in str(ip):
+            if i%2 == 0:
+                last_char = c
+            else:
+                stack.append(int(last_char+c, 16))
+            i+=1
+        ip_addr=str(stack.pop())
+        while len(stack) > 0:
+            ip_addr+="."+str(stack.pop())
+        return ip_addr
 
     def get_routes(self):
-        
+
         # Format
         # dic: {dst, gw, mask, dev, out}
         routes = []
-        
+
         # Try use SIOCRTMSG is waste time (does not work for propose)	
         f = file(PROC_ROUTE)
-	
-        
+
+
         f.readline() # Pass header line
         for line in f.readlines():
             dev,dst,gw,flags,refct,use,metric,mask,mss,win,irtt = line.split()
-	    
+
             # Get output
             # Based on "Unix Network Programming" 
             s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -190,15 +191,15 @@ class Route(Route):
             try:
                 ifreq = ioctl(s, SIOCGIFADDR,struct.pack("16s16x",dev))
             except IOError:
-		continue
-	    out = string.join(map(str,map(ord,ifreq[20:24])),'.')
-	    dst = self._get_ip(dst)
-	    gw = self._get_ip(gw)
-	    mask = self._get_ip(mask)
-	    routes.append({'dst':dst, 'gw':gw,
+                continue
+            out = string.join(map(str,map(ord,ifreq[20:24])),'.')
+            dst = self._get_ip(dst)
+            gw = self._get_ip(gw)
+            mask = self._get_ip(mask)
+            routes.append({'dst':dst, 'gw':gw,
                            'mask': mask,
                            'dev':dev, 'out':out})
         return routes
-            
 
-    
+
+
