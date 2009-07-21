@@ -19,27 +19,22 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import os
-import py.test
-
-from umpa import Socket, Packet
+import umpa
+import umpa.sniffing
 from umpa.protocols import IP, TCP
-from umpa.utils.exceptions import UMPAException, UMPANotPermittedException
+from tests.utils import SendPacket
 
+class TestSendOut(object):
+    def test_sndout(self):
+        packet = umpa.Packet(IP(src="1.2.3.4", dst="67.205.14.183"),
+                            TCP(srcport=81, dstport=80))
+        th = SendPacket(packet)
+        th.start()
+        received = umpa.sniffing.sniff_next(filter="dst 67.205.14.183",
+                                            device="any")
+        th.join()
 
-class TestUMPASockets(object):
-    def test_init(self):
-        if os.name == 'posix' and os.geteuid() != 0:
-            py.test.raises(UMPANotPermittedException, "Socket()")
-
-    def test_sent_size(self):
-        if os.name == 'posix' and os.geteuid() != 0:
-            py.test.skip('root-priviliges are needed')
-
-        p1 = Packet(IP(), TCP())
-        p2 = Packet(IP(), TCP())
-
-        s = Socket()
-        size = s.send(p1, p2)
-
-        assert size == [40, 40]
+        assert received.ip.src == packet.ip.src
+        assert received.ip.dst == packet.ip.dst
+        assert received.tcp.srcport == packet.tcp.srcport
+        assert received.tcp.dstport == packet.tcp.dstport

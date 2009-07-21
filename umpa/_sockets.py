@@ -72,34 +72,6 @@ class Socket(object):
 
         sent_bits = []
         for packet in packets:
-            # XXX: it connects to a remote socket, so destination address has
-            # to be known. the better solution would be to use Ethernet 
-            # protocol (the lowest software layer from OSI).
-            # it will be implemented when Ethernet protocol will be implemented
-            # so now we have to parse the packet for destination address
-            dst_addr = self._get_address(packet)
-            # if dst_addr is a tuple, convert it to string, works only for IPv4
-            if type(dst_addr) is tuple:
-                dst_addr = ".".join(str(y) for y in dst_addr)
-
             sent_bits.append(self._sock.sendto(packet.get_raw(),
-                                                                (dst_addr, 0)))
+                                                            ('127.0.0.1', 0)))
         return sent_bits
-
-    def _get_address(self, packet):
-        """
-        Pick out the destination address from 3rd layer.
-
-        Because of the Ethernet issue (check the comments in send() method for
-        more), we have to parse packets for destination addresses.
-
-        @return: destination address from 3rd layer of OSI model.
-        """
-        for proto in packet.protos:
-            if proto.layer == 3:    # XXX: if we included more than one protocol
-                break               #   of layer 3 we got IP from the first one
-
-        if not proto:
-            raise UMPAException("There is not prototocol from 3rd layer.")
-
-        return proto.dst
