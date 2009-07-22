@@ -29,6 +29,7 @@ UMPA_VERSION = '0.2'
 TESTS_DIR = [
     os.path.join('tests'),
     os.path.join('tests', 'system'),
+    os.path.join('tests', 'system', 'test_snd'),
     os.path.join('tests', 'system', 'test_sndrcv'),
     os.path.join('tests', 'a_unit'),
     os.path.join('tests', 'a_unit', 'test_extensions'),

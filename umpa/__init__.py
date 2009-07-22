@@ -47,6 +47,11 @@ from umpa._sockets import Socket
 # it's something similar to plugin system
 # and we can easily import local protocols/extensions
 def _newpackage(path):
+    """
+    Prepare Python's package for a path.
+
+    Create empty __init__.py files recursively.
+    """
     if not os.path.isdir(path):
         os.makedirs(path)
     if not os.path.isfile(os.path.join(path, '__init__.py')):

@@ -54,7 +54,7 @@ def load_extension(name):
         module_path = "umpa.extensions.%s" % name
 
     try:
-        module = __import__(module_path)
+        __import__(module_path)
     except Exception, err:
         msg = "Can't load the extension.\n" + repr(err) + "\n..ignoring."
         warnings.simplefilter('always', ImportWarning)
