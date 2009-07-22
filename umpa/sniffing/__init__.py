@@ -64,7 +64,7 @@ def sniff(count, filter=None, device=None, timeout=0, snaplen=1024,
     @type device: C{str}
     @param device: interface for sniffing
 
-    @type device: C{int}
+    @type timeout: C{int}
     @param timeout: timeout for sniffing
 
     @type snaplen: C{int}
@@ -105,7 +105,7 @@ def sniff_next(filter=None, device=None, timeout=0, snaplen=1024,promisc=True,
     @type device: C{str}
     @param device: interface for sniffing
 
-    @type device: C{int}
+    @type timeout: C{int}
     @param timeout: timeout for sniffing
 
     @type snaplen: C{int}
@@ -134,7 +134,7 @@ def sniff_loop(count=0, filter=None, device=None, timeout=0, snaplen=1024,
     @type device: C{str}
     @param device: interface for sniffing
 
-    @type device: C{int}
+    @type timeout: C{int}
     @param timeout: timeout for sniffing
 
     @type snaplen: C{int}
@@ -287,7 +287,7 @@ def to_file(fname, count, filter=None, device=None, timeout=0, snaplen=1024,
     @type device: C{str}
     @param device: interface for sniffing
 
-    @type device: C{int}
+    @type timeout: C{int}
     @param timeout: timeout for sniffing
 
     @type snaplen: C{int}
