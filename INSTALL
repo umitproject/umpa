@@ -22,9 +22,14 @@ Contents:
 
 === B. Dependencies ===
 
-	UMPA is developed in Python programming language. Currently it is
-	the only dependence. In near future sniffing feature will be added
-	and new dependencies will come then.
+	UMPA is developed in Python programming language.
+	For sniffing functionality you need to install libpcap library and
+	one of the python's wrappers for libpcap library.
+	Currently, only modified (by UMPA development team) pypcap is supported.
+	To download it, please visit: http://umpa.umitproject.org/PypcapModified
+	
+	All changes to the original version are sent to the author and we strongly
+	believe that they will be attached in near future.
 
 == II. INSTALLATION ==
 
