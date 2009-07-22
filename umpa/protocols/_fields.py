@@ -514,8 +514,8 @@ class MACAddrField(AddrField):
     Hardware address in MAC style.
 
     Handle with 2 types of data:
-    1. strings as "aa:bb:cc:dd:ee:ff"
-    2. tuples as ('aa','bb','cc',11,22,33)
+     1. strings as "aa:bb:cc:dd:ee:ff"
+     2. tuples as ('aa','bb','cc',11,22,33)
     """
 
     separator = ":"
@@ -667,8 +667,8 @@ class Flags(Field):
         If no names passed return a numeric value of all bits.
         To return a list of all bits, pass [] as a first argument.
 
-        @type *names: C{str}
-        @param *names: names of bit-flags.
+        @type names: C{str}
+        @param names: names of bit-flags.
 
         @return: a numeric-value or list of passed bits values.
         """
@@ -708,8 +708,8 @@ class Flags(Field):
         for C{str}: merging with *args
         for C{False} or C{True}: bits from *args are set to True/False
 
-        @param *args: True for bits from the list
-        @param **kwargs: bitname=value
+        @param args: True for bits from the list
+        @param kwargs: bitname=value
         """
 
         # Protocol.__setattr__ call Field.set()

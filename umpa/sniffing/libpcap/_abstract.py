@@ -147,8 +147,8 @@ class dumper(object):
         @type pcap: C{open_pcap}
         @param pcap: open_pcap object's for which store packets
 
-        @type dump_file: C{str}
-        @param dump_file: path to file where packets will be stored
+        @type fname: C{str}
+        @param fname: path to file where packets will be stored
 
         @type open: C{bool}
         @param open: open a file (= open()) (default: I{True})
@@ -163,8 +163,8 @@ class dumper(object):
         @type pcap: C{open_pcap}
         @param pcap: open_pcap object's for which store packets
 
-        @type dump_file: C{str}
-        @param dump_file: path to file where packets will be stored
+        @type fname: C{str}
+        @param fname: path to file where packets will be stored
         """
         raise NotImplementedError("not implemented method for the "
                         "selected libpcap backend or abstract module")
