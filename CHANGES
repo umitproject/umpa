@@ -1,6 +1,20 @@
 UMPA Version History
 ====================
-Version 0.1.1:
+Version 0.2 (23rd of July, 2009):
+  * sniffing support
+  * Ethernet protocol implementation
+  * SLL protocol implementation
+  * provided modified version of pypcap
+    (see http://umpa.umitproject.org/PypcapModified)
+
+  * #330 - fields names changed to wireshark convention
+  * #327 - access protocol stack by name (e.g. packet.tcp.srcport)
+  * #329 - read pcap files  
+  * #333 - print statement for umpa.Packet shows fieldn name
+  * #302 - fixed a problem with passing more than 1 control bit for TCP proto
+  * fixing other minor bugs
+
+Version 0.1.1 (5th of May, 2009):
   * create testsuite (174 tests)
   * #310 - disable IPv6 (it was unusable; should be enable in another release)
   * #318 - better validity for passed values to fields
@@ -16,5 +30,5 @@ Version 0.1.1:
   * #308 - new API for schedule.send()
   * fixing minor bugs and typos
 
-Version 0.1:
-  * first release (2009/02/14)
+Version 0.1 (14th of February, 2009):
+  * first release
