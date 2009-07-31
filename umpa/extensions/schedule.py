@@ -124,7 +124,7 @@ def _send_schedule(self, delay, *packets, **options):
 
     @param options: extra options, currently available are:
       - detach - send packets in the background (B{type}: C{bool})
-        (not implemented yet),
+        @note: it's available only for async version of the extension,
       - interval - set interval between packets (B{type}: C{int}),
       - socket - use passed socket, otherwise create new umpa.Socket() object
         (B{type}: C{umpa.Socket})
