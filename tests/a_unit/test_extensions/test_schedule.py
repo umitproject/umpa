@@ -55,10 +55,7 @@ class TestExtensionScheduleRoot(object):
                                         umpa.Packet(IP()), umpa.Packet(IP()))
 
     def test_detach(self):
-        try:
-            schedule.send(0, [], detach=True)
-        except NotImplementedError:
-            py.test.skip("not implemented yet")
+        py.test.raises(UMPAException, "schedule.send(0, [], detach=True)")
 
     def test_delay(self):
         delay = 2

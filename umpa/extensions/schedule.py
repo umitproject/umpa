@@ -29,8 +29,8 @@ Schedule feature is for sending packets.
 send() function is provided and new method for umpa.Socket objects is added.
 
 @attention: This extension works in blocking-way. The main process is being
-blocked during delays. It will be rewritten in the asynchronous way soon.
-Be patient.
+blocked during delays.
+For non-blocking version please see aschedule extension.
 """
 
 import time
@@ -63,7 +63,7 @@ def send(delay, packets=None, *args, **kwargs):
 
     @param kwargs: extra options, currently available are:
       - detach - send packets in the background (B{type}: C{bool})
-        (not implemented yet),
+        @note: it's available only for async version of the extension,
       - interval - set interval between packets (B{type}: C{int}),
       - socket - use passed socket, otherwise create new umpa.Socket() object
         (B{type}: C{umpa.Socket})
@@ -87,12 +87,11 @@ def send(delay, packets=None, *args, **kwargs):
 
     # forking if detach
     if options['detach']:
-        # TODO: The only reasonable way to implement this feature
-        # is to use asynch way.
-        # spawning processes or threading are totally bad for a library
-        # but to write it with select() we need a bit more time, but
-        # it worth to wait for it than using threads etc.
-        raise NotImplementedError("It will be implemented soon. Sorry!")
+        # this option is available only for aschedule extenstion
+        # the only reasonable way to implement this feature is to use async way.
+        # spawning processes or threading is wrong bad for a library
+        raise UMPAException("Not available for a sync schedule. "
+                            "Only for async version.")
 
     # merge packets
     if packets is None:
