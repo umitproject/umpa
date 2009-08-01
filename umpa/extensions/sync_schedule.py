@@ -30,7 +30,7 @@ send() function is provided and new method for umpa.Socket objects is added.
 
 @attention: This extension works in blocking-way. The main process is being
 blocked during delays.
-For non-blocking version please see aschedule extension.
+For non-blocking version please see async_schedule extension.
 """
 
 import time
