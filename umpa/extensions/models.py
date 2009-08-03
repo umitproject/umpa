@@ -31,7 +31,8 @@ import umpa
 from umpa.sniffing import sniff_next
 from umpa.utils.exceptions import UMPAException
 
-def react(count, filter=None, device=None, timeout=0, snaplen=1024, promisc=True, **kwargs):
+def react(count, forward=None, filter=None, device=None, timeout=0,
+            snaplen=1024, promisc=True, **kwargs):
     """
     Sniff and resend packets with some reaction.
 
@@ -41,6 +42,7 @@ def react(count, filter=None, device=None, timeout=0, snaplen=1024, promisc=True
     Available reactions:
      1. revhosts
      2. revports
+     3. forward
     To set reactions use dict-style keywords like revhosts=True.
     """
 
@@ -56,6 +58,10 @@ def react(count, filter=None, device=None, timeout=0, snaplen=1024, promisc=True
         pkt.tcp.srcport = tmp
         return pkt
 
+    def forwardfunc(pkt, fwd):
+        pkt.ip.dst = fwd
+        return pkt
+
     avail_opts = ('revports', 'revhosts',)
 
     for opt in kwargs:
@@ -66,7 +72,6 @@ def react(count, filter=None, device=None, timeout=0, snaplen=1024, promisc=True
     for opt in avail_opts:
         options[opt] = kwargs.get(opt)
 
-    
     sock = umpa.Socket()
     for i in xrange(count):
         pkt = sniff_next(filter=filter, device=device, timeout=timeout,
@@ -74,6 +79,8 @@ def react(count, filter=None, device=None, timeout=0, snaplen=1024, promisc=True
         for opt in options:
             if options[opt] is True:
                 pkt = locals()[opt](pkt)
+        if forward is not None:
+            pkt = forwardfunc(pkt, forward)
         # remove 2nd layer
         while pkt.protos[0].layer < 3:
             pkt.protos.pop(0)

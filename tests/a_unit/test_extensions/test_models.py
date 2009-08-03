@@ -64,6 +64,17 @@ class RevHostsThread(SniffThread):
         except AssertionError, e:
             self._queue.put(e)
 
+class ForwardThread(SniffThread):
+    def run(self):
+        pkt = umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
+        try:
+            assert pkt[0].ip.src == "127.0.0.1"
+            assert pkt[0].ip.dst == "67.205.14.183"
+            assert pkt[1].ip.src == "127.0.0.1"
+            assert pkt[1].ip.dst == "127.0.0.1"
+        except AssertionError, e:
+            self._queue.put(e)
+
 class TestModels(object):
     pass
 
@@ -105,6 +116,25 @@ class TestReact(TestModels):
             raise AssertionError(err)
         queue.join()
         
+    def test_forward(self):
+        # use queue to communicate between threads
+        # py.test doesn't catch assertions from threads by itself
+        queue = Queue.Queue()
+
+        th = SendPacket(umpa.Packet(IP(src="127.0.0.1", dst="67.205.14.183"), TCP(srcport=888)))
+        th.start()
+        
+        th2 = ForwardThread("host 127.0.0.1 and port 888", "any", queue)
+        th2.start()
+        models.react(1, filter="host 67.205.14.183 and port 888", device="any",
+                    forward="127.0.0.1")
+        th.join()
+        th2.join()
+        if not queue.empty():
+            err = queue.get()
+            raise AssertionError(err)
+        queue.join()
+
     def test_wrongargs(self):
         py.test.raises(UMPAException, "models.react(1, foo=True)")
         py.test.raises(UMPAException,
