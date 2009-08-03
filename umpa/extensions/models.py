@@ -40,9 +40,9 @@ def react(count, forward=None, filter=None, device=None, timeout=0,
 
     For description of arguments please see umpa.sniffing package.
     Available reactions:
-     1. revhosts
-     2. revports
-     3. forward
+     1. revhosts -- revert hosts
+     2. revports -- revert ports
+     3. forward  -- forward packet to a new destination
     To set reactions use dict-style keywords like revhosts=True.
     """
 

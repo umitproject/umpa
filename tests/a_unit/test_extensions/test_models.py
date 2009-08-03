@@ -103,7 +103,7 @@ class TestReact(TestModels):
         # py.test doesn't catch assertions from threads by itself
         queue = Queue.Queue()
 
-        th = SendPacket(umpa.Packet(IP(src="67.205.14.183", dst="127.0.0.1"), strict=False))
+        th = SendPacket(umpa.Packet(IP(src="67.205.14.183", dst="127.0.0.1")))
         th.start()
         
         th2 = RevHostsThread("host 67.205.14.183", "any", queue)
