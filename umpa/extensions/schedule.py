@@ -87,7 +87,7 @@ def send(delay, packets=None, *args, **kwargs):
         (B{type}: C{umpa.Socket})
 
     @rtype: C{list}
-    @return: sent bits of each packet.
+    @return: sent bits of each packet (@note: only if detach=False).
     """
     # parsing passed options
     options = { 'detach'    : False,
