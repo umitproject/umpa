@@ -26,7 +26,7 @@ import py.test
 
 import umpa
 from umpa.protocols import IP
-from umpa.extensions import sync_schedule as schedule
+from umpa.extensions import schedule
 from umpa.utils.exceptions import UMPAException
 
 
