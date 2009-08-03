@@ -55,7 +55,7 @@ class TestExtensionScheduleRoot(object):
                                         umpa.Packet(IP()), umpa.Packet(IP()))
 
     def test_detach(self):
-        py.test.raises(UMPAException, "schedule.send(0, [], detach=True)")
+        pass # TODO how to test it?
 
     def test_delay(self):
         delay = 2

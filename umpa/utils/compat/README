@@ -1,4 +1,0 @@
-asyncore.py and sched.py:
- - these files are based on python's trunk repository (r74273).
- - they are patched by scheduler.patch provided at issue1641
-   (http://bugs.python.org/issue1641)
