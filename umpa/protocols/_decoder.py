@@ -44,7 +44,7 @@ def decode(buffer, linktype):
     """
 
     protos = _prepare_protos()
-    packet = umpa.Packet(strict=False)
+    packet = umpa.Packet(strict=False, warn=False)
 
     # XXX: currently there is no protocols in upper layers (above 4th layer)
     #      propably if they would be implemented - some changes are needed
