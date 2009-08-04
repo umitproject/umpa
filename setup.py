@@ -20,11 +20,13 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import glob
+import os
 import os.path
+from stat import ST_MODE
 from distutils.core import setup
+from distutils.command.install import install
 
 UMPA_VERSION = '0.2'
-
 
 TESTS_DIR = [
     os.path.join('tests'),
@@ -39,6 +41,65 @@ TESTS_DIR = [
     os.path.join('tests', 'a_unit', 'test_sniffing', 'test_libpcap'),
 ]
 
+class umpa_install(install):
+    def run(self):
+        install.run(self)
+        self.create_uninstaller()
+
+    def create_uninstaller(self):
+        uninstaller_filename = os.path.join(
+                self.install_data, 'share', 'umpa', 'uninstall_umpa')
+        uninstaller = []
+        uninstaller.append(
+                "#!/usr/bin/env python\n"
+                "import os, sys, shutil\n"
+                "\n"
+                "print\n"
+                "print '%(line)s Uninstall UMPA %(version)s %(line)s'\n"
+                "print\n"
+                "\n"
+                "answer = raw_input('Are you sure that you want to '\n"
+                "        'completly uninstall UMPA %(version)s? (yes/no) ')\n"
+                "\n"
+                "if answer.lower() not in ['yes', 'y']:\n"
+                "    sys.exit(0)\n"
+                "\n"
+                "print\n"
+                "print '%(line)s Uninstalling UMPA %(version)s... %(line)s'\n"
+                "print\n" % {'version': UMPA_VERSION, 'line': '-' * 10})
+
+        for output in self.get_outputs():
+            uninstaller.append(
+                    'print "Removing %(output)s..."\n'
+                    'if os.path.exists("%(output)s"):\n'
+                    '    os.remove("%(output)s")\n' % {'output': output})
+
+        uninstaller.append('print "Removing empty directories..."\n')
+        for dir in (
+                os.path.join(self.install_data, 'share', 'umpa'),
+                os.path.join(self.install_data, 'share', 'doc', 'umpa'),
+                os.path.join(self.install_lib, 'umpa'),
+            ):
+            uninstaller.append(
+                    'if os.path.exists("%(dir)s"):\n'
+                    '    shutil.rmtree("%(dir)s")\n' % {'dir' : dir})
+
+        uninstaller.append(
+                "print 'Removing uninstaller itself...'\n"
+                "os.remove('%s')\n" % uninstaller_filename)
+
+        uninstaller_file = open(uninstaller_filename, 'w')
+        uninstaller_file.writelines(uninstaller)
+        uninstaller_file.close()
+
+        # Set exec bit for uninstaller
+        mode = ((os.stat(uninstaller_filename)[ST_MODE]) | 0555) & 07777
+        os.chmod(uninstaller_filename, mode)
+
+cmdclasses = {
+        'install' : umpa_install,
+        }
+
 test_files = []
 for dir in TESTS_DIR:
     test_files = test_files + [ (os.path.join('share','umpa', dir),
@@ -46,8 +107,6 @@ for dir in TESTS_DIR:
 
 data_files = [  (os.path.join('share','umpa','examples'),
                             glob.glob(os.path.join('examples','*'))),
-                (os.path.join('share','umpa','scripts'),
-                    glob.glob(os.path.join('install_scripts','*.sh'))),
                 (os.path.join('share','doc','umpa','API'),
                     glob.glob(os.path.join('docs','API','*'))),
                 (os.path.join('share','umpa',),
@@ -74,6 +133,6 @@ setup(  name            = "UMPA",
                             "umpa.extensions",
                             "umpa.utils",
                             ],
-        data_files = data_files
-
+        data_files = data_files,
+        cmdclass = cmdclasses,
 )
