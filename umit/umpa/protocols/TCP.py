@@ -650,6 +650,6 @@ class TCP(_protocols.Protocol):
             self.get_field('options').bits = rest*8
             self.options = new_value
 
-        return buffer[self._hdr_len*4 + rest:]
+        return buffer[self._hdr_len*4:]
 
 protocols = [ TCP, ]
