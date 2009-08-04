@@ -11,7 +11,7 @@ old_pwd=`pwd`
 script_dir=`pwd`/$0
 script_dir=`dirname $script_dir`
 
-cd $script_dir/../..
+cd $script_dir/..
 echo "Removing MANIFEST.."
 rm -f MANIFEST
 echo "Removing build directory.."
