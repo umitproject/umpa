@@ -10,7 +10,7 @@ Version 0.2 (23rd of July, 2009):
   * #330 - fields names changed to wireshark convention
   * #327 - access protocol stack by name (e.g. packet.tcp.srcport)
   * #329 - read pcap files  
-  * #333 - print statement for umpa.Packet shows fieldn name
+  * #333 - print statement for umpa.Packet shows field's name
   * #302 - fixed a problem with passing more than 1 control bit for TCP proto
   * fixing other minor bugs
 
