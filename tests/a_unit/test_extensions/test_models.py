@@ -50,7 +50,7 @@ class RevPortsThread(SniffThread):
             assert pkt[1].ip.dst == "127.0.0.1"
             assert pkt[1].tcp.srcport == 0
             assert pkt[1].tcp.dstport == 80
-        except AssertionError, e:
+        except Exception, e:
             self._queue.put(e)
 
 class RevHostsThread(SniffThread):
@@ -61,7 +61,7 @@ class RevHostsThread(SniffThread):
             assert pkt[0].ip.dst == "127.0.0.1"
             assert pkt[1].ip.src == "127.0.0.1"
             assert pkt[1].ip.dst == "67.205.14.183"
-        except AssertionError, e:
+        except Exception, e:
             self._queue.put(e)
 
 class ForwardThread(SniffThread):
@@ -72,7 +72,7 @@ class ForwardThread(SniffThread):
             assert pkt[0].ip.dst == "67.205.14.183"
             assert pkt[1].ip.src == "127.0.0.1"
             assert pkt[1].ip.dst == "127.0.0.1"
-        except AssertionError, e:
+        except Exception, e:
             self._queue.put(e)
 
 class TestModels(object):
