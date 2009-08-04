@@ -18,10 +18,10 @@ So, there are provided some plugins with UMPA. Extensions like XML or schedule. 
 
 {{{
 #!python
-import umpa.extensions.XML
-from umpa.extensions import schedule
+import umit.umpa.extensions.XML
+from umit.umpa.extensions import schedule
 
-import umpa.protocols.IP
+import umit.umpa.protocols.IP
 }}}
 
 But we can write our owns plugins and store them in our $HOME directory. By importing UMPA first time, it will create a special directory $HOME/.umpa and this directory is important keep some configs and plugins. There is a sub-directory {{{$HOME/.umpa/umpa_plugins}}} with {{{extensions}}} and {{{protocols}}} sub-directories. So you can keep your own plugins there.
@@ -30,7 +30,7 @@ Because it's just an imitation of the real plugins system, there is no interface
 
 ===== available plugins =====
 
-There are 3 functions for {{{umpa.protocols}}} and {{{umpa.extensions}}} to get available protocols/extensions:
+There are 3 functions for {{{umit.umpa.protocols}}} and {{{umit.umpa.extensions}}} to get available protocols/extensions:
  * {{{get_all()}}} - return both local and global plugins
  * {{{get_globals()}}} - return only global plugins
  * {{{get_locals()}}} - return only local plugins
@@ -43,9 +43,9 @@ Firstly, just read any already implemented protocols to see how it works.
 
 But here is pointed some important issues.[[BR]]
 There 3 common modules which we should use to create new protocol implementation:
- 1. {{{umpa.protocols._protocols}}} -- with our the super-class {{{Protocol}}}
- 2. {{{umpa.protocols._fields}}} -- with many common classes of fields
- 3. {{{umpa.protocols._consts}}} -- with common constansts
+ 1. {{{umit.umpa.protocols._protocols}}} -- with our the super-class {{{Protocol}}}
+ 2. {{{umit.umpa.protocols._fields}}} -- with many common classes of fields
+ 3. {{{umit.umpa.protocols._consts}}} -- with common constansts
 
 ===== protocol class in general =====
 
@@ -54,8 +54,8 @@ Ok, let's call our protocol {{{Foo}}} and create class.
 {{{
 #!python
 
-from umpa.protocols import _protocols
-from umpa.protocols import _fields
+from umit.umpa.protocols import _protocols
+from umit.umpa.protocols import _fields
 
 class Foo(Protocol):
     layer = 4                                                             # layer of OSI model where protocol is situated
@@ -80,14 +80,14 @@ OK, we've already created our {{{Foo}}} class. It's not finished yet but...:) Th
  1. {{{protocol_id}}} class attribute is an general attribite for any ID of the protocol. Usually it's used by a lower layer for information what protocol is upper. E.g. in Ethernet protocol there is a field EtherType and there will be 0x0800 if upper protocol is IP. So, in this case protocol_id for IP should be 0x0800.
  2. {{{_ordered_fields}}} -- this is a tuple of fields in the order as we want to see it in the header of our protocol. Items of the tuple are names of fields. User uses these names like {{{foo.field1}}} if he wants to access to them. Please note about underscored '_' prefix. It says that the field is auto-filling and shouldn't be modify by the user.
  3. The second field is a flag-type. Like control bits field in TCP with bit flags like SYN, FIN, ACK etc. Items the tuple are names of each bit-flag. The next line predefined them to default values (0 for every bits in this case).
- 4. This list contains fields-objects. We can use already written classes provided by {{{umpa.protocols._fields}}} (like {{{Flags}}}) or create new subclasses as we are going to do with two fields. Arguments for constructor are: {{{name, value=None, bits=None, auto=None}}}. We define a default value form Field3 but omit rest because we will set them in classes directly. Please note, that the order of the list must be same as the order of {{{_ordered_fields}}} tuple.
+ 4. This list contains fields-objects. We can use already written classes provided by {{{umit.umpa.protocols._fields}}} (like {{{Flags}}}) or create new subclasses as we are going to do with two fields. Arguments for constructor are: {{{name, value=None, bits=None, auto=None}}}. We define a default value form Field3 but omit rest because we will set them in classes directly. Please note, that the order of the list must be same as the order of {{{_ordered_fields}}} tuple.
  5. We call a constructor from {{{Protocol}}}. It handles with **kwargs and set a lot of things for us.
 
 We need to implement 2 methods, but let's take care about our 2 fields first.
 
 ===== fields classes =====
 
-{{{_H}}} prefix for classes names is only a pattern. I like it, you don't have to. Every field's class has to inherit from the {{{umpa.protocols.fields.Field}}} class or subclasses. Our fields are number-type. Field1 should be set by user, and Field3 is auto-filling.
+{{{_H}}} prefix for classes names is only a pattern. I like it, you don't have to. Every field's class has to inherit from the {{{umit.umpa.protocols.fields.Field}}} class or subclasses. Our fields are number-type. Field1 should be set by user, and Field3 is auto-filling.
 
 {{{
 #!python
@@ -135,7 +135,7 @@ protocols = [ Foo, ]
 __all__ = [ "Foo", ]
 }}}
 
-The {{{protocols}}} list is used by the plugin mechanism. If we store our module in {{{$HOME/.umpa/umpa_plugins/protocols}}}, it will be automatically loaded by {{{import umpa.protocols}}}. We can just import the class by {{{from umpa.protocols import Foo}}}. Also, we can check our protocols' plugins by calling {{{umpa.protocols.get_locals()}}}.
+The {{{protocols}}} list is used by the plugin mechanism. If we store our module in {{{$HOME/.umpa/umpa_plugins/protocols}}}, it will be automatically loaded by {{{import umit.umpa.protocols}}}. We can just import the class by {{{from umit.umpa.protocols import Foo}}}. Also, we can check our protocols' plugins by calling {{{umit.umpa.protocols.get_locals()}}}.
 
 === Extensions ===
 
@@ -165,8 +165,8 @@ If we store the extension in {{{$HOME/.umpa/umpa_plugins/extensions/hacker.py}}}
 import umpa_plugins.extensions.hacker
 
 # second way
-import umpa.extensions
-umpa.extensions.load_extension('hacker')
+import umit.umpa.extensions
+umit.umpa.extensions.load_extension('hacker')
 }}}
 
 After that, we can simple call the new extension if we want it.
@@ -174,7 +174,7 @@ After that, we can simple call the new extension if we want it.
 #!python
 umpa_plugins.extensions.hacker.say_hello("Alice")    # for the former importing style
 
-umpa.extensions.hacker.say_hello("Bob")              # for the second one
+umit.umpa.extensions.hacker.say_hello("Bob")              # for the second one
 }}}
 
 ===== extending the hacker =====
@@ -183,12 +183,12 @@ Because UMPA is written in the Python we can dynamically add something to our ob
 {{{
 #!python
 
-import umpa
+import umit.umpa
 
 def _say_hello_method(self, name):
     say_hello(name)
 
-umpa.Packet.say_hello = _say_hello_method
+umit.umpa.Packet.say_hello = _say_hello_method
 }}}
 
 Now, we can call our method for Packet's objects!

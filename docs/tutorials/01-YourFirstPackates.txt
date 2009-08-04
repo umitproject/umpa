@@ -17,7 +17,7 @@ They are also available on http://trac.umitproject.org/browser/branch/UMPA/examp
 Ok, at the beginning we need to import UMPA.
 {{{
 #!python
-In [1]: import umpa
+In [1]: import umit.umpa
 In [2]:
 }}}
 Pretty easy, isn't it? ;-)
@@ -31,23 +31,23 @@ The former one is a protocol container. If you want to build new packet, you hav
 
 To create RAW_SOCKET we need SUID (root priviliges), but for normal usage usually it's not necessary (depends what you are doing with your application).
 
-So, it's recommended to drop the priviliges and up them only if needed. {{{umpa.utils}}} package provides some useful modules, and the {{{umpa.utils.security}}} module provides functions which are usefull in this case.
+So, it's recommended to drop the priviliges and up them only if needed. {{{umit.umpa.utils}}} package provides some useful modules, and the {{{umit.umpa.utils.security}}} module provides functions which are usefull in this case.
 
 All we need is to import the module and call the function. Later when we need to create a new socket (or to do something other what rely on SUID) we call another function from the module (it will be describe later).
 
 {{{
 #!python
-In [2]: import umpa.utils.security
-In [3]: umpa.utils.security.drop_priviliges()
+In [2]: import umit.umpa.utils.security
+In [3]: umit.umpa.utils.security.drop_priviliges()
 In [4]: 
 }}}
 
 Please note that our process has to be run as a root. Otherwise, an excaption will raise:
 {{{
 #!python
-In [1]: import umpa.utils.security
+In [1]: import umit.umpa.utils.security
 
-In [2]: umpa.utils.security.drop_priviliges()
+In [2]: umit.umpa.utils.security.drop_priviliges()
 Run the program with root-priviliges.
 
 ---------------------------------------------------------------------------
@@ -71,17 +71,17 @@ In [3]:
 
 Let's build our first packet. There are several ways to do that. We can include each protocols as an arguments in {{{Packet()}}} constructor, or just build them independent. The second case is more interesting.
 
-First, we need to import the {{{umpa.protocols}}} package. If we don't know which protocols are available, we can simple check it.
+First, we need to import the {{{umit.umpa.protocols}}} package. If we don't know which protocols are available, we can simple check it.
 {{{
 #!python
-In [4]: import umpa.protocols
+In [4]: import umit.umpa.protocols
 
-In [5]: umpa.protocols.get_all()
+In [5]: umit.umpa.protocols.get_all()
 Out[5]: 
-{'IP': <class 'umpa.protocols.IP.IP'>,
- 'Payload': <class 'umpa.protocols.Payload.Payload'>,
- 'TCP': <class 'umpa.protocols.TCP.TCP'>,
- 'UDP': <class 'umpa.protocols.UDP.UDP'>}
+{'IP': <class 'umit.umpa.protocols.IP.IP'>,
+ 'Payload': <class 'umit.umpa.protocols.Payload.Payload'>,
+ 'TCP': <class 'umit.umpa.protocols.TCP.TCP'>,
+ 'UDP': <class 'umit.umpa.protocols.UDP.UDP'>}
  
 In [6]:
 }}}
@@ -94,7 +94,7 @@ OK, in our example we would like to build TCP/IP packet and UDP/IP. Both packets
 
 {{{
 #!python
-In [6]: ip = umpa.protocols.IP(source_address="127.0.0.1")
+In [6]: ip = umit.umpa.protocols.IP(source_address="127.0.0.1")
 
 In [7]: ip.destination_address = (67,205,14,183)
 
@@ -125,7 +125,7 @@ Ok, We've just created the IP instance. As you see, we can pass values directly 
 What next? TCP header and some payload for it..
 {{{
 #!python
-In [9]: tcp = umpa.protocols.TCP()
+In [9]: tcp = umit.umpa.protocols.TCP()
 
 In [10]: tcp.source_port = 2958
 
@@ -133,7 +133,7 @@ In [11]: tcp.destination_port = 0
 
 In [12]: tcp.set_flags('control_bits', syn=True)
 
-In [13]: payload = umpa.protocols.Payload()
+In [13]: payload = umit.umpa.protocols.Payload()
 
 In [14]: payload.data = "this is umpa!"
 
@@ -147,7 +147,7 @@ Completely simple so far, isn't it?
 Ok, let's build a packet...
 {{{
 #!python
-In [15]: first_packet = umpa.Packet(ip, tcp)
+In [15]: first_packet = umit.umpa.Packet(ip, tcp)
 
 In [16]: first_packet.include(payload)
 }}}
@@ -201,7 +201,7 @@ Packet contains 3 protocols
 | \-[ Options                   ]		contains 0 bit flags
 | +-[ Padding                   ]		0 (auto - 0)
 \-< IP                          >		contains 14 fields
-<umpa.protocols.IP.IP object at 0xb78c2a4c>
+<umit.umpa.protocols.IP.IP object at 0xb78c2a4c>
 +-< TCP                         >
 | \
 | +-[ Source Port               ]		2958
@@ -229,13 +229,13 @@ Packet contains 3 protocols
 | \-[ Options                   ]		contains 0 bit flags
 | +-[ Padding                   ]		0 (auto - 0)
 \-< TCP                         >		contains 12 fields
-<umpa.protocols.TCP.TCP object at 0xb78e774c>
+<umit.umpa.protocols.TCP.TCP object at 0xb78e774c>
 +-< Payload                     >
 | \
 | +-[ Data                      ]		this is umpa!
 \-< Payload                     >		contains 1 fields
-<umpa.protocols.Payload.Payload object at 0xb78e794c>
-<umpa._packets.Packet object at 0xb78e798c>
+<umit.umpa.protocols.Payload.Payload object at 0xb78e794c>
+<umit.umpa._packets.Packet object at 0xb78e798c>
 
 In [18]: 
 }}}
@@ -243,25 +243,25 @@ In [18]:
 ===== sockets =====
 
 Now, we are ready to send the packet!
-To create a new socket, we will use {{{umpa.Socket}}} class. Please remember, that we dropped our priviliges so we need to get them back now.
+To create a new socket, we will use {{{umit.umpa.Socket}}} class. Please remember, that we dropped our priviliges so we need to get them back now.
 We can do it in 2 ways.
  1. atomic way ('''''recommended''''')
   {{{
 #!python
-In [18]: sock = umpa.utils.security.super_priviliges(umpa.Socket)
+In [18]: sock = umit.umpa.utils.security.super_priviliges(umit.umpa.Socket)
 
 In [19]: 
 }}}
  2. normal way
   {{{
 #!python
-In [18]: umpa.utils.security.drop_priviliges()
+In [18]: umit.umpa.utils.security.drop_priviliges()
 
-In [19]: umpa.utils.security.super_priviliges()
+In [19]: umit.umpa.utils.security.super_priviliges()
 
-In [20]: sock = umpa.Socket()
+In [20]: sock = umit.umpa.Socket()
 
-In [21]: umpa.utils.security.drop_priviliges()
+In [21]: umit.umpa.utils.security.drop_priviliges()
 
 In [22]: 
 }}}
@@ -294,7 +294,7 @@ Ok, let's create another packet with a UDP header just in single line!
 
 {{{
 #!python
-In [20]: udp = umpa.protocols.UDP(source_port=0, destination_port=7)
+In [20]: udp = umit.umpa.protocols.UDP(source_port=0, destination_port=7)
 
 In [21]:
 }}}
@@ -375,7 +375,7 @@ Packet contains 2 protocols
 | \-[ Options                   ]		contains 0 bit flags
 | +-[ Padding                   ]		0 (auto - 0)
 \-< IP                          >		contains 14 fields
-<umpa.protocols.IP.IP object at 0xb78c8b6c>
+<umit.umpa.protocols.IP.IP object at 0xb78c8b6c>
 +-< UDP                         >
 | \
 | +-[ Source Port               ]		0
@@ -383,8 +383,8 @@ Packet contains 2 protocols
 | +-[ Length                    ]		None (auto - 8)
 | +-[ Checksum                  ]		None (auto - 0)
 \-< UDP                         >		contains 4 fields
-<umpa.protocols.UDP.UDP object at 0xb78c8b0c>
-<umpa._packets.Packet object at 0xb78c8ecc>
+<umit.umpa.protocols.UDP.UDP object at 0xb78c8b0c>
+<umit.umpa._packets.Packet object at 0xb78c8ecc>
 
 In [24]: 
 }}}
@@ -395,7 +395,7 @@ As you see, TTL is "in Windows mode".
 
 {{{
 #!python
-In [24]: second_packet = umpa.Packet(ip, udp)
+In [24]: second_packet = umit.umpa.Packet(ip, udp)
 
 In [25]: sock.send(first_packet, second_packet)
 Out [25]: [53, 28]
