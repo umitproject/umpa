@@ -31,7 +31,7 @@ Use these fields' classes to create new implementation of any protocols.
 
 import types
 
-from umpa.utils.exceptions import UMPAException, UMPAAttributeException
+from umit.umpa.utils.exceptions import UMPAException, UMPAAttributeException
 
 class Field(object):
     """
@@ -276,7 +276,7 @@ class SpecialIntField(IntField):
     Use _tmp_value attribute then in pre/post raw methods in protocol
     classes. Just assign to the _tmp_value needed information from other fields
     and implement _generate_value() method in the related way.
-    Check umpa.protocols.IP module for examples.
+    Check umit.umpa.protocols.IP module for examples.
     """
 
     def __init__(self, *args, **kwargs):
@@ -323,7 +323,7 @@ class SpecialIntField(IntField):
     classes if you need handle with other fields.
     Assign to the _tmp_value needed information from other fields
     and implement _generate_value() method in the related way.
-    Check umpa.protocols.IP module for examples.
+    Check umit.umpa.protocols.IP module for examples.
 
     @type: C{int}
     """)

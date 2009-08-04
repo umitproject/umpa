@@ -25,16 +25,16 @@ from cStringIO import StringIO
 import tempfile
 import os
 
-import umpa
-from umpa.protocols import IP, TCP, Payload
-from umpa.protocols._fields import Flags
-from umpa.extensions import XML
+import umit.umpa
+from umit.umpa.protocols import IP, TCP, Payload
+from umit.umpa.protocols._fields import Flags
+from umit.umpa.extensions import XML
 
 class TestExtensionXML(object):
     example_xml = """<?xml version="1.0" ?>
 <UMPA>
         <packet id="0" strict="True">
-                <protocol class="umpa.protocols.IP.IP">
+                <protocol class="umit.umpa.protocols.IP.IP">
                         <_version type="int">
                                 4
                         </_version>
@@ -109,7 +109,7 @@ class TestExtensionXML(object):
                                 0
                         </_padding>
                 </protocol>
-                <protocol class="umpa.protocols.TCP.TCP">
+                <protocol class="umit.umpa.protocols.TCP.TCP">
                         <srcport type="int">
                                 2958
                         </srcport>
@@ -164,16 +164,16 @@ class TestExtensionXML(object):
                                 0
                         </_padding>
                 </protocol>
-                <protocol class="umpa.protocols.Payload.Payload">
+                <protocol class="umit.umpa.protocols.Payload.Payload">
                         <data type="str">
-                                this is umpa!
+                                this is umit.umpa!
                         </data>
                 </protocol>
         </packet>
 </UMPA>
 """
     example_xml2 = """        <packet id="1" strict="True">
-                <protocol class="umpa.protocols.TCP.TCP">
+                <protocol class="umit.umpa.protocols.TCP.TCP">
                         <srcport type="int">
                                 123
                         </srcport>
@@ -228,9 +228,9 @@ class TestExtensionXML(object):
                                 0
                         </_padding>
                 </protocol>
-                <protocol class="umpa.protocols.Payload.Payload">
+                <protocol class="umit.umpa.protocols.Payload.Payload">
                         <data type="str">
-                                another umpa packet!
+                                another umit.umpa packet!
                         </data>
                 </protocol>
         </packet>
@@ -249,22 +249,22 @@ class TestExtensionXML(object):
 
     # Payload
     data = Payload()
-    data.data = "this is umpa!"
+    data.data = "this is umit.umpa!"
 
     # packet
-    example_packet = umpa.Packet(ip, tcp, data)
+    example_packet = umit.umpa.Packet(ip, tcp, data)
     
     tcp2 = TCP()
     tcp2.srcport = 123
     tcp2.dstport = 321
     tcp2.set_flags('flags', syn=False)
     data2 = Payload()
-    data2.data = "another umpa packet!"
-    example_packet2 = umpa.Packet(tcp2, data2, strict=True)
+    data2.data = "another umit.umpa packet!"
+    example_packet2 = umit.umpa.Packet(tcp2, data2, strict=True)
 
     def test_packet_attrs(self):
-        assert hasattr(umpa.Packet, 'save_xml')
-        assert hasattr(umpa.Packet, 'load_xml')
+        assert hasattr(umit.umpa.Packet, 'save_xml')
+        assert hasattr(umit.umpa.Packet, 'load_xml')
 
     def test_xml_load(self):
         f = StringIO()

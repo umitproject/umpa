@@ -21,35 +21,35 @@
 
 import tempfile
 
-import umpa
-import umpa.sniffing
-from umpa.protocols import IP, TCP
-from umpa.protocols._decoder import decode
-from umpa.utils.exceptions import UMPASniffingException
+import umit.umpa
+import umit.umpa.sniffing
+from umit.umpa.protocols import IP, TCP
+from umit.umpa.protocols._decoder import decode
+from umit.umpa.utils.exceptions import UMPASniffingException
 from tests.utils import SendPacket
 
 import py.test
 
 class TestSniffing(object):
     def test_import_backend(self):
-        assert hasattr(umpa.sniffing, 'lpcap')
-        assert umpa.sniffing.lpcap._backend == umpa.config['libpcap']
+        assert hasattr(umit.umpa.sniffing, 'lpcap')
+        assert umit.umpa.sniffing.lpcap._backend == umit.umpa.config['libpcap']
 
-        oldlpcap = umpa.config['libpcap']
-        umpa.config['libpcap'] = "foobar"
-        py.test.raises(UMPASniffingException, "reload(umpa.sniffing)")
-        umpa.config['libpcap'] = oldlpcap
+        oldlpcap = umit.umpa.config['libpcap']
+        umit.umpa.config['libpcap'] = "foobar"
+        py.test.raises(UMPASniffingException, "reload(umit.umpa.sniffing)")
+        umit.umpa.config['libpcap'] = oldlpcap
 
     def test_get_available_devices(self):
-        if umpa.config['libpcap'] == 'pypcap':
-            from umpa.sniffing.libpcap import pypcap
-            assert umpa.sniffing.get_available_devices()==pypcap.findalldevs()
+        if umit.umpa.config['libpcap'] == 'pypcap':
+            from umit.umpa.sniffing.libpcap import pypcap
+            assert umit.umpa.sniffing.get_available_devices()==pypcap.findalldevs()
 
     def test_sniff(self):
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.4"),
                                     TCP(srcport=99)))
         th.start()
-        result = umpa.sniffing.sniff(1, device='any', filter="src port 99")
+        result = umit.umpa.sniffing.sniff(1, device='any', filter="src port 99")
         th.join()
 
         assert len(result) == 1
@@ -57,20 +57,20 @@ class TestSniffing(object):
         assert result[0].tcp.srcport == 99
 
     def test_sniff_next(self):
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.4"),
                                     TCP(srcport=99)))
         th.start()
-        result = umpa.sniffing.sniff_next(device='any', filter="src port 99")
+        result = umit.umpa.sniffing.sniff_next(device='any', filter="src port 99")
         th.join()
 
         assert result.ip.src == '1.2.3.4'
         assert result.tcp.srcport == 99
 
         # send more, sniff one
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.4"),
                                     TCP(srcport=99)), 5)
         th.start()
-        result = umpa.sniffing.sniff_next(device='any', filter="src port 99")
+        result = umit.umpa.sniffing.sniff_next(device='any', filter="src port 99")
         th.join()
 
         assert result.ip.src == '1.2.3.4'
@@ -86,40 +86,40 @@ class TestSniffing(object):
             if args[0] > args[1]:
                 raise UMPASniffingException("test")
 
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.6"),
                                     TCP(srcport=99)), 2)
         th.start()
-        umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
+        umit.umpa.sniffing.sniff_loop(1, filter="src 1.2.3.6", device='any',
                                             callback=cbk, callback_args=[1,2])
         th.join()
 
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.6"),
                                     TCP(srcport=99)))
         th.start()
-        py.test.raises(UMPASniffingException, umpa.sniffing.sniff_loop, 1,
+        py.test.raises(UMPASniffingException, umit.umpa.sniffing.sniff_loop, 1,
                         filter="src 1.2.3.6", device='any', callback=cbk,
                         callback_args=[2,1] )
         th.join()
 
-        py.test.raises(UMPASniffingException, umpa.sniffing.sniff_loop, 1)
+        py.test.raises(UMPASniffingException, umit.umpa.sniffing.sniff_loop, 1)
 
     def test_from_file(self):
         dump_file = tempfile.NamedTemporaryFile(mode="w")
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.6"),
                                     TCP(srcport=99)), 3)
         th.start()
-        umpa.sniffing.sniff(3, device="any", dump=dump_file.name,
+        umit.umpa.sniffing.sniff(3, device="any", dump=dump_file.name,
                             filter="src host 1.2.3.6 and src port 99")
         th.join()
 
-        result = umpa.sniffing.from_file(dump_file.name)
+        result = umit.umpa.sniffing.from_file(dump_file.name)
 
         assert len(result) == 3
         for packet in result:
             assert packet.ip.src == "1.2.3.6"
             assert packet.tcp.srcport == 99
 
-        result = umpa.sniffing.from_file(dump_file.name, 2)
+        result = umit.umpa.sniffing.from_file(dump_file.name, 2)
         assert len(result) == 2
         for packet in result:
             assert packet.ip.src == "1.2.3.6"
@@ -138,22 +138,22 @@ class TestSniffing(object):
             idx += 1
 
         dump_file = tempfile.NamedTemporaryFile(mode="w")
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.6"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.6"),
                                     TCP(srcport=99)), 3)
         th.start()
-        umpa.sniffing.sniff(3, device="any", dump=dump_file.name,
+        umit.umpa.sniffing.sniff(3, device="any", dump=dump_file.name,
                             filter="src host 1.2.3.6 and src port 99")
         th.join()
 
         idx = 0
         amount = 3
-        umpa.sniffing.from_file_loop(dump_file.name, callback=cbk,
+        umit.umpa.sniffing.from_file_loop(dump_file.name, callback=cbk,
                                     callback_args=[amount,])
         assert idx == amount
 
         idx = 0
         amount = 2
-        umpa.sniffing.from_file_loop(dump_file.name, 2, callback=cbk,
+        umit.umpa.sniffing.from_file_loop(dump_file.name, 2, callback=cbk,
                                             callback_args=[amount,])
         assert idx == amount
 
@@ -161,11 +161,11 @@ class TestSniffing(object):
         dump_file = tempfile.NamedTemporaryFile(mode="w")
         amount = 5
 
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.4"),
                                     TCP(srcport=99)), amount)
         th.start()
         try:
-            umpa.sniffing.to_file(dump_file.name, amount,
+            umit.umpa.sniffing.to_file(dump_file.name, amount,
                     "src host 1.2.3.4 and src port 99", "any")
         except UMPASniffingException:
             py.test.skip("no suitable devices for sniffing found. "
@@ -173,13 +173,13 @@ class TestSniffing(object):
         finally:
             th.join()
 
-        result = umpa.sniffing.from_file(dump_file.name)
+        result = umit.umpa.sniffing.from_file(dump_file.name)
         assert len(result) == amount
         for packet in result:
             assert packet.ip.src == "1.2.3.4"
             assert packet.tcp.srcport == 99
 
-        result = umpa.sniffing.from_file(dump_file.name, 2)
+        result = umit.umpa.sniffing.from_file(dump_file.name, 2)
         assert len(result) == 2
         for packet in result:
             assert packet.ip.src == "1.2.3.4"

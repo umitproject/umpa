@@ -22,11 +22,11 @@
 import Queue
 import threading
 
-import umpa
-import umpa.sniffing
-from umpa.protocols import IP, TCP
-from umpa.extensions import models
-from umpa.utils.exceptions import UMPAException
+import umit.umpa
+import umit.umpa.sniffing
+from umit.umpa.protocols import IP, TCP
+from umit.umpa.extensions import models
+from umit.umpa.utils.exceptions import UMPAException
 from tests.utils import SendPacket
 
 import py.test
@@ -40,7 +40,7 @@ class SniffThread(threading.Thread):
 
 class RevPortsThread(SniffThread):
     def run(self):
-        pkt = umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
+        pkt = umit.umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
         try:
             assert pkt[0].ip.src == "127.0.0.1"
             assert pkt[0].ip.dst == "127.0.0.1"
@@ -55,7 +55,7 @@ class RevPortsThread(SniffThread):
 
 class RevHostsThread(SniffThread):
     def run(self):
-        pkt = umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
+        pkt = umit.umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
         try:
             assert pkt[0].ip.src == "67.205.14.183"
             assert pkt[0].ip.dst == "127.0.0.1"
@@ -66,7 +66,7 @@ class RevHostsThread(SniffThread):
 
 class ForwardThread(SniffThread):
     def run(self):
-        pkt = umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
+        pkt = umit.umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
         try:
             assert pkt[0].ip.src == "127.0.0.1"
             assert pkt[0].ip.dst == "67.205.14.183"
@@ -84,7 +84,7 @@ class TestReact(TestModels):
         # py.test doesn't catch assertions from threads by itself
         queue = Queue.Queue()
 
-        th = SendPacket(umpa.Packet(IP(), TCP(srcport=80, dstport=0)))
+        th = SendPacket(umit.umpa.Packet(IP(), TCP(srcport=80, dstport=0)))
         th.start()
         
         th2 = RevPortsThread("host 127.0.0.1 and port 80", "lo", queue)
@@ -103,7 +103,7 @@ class TestReact(TestModels):
         # py.test doesn't catch assertions from threads by itself
         queue = Queue.Queue()
 
-        th = SendPacket(umpa.Packet(IP(src="67.205.14.183", dst="127.0.0.1")))
+        th = SendPacket(umit.umpa.Packet(IP(src="67.205.14.183", dst="127.0.0.1")))
         th.start()
         
         th2 = RevHostsThread("host 67.205.14.183", "any", queue)
@@ -121,7 +121,7 @@ class TestReact(TestModels):
         # py.test doesn't catch assertions from threads by itself
         queue = Queue.Queue()
 
-        th = SendPacket(umpa.Packet(IP(src="127.0.0.1", dst="67.205.14.183"), TCP(srcport=888)))
+        th = SendPacket(umit.umpa.Packet(IP(src="127.0.0.1", dst="67.205.14.183"), TCP(srcport=888)))
         th.start()
         
         th2 = ForwardThread("host 127.0.0.1 and port 888", "any", queue)

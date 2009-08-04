@@ -27,10 +27,10 @@ Some methods have to be overridden. Read Protocol's docstrings for more
 information.
 """
 
-from umpa.protocols._consts import BYTE
-from umpa.protocols._fields import Field, Flags
-from umpa.utils.exceptions import UMPAException, UMPAAttributeException
-from umpa.utils.tools import dict_from_sequence as _dict_from_sequence
+from umit.umpa.protocols._consts import BYTE
+from umit.umpa.protocols._fields import Field, Flags
+from umit.umpa.utils.exceptions import UMPAException, UMPAAttributeException
+from umit.umpa.utils.tools import dict_from_sequence as _dict_from_sequence
 
 class Protocol(object):
     """

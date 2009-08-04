@@ -29,8 +29,8 @@ Use it to build a packet which contains several protocols.
 import struct
 import warnings
 
-import umpa.utils.bits
-from umpa.utils.exceptions import UMPAException, UMPAStrictException
+import umit.umpa.utils.bits
+from umit.umpa.utils.exceptions import UMPAException, UMPAStrictException
 
 BYTE = 8
 
@@ -184,7 +184,7 @@ class Packet(object):
         # split into chunks
         # we make it because we need string for socket object
         # so after that we pack it by struct module.pack()
-        byte_chunks = umpa.utils.bits.split_number_into_chunks(
+        byte_chunks = umit.umpa.utils.bits.split_number_into_chunks(
                                         self.raw, chunk_amount=self.bits/BYTE)
         return struct.pack('!' + 'B'*(self.bits/BYTE), *byte_chunks)
 

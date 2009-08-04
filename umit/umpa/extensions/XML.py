@@ -36,8 +36,8 @@ Also, Packet objects get 2 extra methods:
 import re
 import xml.dom.minidom
 
-import umpa
-from umpa.protocols._fields import Flags
+import umit.umpa
+from umit.umpa.protocols._fields import Flags
 
 # TODO: refactoring with SAX usage
 
@@ -104,9 +104,9 @@ def load(filename, proto_only=False):
     It's usefull if in some cases.
     I{Example}:
 
-        >>> import umpa
-        >>> import umpa.extensions.XML
-        >>> packet = umpa.Packet()
+        >>> import umit.umpa
+        >>> import umit.umpa.extensions.XML
+        >>> packet = umit.umpa.Packet()
         >>> packet.load_xml('packets.xml') # proto_only by default in this case
     
     In this case, don't create new objects of Packet. Return list of protocols
@@ -131,7 +131,7 @@ def load(filename, proto_only=False):
     packets = []
     for pa in doc.getElementsByTagName("packet"):
         is_true = (pa.getAttribute("strict") != "False")
-        packet = umpa.Packet(strict=is_true)
+        packet = umit.umpa.Packet(strict=is_true)
         for pr in pa.getElementsByTagName("protocol"):
             # dealing with class of protocol
             protocol_name = pr.getAttribute("class").split(".")
@@ -196,13 +196,13 @@ def _load_xml(self, filename):
     Overwrite current list of the protocols in the Packet's object by
     loaded protocols.
     
-    Internally, call umpa.extensions.XML.load() function with proto_only=True
-    attribute.
+    Internally, call umit.umpa.extensions.XML.load() function
+    with proto_only=True attribute.
     @type filename: C{str}
     @param filename: name of the XML file.
     """
 
     self.protos = load(filename, proto_only=True)
 
-umpa.Packet.save_xml = _save_xml
-umpa.Packet.load_xml = _load_xml
+umit.umpa.Packet.save_xml = _save_xml
+umit.umpa.Packet.load_xml = _load_xml

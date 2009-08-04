@@ -25,11 +25,11 @@ Payload "protocol" implementation.
 Payload is the abstract protocol of 5-7 layers of the OSI model.
 """
 
-from umpa.protocols._fields import Field
-from umpa.protocols._protocols import Protocol
-from umpa.protocols._consts import BYTE
+from umit.umpa.protocols._fields import Field
+from umit.umpa.protocols._protocols import Protocol
+from umit.umpa.protocols._consts import BYTE
 
-from umpa.utils.exceptions import UMPAAttributeException
+from umit.umpa.utils.exceptions import UMPAAttributeException
 
 __all__ = [ "Payload", ]
 

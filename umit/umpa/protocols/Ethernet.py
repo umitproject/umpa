@@ -25,9 +25,9 @@ Ethernet protocol implementation.
 
 import struct
 
-from umpa.protocols import _protocols
-from umpa.protocols import _fields
-from umpa.protocols import _consts
+from umit.umpa.protocols import _protocols
+from umit.umpa.protocols import _fields
+from umit.umpa.protocols import _consts
 
 __all__ = [ "Ethernet", ]
 

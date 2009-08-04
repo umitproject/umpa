@@ -24,6 +24,8 @@ import sys
 import shutil
 import tempfile
 
+import umit
+
 old_expanduser = os.path.expanduser
 
 class TestUMPAInitialization(object):
@@ -35,14 +37,14 @@ class TestUMPAInitialization(object):
         cls.tmp_dir = tempfile.mkdtemp()
         #cls.old_expanduser = os.path.expanduser
         os.path.expanduser = expanduser
-        import umpa
+        import umit.umpa
         # dirty hack to get possibility of reload module later
-        globals()[umpa.__name__] = umpa
+        globals()[umit.umpa.__name__] = umit.umpa
 
     def teardown_class(cls):
         shutil.rmtree(cls.tmp_dir)
         os.path.expanduser = old_expanduser
-        reload(umpa)
+        reload(umit.umpa)
 
     def test_paths(self):
         def path_exist(path):
@@ -68,5 +70,5 @@ class TestUMPAInitialization(object):
         home = os.path.join(os.path.expanduser('~'), '.umpa')
         for dir in os.listdir(home):
             shutil.rmtree(os.path.join(home,dir))
-        reload(umpa)
+        reload(umit.umpa)
         self.test_paths()

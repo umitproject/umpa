@@ -64,7 +64,7 @@ def get_globals():
     Return global protocols.
 
     Global protocols are the ones which are located
-    in the umpa.protocols package.
+    in the umit.umpa.protocols package.
 
     @rtype: C{dict}
     @return: global protocols.

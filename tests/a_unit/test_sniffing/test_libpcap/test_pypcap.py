@@ -25,10 +25,10 @@ import tempfile
 import pcap
 import py.test
 
-import umpa
-from umpa.protocols import IP, TCP
-from umpa.sniffing.libpcap import pypcap
-from umpa.utils.exceptions import UMPASniffingException
+import umit.umpa
+from umit.umpa.protocols import IP, TCP
+from umit.umpa.sniffing.libpcap import pypcap
+from umit.umpa.utils.exceptions import UMPASniffingException
 from tests.utils import SendPacket
 
 class TestPypcap(object):
@@ -76,13 +76,13 @@ class TestOpenPcap(object):
         try:
             p = pypcap.open_pcap("any", to_ms=100)
             p.setfilter("src host 1.2.3.4 and src port 99")
-            th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+            th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.4"),
                                         TCP(srcport=99)))
             th.start()
             p.loop(1, cbk, "foobar")
             th.join()
 
-            th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+            th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.4"),
                                         TCP(srcport=99)), 5)
             th.start()
             p.loop(5, cbk, "foobar")
@@ -95,7 +95,7 @@ class TestOpenPcap(object):
         # can't test iterable of the object
         # because pypcap doesn't raise StopIteration
         amount = 5
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.4"),
                                     TCP(srcport=99)), amount)
         th.start()
         try:
@@ -113,7 +113,7 @@ class TestDumper(object):
     def test_dump(self):
         amount = 5
         dump_file = tempfile.NamedTemporaryFile(mode="w")
-        th = SendPacket(umpa.Packet(IP(src="1.2.3.4"),
+        th = SendPacket(umit.umpa.Packet(IP(src="1.2.3.4"),
                                     TCP(srcport=99)), amount)
         th.start()
         try:

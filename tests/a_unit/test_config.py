@@ -19,18 +19,18 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import umpa
+import umit.umpa
 
 class TestConfig(object):
     def test_libpcap_wrapper(self):
         try:
             import pcap
-            assert umpa.config['libpcap'] == 'pypcap' or \
-                    umpa.config['libpcap'] == 'pylibpcap'
+            assert umit.umpa.config['libpcap'] == 'pypcap' or \
+                    umit.umpa.config['libpcap'] == 'pylibpcap'
         except ImportError:
             try:
                 import pcapy
-                assert umpa.config['libpcap'] == 'pcapy'
+                assert umit.umpa.config['libpcap'] == 'pcapy'
             except ImportError:
-                assert umpa.config['libpcap'] is None
-        assert not hasattr(umpa, 'libpcap')
+                assert umit.umpa.config['libpcap'] is None
+        assert not hasattr(umit.umpa, 'libpcap')

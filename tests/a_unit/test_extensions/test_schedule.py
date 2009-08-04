@@ -24,15 +24,15 @@ import time
 
 import py.test
 
-import umpa
-from umpa.protocols import IP
-from umpa.extensions import schedule
-from umpa.utils.exceptions import UMPAException
+import umit.umpa
+from umit.umpa.protocols import IP
+from umit.umpa.extensions import schedule
+from umit.umpa.utils.exceptions import UMPAException
 
 
 class TestExtensionSchedule(object):
     def test_send_schedule_attr(self):
-        assert hasattr(umpa.Socket, 'send_schedule')
+        assert hasattr(umit.umpa.Socket, 'send_schedule')
 
     def test_wrong_arg(self):
         py.test.raises(UMPAException, "schedule.send(0, bad_args=None)")
@@ -46,13 +46,13 @@ class TestExtensionScheduleRoot(object):
             py.test.skip('root-priviliges are needed')
 
     def test_extra_args(self):
-        schedule.send(0, umpa.Packet(IP()))
-        schedule.send(0, (umpa.Packet(IP()), umpa.Packet(IP())))
-        schedule.send(0, [umpa.Packet(IP()), umpa.Packet(IP())])
-        schedule.send(0, (umpa.Packet(IP()), umpa.Packet(IP())),
-                                                            umpa.Packet(IP()))
-        schedule.send(0, (umpa.Packet(IP()), umpa.Packet(IP())),
-                                        umpa.Packet(IP()), umpa.Packet(IP()))
+        schedule.send(0, umit.umpa.Packet(IP()))
+        schedule.send(0, (umit.umpa.Packet(IP()), umit.umpa.Packet(IP())))
+        schedule.send(0, [umit.umpa.Packet(IP()), umit.umpa.Packet(IP())])
+        schedule.send(0, (umit.umpa.Packet(IP()), umit.umpa.Packet(IP())),
+                                                            umit.umpa.Packet(IP()))
+        schedule.send(0, (umit.umpa.Packet(IP()), umit.umpa.Packet(IP())),
+                                        umit.umpa.Packet(IP()), umit.umpa.Packet(IP()))
 
     def test_detach(self):
         pass # TODO how to test it?
@@ -67,7 +67,7 @@ class TestExtensionScheduleRoot(object):
     def test_interval(self):
         # TODO: should be test better when async will be available
         interval = 2
-        p = (umpa.Packet(IP()), umpa.Packet(IP()))
+        p = (umit.umpa.Packet(IP()), umit.umpa.Packet(IP()))
         before = int(time.time())
         schedule.send(0, p, interval=interval)
         after = int(time.time())

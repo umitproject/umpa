@@ -19,18 +19,18 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import umpa
-import umpa.sniffing
-from umpa.protocols import IP, TCP
+import umit.umpa
+import umit.umpa.sniffing
+from umit.umpa.protocols import IP, TCP
 from tests.utils import SendPacket
 
 class TestSendOut(object):
     def test_sndout(self):
-        packet = umpa.Packet(IP(src="1.2.3.4", dst="67.205.14.183"),
+        packet = umit.umpa.Packet(IP(src="1.2.3.4", dst="67.205.14.183"),
                             TCP(srcport=81, dstport=80))
         th = SendPacket(packet)
         th.start()
-        received = umpa.sniffing.sniff_next(filter="dst 67.205.14.183",
+        received = umit.umpa.sniffing.sniff_next(filter="dst 67.205.14.183",
                                             device="any")
         th.join()
 

@@ -21,10 +21,10 @@
 
 import pcap
 
-from umpa.sniffing.libpcap._abstract import *
-from umpa.utils.exceptions import UMPASniffingException
+from umit.umpa.sniffing.libpcap._abstract import *
+from umit.umpa.utils.exceptions import UMPASniffingException
 
-# see umpa.sniffing.libpcap._abstract for docstrings
+# see umit.umpa.sniffing.libpcap._abstract for docstrings
 
 def lookupdev():
     try:

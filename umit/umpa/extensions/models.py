@@ -27,9 +27,9 @@ But it provides some functions which are used often so using it can decrease
 time for coding.
 """
 
-import umpa
-from umpa.sniffing import sniff_next
-from umpa.utils.exceptions import UMPAException
+import umit.umpa
+from umit.umpa.sniffing import sniff_next
+from umit.umpa.utils.exceptions import UMPAException
 
 def react(count, forward=None, filter=None, device=None, timeout=0,
             snaplen=1024, promisc=True, **kwargs):
@@ -38,7 +38,7 @@ def react(count, forward=None, filter=None, device=None, timeout=0,
 
     Sniffed packet can be modify (e.g. by reversing src/dst ports) and resend.
 
-    For description of arguments please see umpa.sniffing package.
+    For description of arguments please see umit.umpa.sniffing package.
     Available reactions:
      1. revhosts -- revert hosts
      2. revports -- revert ports
@@ -72,7 +72,7 @@ def react(count, forward=None, filter=None, device=None, timeout=0,
     for opt in avail_opts:
         options[opt] = kwargs.get(opt)
 
-    sock = umpa.Socket()
+    sock = umit.umpa.Socket()
     for i in xrange(count):
         pkt = sniff_next(filter=filter, device=device, timeout=timeout,
                         snaplen=snaplen, promisc=promisc)

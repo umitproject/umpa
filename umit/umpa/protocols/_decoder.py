@@ -19,19 +19,19 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import umpa
-import umpa.protocols
-from umpa.protocols import Payload
+import umit.umpa
+import umit.umpa.protocols
+from umit.umpa.protocols import Payload
 
 def _prepare_protos():
     d = {2:[], 3:[], 4:[], 5:[]}
-    for cls in umpa.protocols.get_all().values():
+    for cls in umit.umpa.protocols.get_all().values():
         d[cls.layer].append(cls)
     return d
 
 def decode(buffer, linktype):
     """
-    Decode raw buffer of packet and return umpa.Packet's object.
+    Decode raw buffer of packet and return umit.umpa.Packet's object.
     
     @param buffer: raw buffer
 
@@ -39,12 +39,12 @@ def decode(buffer, linktype):
     @param linktype: datalink of 2nd layer
     (return by datalink() method of pcap session)
 
-    @rtype: C{umpa.Packet}
+    @rtype: C{umit.umpa.Packet}
     @return: decoded packet
     """
 
     protos = _prepare_protos()
-    packet = umpa.Packet(strict=False, warn=False)
+    packet = umit.umpa.Packet(strict=False, warn=False)
 
     # XXX: currently there is no protocols in upper layers (above 4th layer)
     #      propably if they would be implemented - some changes are needed

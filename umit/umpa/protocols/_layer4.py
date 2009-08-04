@@ -26,9 +26,9 @@ TCP/UDP use special pseudo header to calculate checksum. These classes
 are provided.
 """
 
-from umpa.protocols._protocols import Protocol
-from umpa.protocols.IP import IP
-from umpa.protocols._fields import IntField, IPv4AddrField
+from umit.umpa.protocols._protocols import Protocol
+from umit.umpa.protocols.IP import IP
+from umit.umpa.protocols._fields import IntField, IPv4AddrField
 
 class Layer4ChecksumField(IntField):
     """

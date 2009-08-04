@@ -22,7 +22,7 @@
 import threading
 import time
 
-import umpa
+import umit.umpa
 
 class SendPacket(threading.Thread):
     def __init__(self, packet, amount=1):
@@ -30,7 +30,7 @@ class SendPacket(threading.Thread):
         self._packet = packet
         self._amount = amount
     def run(self):
-        s = umpa.Socket()
+        s = umit.umpa.Socket()
         for i in xrange(self._amount):
             time.sleep(2)
             s.send(self._packet)

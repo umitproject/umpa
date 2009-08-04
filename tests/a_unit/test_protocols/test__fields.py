@@ -20,8 +20,8 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import py.test
-from umpa.protocols._fields import *
-from umpa.utils.exceptions import UMPAException, UMPAAttributeException
+from umit.umpa.protocols._fields import *
+from umit.umpa.utils.exceptions import UMPAException, UMPAAttributeException
 
 class TestField(object):
     cls_field = Field

@@ -21,7 +21,7 @@
 
 import os
 import py.test
-from umpa.utils.security import *
+from umit.umpa.utils.security import *
 
 def foo():
     return 1

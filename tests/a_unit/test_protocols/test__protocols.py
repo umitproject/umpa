@@ -22,9 +22,9 @@
 import types
 import py.test
 
-from umpa.protocols._protocols import Protocol
-from umpa.protocols._fields import IntField, Flags
-from umpa.utils.exceptions import UMPAException, UMPAAttributeException
+from umit.umpa.protocols._protocols import Protocol
+from umit.umpa.protocols._fields import IntField, Flags
+from umit.umpa.utils.exceptions import UMPAException, UMPAAttributeException
 
 class TestProtocol(object):
     cls_proto = Protocol
@@ -237,7 +237,7 @@ class TestProtocol(object):
         p = self.cls_proto(fake_fields)
 
         # we can pass None for protocol_container and protocol_bits
-        # because they are not being used here (see umpa.Packet)
+        # because they are not being used here (see umit.umpa.Packet)
         assert p._raw(0, 0, None, None) == (0x010101, 24)
         p.get_field('a').bits = 4
         assert p._raw(0, 0, None, None) == (0x010101, 20)
@@ -264,7 +264,7 @@ class TestProtocol(object):
         p = self.cls_proto(fake_fields)
 
         # we can pass None for protocol_container and protocol_bits
-        # because they are not being used here (see umpa.Packet)
+        # because they are not being used here (see umit.umpa.Packet)
         assert p.get_raw(None, None) == (0x010101, 24)
         p.get_field('a').bits = 8
         p.a = 16

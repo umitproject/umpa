@@ -20,7 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import py.test
-from umpa.utils.bits import *
+from umit.umpa.utils.bits import *
 
 class TestUtilBitsGet(object):
     def test_get_bits(self):

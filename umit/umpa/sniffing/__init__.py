@@ -21,17 +21,17 @@
 
 import os.path
 
-import umpa
-from umpa.protocols._decoder import decode
-from umpa.utils.exceptions import UMPASniffingException
+import umit.umpa
+from umit.umpa.protocols._decoder import decode
+from umit.umpa.utils.exceptions import UMPASniffingException
 
-if umpa.config['libpcap']:
-    modulepath = "umpa.sniffing.libpcap.%s" % umpa.config['libpcap']
+if umit.umpa.config['libpcap']:
+    modulepath = "umit.umpa.sniffing.libpcap.%s" % umit.umpa.config['libpcap']
     try:
         lpcap = __import__(modulepath, fromlist=[None])
     except ImportError, err:
         raise UMPASniffingException("unknown libpcap's wrapper.\n" + str(err))
-    lpcap._backend = umpa.config['libpcap']
+    lpcap._backend = umit.umpa.config['libpcap']
     del modulepath
 else:
     raise UMPASniffingException("unknown/missing libpcap's wrapper")
@@ -230,7 +230,7 @@ def from_file_loop(filename, count=0, filter=None, callback=None,
     Call callback for each or return list of packets.
 
     @note: sniffed packets in callback function is not decoded.
-    To get decoded packets use umpa.protocols._decoder.decode() function
+    To get decoded packets use umit.umpa.protocols._decoder.decode() function
     or other sniff's functions (without a loop feature).
 
     @type filename: C{str}

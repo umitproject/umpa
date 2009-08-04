@@ -25,12 +25,12 @@ TCP (Transmission Control Protocol) protocol implementation.
 
 import struct
 
-from umpa.protocols import _consts
-from umpa.protocols import _fields
-from umpa.protocols import _protocols
-from umpa.protocols import _layer4
-import umpa.utils.net as _net
-import umpa.utils.bits as _bits
+from umit.umpa.protocols import _consts
+from umit.umpa.protocols import _fields
+from umit.umpa.protocols import _protocols
+from umit.umpa.protocols import _layer4
+import umit.umpa.utils.net as _net
+import umit.umpa.utils.bits as _bits
 
 __all__ = [ "TCP", ]
 

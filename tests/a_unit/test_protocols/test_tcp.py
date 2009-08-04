@@ -19,7 +19,7 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-from umpa.protocols import TCP, IP, Payload
+from umit.umpa.protocols import TCP, IP, Payload
 
 class TestTCP(object):
     def test_get_raw(self):
@@ -32,7 +32,7 @@ class TestTCP(object):
                 (0xa000000000000000150000200afd70000, 160)
 
 
-        # XXX can't test it because it's vary on umpa.Packet
+        # XXX can't test it because it's vary on umit.umpa.Packet
         #payload = Payload('test')
         #tcp.__dict__['payload'] = payload
         #print tcp._raw(0, 0, [ip, tcp, payload], 0)

@@ -19,7 +19,7 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-from umpa.utils.tools import *
+from umit.umpa.utils.tools import *
 
 class TestUtilsTools(object):
     def test_dict_sequence(self):

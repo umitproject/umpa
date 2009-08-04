@@ -20,27 +20,27 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import os
-import umpa.extensions
+import umit.umpa.extensions
 
 class TestExtensionInit(object):
     def test_load_global(self):
-        umpa.extensions.load_extension('XML')
-        assert umpa.extensions.XML
+        umit.umpa.extensions.load_extension('XML')
+        assert umit.umpa.extensions.XML
 
-        #umpa.extensions.load_extension('route')
-        #assert umpa.extensions.route
+        #umit.umpa.extensions.load_extension('route')
+        #assert umit.umpa.extensions.route
 
     def test_load_local(self):
         for file in os.listdir(os.path.join(os.path.expanduser('~'),
                             '.umpa', 'umpa_plugins', 'extensions')):
             if file.startswith('_'):
                 continue
-            umpa.extensions.load_extension(file[:-3])
-            assert getattr(umpa.extensions, file[:-3])
+            umit.umpa.extensions.load_extension(file[:-3])
+            assert getattr(umit.umpa.extensions, file[:-3])
     
     def test_get_locals(self):
         for file in os.listdir(os.path.join(os.path.expanduser('~'),
                             '.umpa', 'umpa_plugins', 'extensions')):
             if file.startswith('_'):
                 continue
-            assert file[:-3] in umpa.extensions.get_locals()
+            assert file[:-3] in umit.umpa.extensions.get_locals()

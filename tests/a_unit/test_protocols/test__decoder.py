@@ -21,8 +21,8 @@
 
 import os.path
 
-from umpa.protocols._decoder import decode
-from umpa.protocols import _consts
+from umit.umpa.protocols._decoder import decode
+from umit.umpa.protocols import _consts
 import tests.a_unit.test_protocols
 
 class TestDecode(object):

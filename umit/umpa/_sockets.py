@@ -30,7 +30,7 @@ But it's correctly to use socket module directly if needed.
 
 import socket
 
-from umpa.utils.exceptions import UMPAException, UMPANotPermittedException
+from umit.umpa.utils.exceptions import UMPAException, UMPANotPermittedException
 
 class Socket(object):
     """
@@ -51,7 +51,7 @@ class Socket(object):
 
         # to create socket object we need root priviligies.
         # if non-root EUID, then exception is raised
-        # use umpa.utils.security.super_priviliges() to avoid exception
+        # use umit.umpa.utils.security.super_priviliges() to avoid exception
         # when a new Socket object is created
         try:
             self._sock = socket.socket(socket.AF_INET, socket.SOCK_RAW,
@@ -67,7 +67,7 @@ class Socket(object):
         Send packets in to the network.
 
         @type packets: C{Packet}
-        @param packets: packets which were built by umpa.Packet objects.
+        @param packets: packets which were built by umit.umpa.Packet objects.
         """
 
         sent_bits = []

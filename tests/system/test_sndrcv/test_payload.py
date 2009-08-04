@@ -19,18 +19,18 @@
 # along with this library; if not, write to the Free Software Foundation, 
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-import umpa
-import umpa.sniffing
-from umpa.protocols import IP, TCP, Payload
+import umit.umpa
+import umit.umpa.sniffing
+from umit.umpa.protocols import IP, TCP, Payload
 from tests.utils import SendPacket
 
 class TestSendReceivePayload(object):
     def test_sndrcv_loopback(self):
-        packet = umpa.Packet(IP(src="1.2.3.4", dst="127.0.0.1"),
+        packet = umit.umpa.Packet(IP(src="1.2.3.4", dst="127.0.0.1"),
                             TCP(srcport=99), Payload(data="foo bar"))
         th = SendPacket(packet)
         th.start()
-        received = umpa.sniffing.sniff_next(filter="src 1.2.3.4", device="lo")
+        received = umit.umpa.sniffing.sniff_next(filter="src 1.2.3.4", device="lo")
         th.join()
 
         assert received.ip.src == packet.ip.src

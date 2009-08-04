@@ -23,7 +23,7 @@
 Functions related with parsing bits of numbers.
 """
 
-from umpa.utils.exceptions import UMPAException
+from umit.umpa.utils.exceptions import UMPAException
 
 BYTE = 8
 

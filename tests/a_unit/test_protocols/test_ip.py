@@ -21,7 +21,7 @@
 
 import py.test
 
-from umpa.protocols import IP
+from umit.umpa.protocols import IP
 
 class TestIP(object):
     def test_get_raw(self):

@@ -27,9 +27,9 @@ In general, it's similar to plugins system.
 
 There are 2 ways to load an extension:
  1. by load_extension() function for local and global extensions
-    (e.g. C{umpa.extensions.load_extension("XML")}),
+    (e.g. C{umit.umpa.extensions.load_extension("XML")}),
  2. by import statement
-     - global example: C{import umpa.extensions.XML},
+     - global example: C{import umit.umpa.extensions.XML},
      - local example: C{import umpa_plugins.extensions.XML}
 
 @note: Extensions have to be single .py files.
@@ -44,14 +44,14 @@ def load_extension(name):
     Load the requested extension.
 
     First, I{locally} check the $HOME/.umpa location.
-    If failure, I{globally} check the name in umpa.extensions package.
+    If failure, I{globally} check the name in umit.umpa.extensions package.
     """
 
     if os.path.isfile(os.path.join(os.path.expanduser('~'), '.umpa',
                             'umpa_plugins', 'extensions', name+'.py')):
         module_path = "umpa_plugins.extensions.%s" % name
     else:
-        module_path = "umpa.extensions.%s" % name
+        module_path = "umit.umpa.extensions.%s" % name
 
     try:
         __import__(module_path)
@@ -78,7 +78,7 @@ def get_globals():
     Return global extensions.
 
     Global extensions are the ones which are located
-    in the umpa.extensions package.
+    in the umit.umpa.extensions package.
 
     @rtype: C{list}
     @return: global extensions.

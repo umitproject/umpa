@@ -23,7 +23,7 @@
 Functions related to network issues.
 """
 
-import umpa.utils.bits
+import umit.umpa.utils.bits
 
 def in_cksum(data, cksum=0):
     """
@@ -44,7 +44,7 @@ def in_cksum(data, cksum=0):
     @return: calculated checksum.
     """
 
-    pieces = umpa.utils.bits.split_number_into_chunks(data)
+    pieces = umit.umpa.utils.bits.split_number_into_chunks(data)
     if len(pieces)%2 == 1:
         pieces.append(0)
 

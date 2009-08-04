@@ -20,11 +20,11 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 import sys
-from umpa import Packet
-from umpa.protocols import IP, TCP, UDP, Payload
-from umpa.protocols import _consts
-from umpa.utils.exceptions import UMPAException, UMPAStrictException
-from umpa._packets import StrictWarning
+from umit.umpa import Packet
+from umit.umpa.protocols import IP, TCP, UDP, Payload
+from umit.umpa.protocols import _consts
+from umit.umpa.utils.exceptions import UMPAException, UMPAStrictException
+from umit.umpa._packets import StrictWarning
 
 import py.test
 

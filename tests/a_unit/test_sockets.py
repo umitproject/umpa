@@ -22,9 +22,9 @@
 import os
 import py.test
 
-from umpa import Socket, Packet
-from umpa.protocols import IP, TCP
-from umpa.utils.exceptions import UMPAException, UMPANotPermittedException
+from umit.umpa import Socket, Packet
+from umit.umpa.protocols import IP, TCP
+from umit.umpa.utils.exceptions import UMPAException, UMPANotPermittedException
 
 
 class TestUMPASockets(object):
