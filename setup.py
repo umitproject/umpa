@@ -74,6 +74,10 @@ class umpa_install(install):
                     'if os.path.exists("%(output)s"):\n'
                     '    os.remove("%(output)s")\n' % {'output': output})
 
+        uninstaller.append(
+                "print 'Removing uninstaller itself...'\n"
+                "os.remove('%s')\n" % uninstaller_filename)
+
         uninstaller.append('print "Removing empty directories..."\n')
         for dir in (
                 os.path.join(self.install_data, 'share', 'umpa'),
@@ -83,10 +87,6 @@ class umpa_install(install):
             uninstaller.append(
                     'if os.path.exists("%(dir)s"):\n'
                     '    shutil.rmtree("%(dir)s")\n' % {'dir' : dir})
-
-        uninstaller.append(
-                "print 'Removing uninstaller itself...'\n"
-                "os.remove('%s')\n" % uninstaller_filename)
 
         uninstaller_file = open(uninstaller_filename, 'w')
         uninstaller_file.writelines(uninstaller)
