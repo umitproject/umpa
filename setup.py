@@ -27,6 +27,8 @@ from distutils.core import setup
 from distutils.command.install import install
 
 UMPA_VERSION = '0.2'
+SHARE_DIR = os.path.join('share', 'umpa')
+DOCS_DIR = os.path.join('share', 'doc', 'umpa')
 
 TESTS_DIR = [
     os.path.join('tests'),
@@ -48,7 +50,7 @@ class umpa_install(install):
 
     def create_uninstaller(self):
         uninstaller_filename = os.path.join(
-                self.install_data, 'share', 'umpa', 'uninstall_umpa')
+                self.install_data, SHARE_DIR, 'uninstall_umpa')
         uninstaller = []
         uninstaller.append(
                 "#!/usr/bin/env python\n"
@@ -80,8 +82,8 @@ class umpa_install(install):
 
         uninstaller.append('print "Removing empty directories..."\n')
         for dir in (
-                os.path.join(self.install_data, 'share', 'umpa'),
-                os.path.join(self.install_data, 'share', 'doc', 'umpa'),
+                os.path.join(self.install_data, SHARE_DIR),
+                os.path.join(self.install_data, DOCS_DIR),
                 os.path.join(self.install_lib, 'umpa'),
             ):
             uninstaller.append(
@@ -102,20 +104,20 @@ cmdclasses = {
 
 test_files = []
 for dir in TESTS_DIR:
-    test_files = test_files + [ (os.path.join('share','umpa', dir),
+    test_files = test_files + [ (os.path.join(SHARE_DIR, dir),
                                 glob.glob(os.path.join(dir,'*.py')))]
 
-data_files = [  (os.path.join('share','umpa','examples'),
+data_files = [  (os.path.join(SHARE_DIR,'examples'),
                             glob.glob(os.path.join('examples','*'))),
-                (os.path.join('share','doc','umpa','API'),
+                (os.path.join(DOCS_DIR,'API'),
                     glob.glob(os.path.join('docs','API','*'))),
-                (os.path.join('share','umpa',),
-                    ('run_tests.sh', 'run_tests.bat')),
-                (os.path.join('share','doc','umpa'),
+                (SHARE_DIR, ('run_tests.sh', 'run_tests.bat')),
+                (DOCS_DIR,
                     ('README', 'COPYING', 'AUTHORS', 'TODO', 'CHANGES',
                     'INSTALL')),
-                (os.path.join('share','umpa','tests'),
-                (os.path.join('tests','README'), os.path.join('tests','IMPORTANT'))),
+                (os.path.join(SHARE_DIR, 'tests'),
+                    (os.path.join('tests','README'),
+                    os.path.join('tests','IMPORTANT'))),
             ] + test_files
 
 setup(  name            = "UMPA",
