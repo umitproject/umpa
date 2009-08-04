@@ -1,3 +1,4 @@
+==========================================
 UMPA - Umit's Manipulations of Packets Art
 ==========================================
 
@@ -22,7 +23,7 @@ UMPA - Umit's Manipulations of Packets Art
   Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 Introduction
-============
+------------
 
   UMPA is a packets manipulation library.
 
@@ -32,16 +33,15 @@ Introduction
   to manipulate packets of every OSI model layers.
 
   Many features are supported like: auto-generating packets, high-level
-  editing header fields, auto-filling, interaction system (with libpcap
-  capturing support) - it's not released yet, etc.
-
+  editing header fields, auto-filling, interaction system, sniffing
+  and creating objet's of packets.
   The goal of the project is to get a powerful, easy to use and intelligent
   tool for pro and newbies.
 
   Check docs/* for additional informations.
 
 Documentation
-=============
+-------------
 
   On the Web:
 
@@ -56,12 +56,14 @@ Documentation
   See /usr/share/doc/umpa       if you have already installed the library
 
 Dependencies
-============
+------------
 
   * [1] Python programming language
+  * [2] libpcap (for sniffing)
+  * [3] libpcap's python wrapper (see INSTALL for more)
 
 Acknowledgements
-================
+----------------
 
   I would like to thank for a several people, who help and support me with the
   library, sending patches, testing it and giving ideas:
@@ -70,14 +72,15 @@ Acknowledgements
    * Francesco Piccinno
    * Luís António Bastião Silva
    * Guilherme Henrique Polo Gonçalves
+   * João Paulo de Souza Medeiros
 
 Authors
-=======
+-------
 
   * Bartosz SKOWRON <getxsick at gmail dot com>
 
-Links
-=====
+References
+----------
 
   [0] UMPA website - http://www.umpa.umitproject.org
   [1] Python official website - http://www.python.org
