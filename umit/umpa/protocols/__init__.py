@@ -40,6 +40,7 @@ import warnings
 # loading global protocols
 from Ethernet import Ethernet
 from SLL import SLL
+from ARP import ARP
 from IP import IP
 # from ICMP import ICMP
 from TCP import TCP
@@ -132,7 +133,7 @@ def _dict_protos(protos_list):
         protos_dict[proto.name] = proto
     return protos_dict
 
-_gprotos_list = [ Ethernet, SLL, IP, TCP, UDP, Payload ]
+_gprotos_list = [ Ethernet, SLL, ARP, IP, TCP, UDP, Payload ]
 _lprotos_list = _load_local_protocols()
 
 _gproto = _dict_protos(_gprotos_list)
