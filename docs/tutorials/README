@@ -1,9 +1,0 @@
-Each file of tutorial is independent. They are sorted in order of ascending
-difficulty.
-
-On-line version of them are available here:
-http://umpa.umitproject.org/Documentation/Tutorials
-
-Files are in trac-wiki convention.
-= = for chapters and paragraphs.
-{{{ }}} for Python code
