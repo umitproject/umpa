@@ -51,13 +51,16 @@ def decode(buffer, linktype):
     #      to detect what protocol it is
     #      statical version of decode was existing till r5043
     next_type = linktype
-    for layer in xrange(2, 5):
+    layer = 2
+    while next_type:
         for proto in protos[layer]:
             if next_type == proto.protocol_id:
                 header = proto()
                 buffer = header.load_raw(buffer)
-                if layer < 4:
+                if header.payload_fieldname:
                     next_type = getattr(header, header.payload_fieldname)
+                else:
+                    next_type = None
                 packet.include(header)
                 break
         else:
@@ -65,6 +68,7 @@ def decode(buffer, linktype):
             header.load_raw(buffer)
             packet.include(header)
             return packet
+        layer += 1
     
     # payload
     if len(buffer) > 0:
