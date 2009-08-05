@@ -37,7 +37,7 @@ Contents:
 
 	The binaries are available under following address:
 
-	http://www.umitproject.org/umpa/download/
+	http://umpa.umitproject.org
 
 	Download the suitable file and extract it. Copy dirs and files
 	where you want.
@@ -46,7 +46,7 @@ Contents:
 
 	The EXE binaries are available under following address:
 
-	http://www.umitproject.org/umpa/download/
+	http://umpa.umitproject.org
 
 	Download the suitable file and run it.
 
@@ -54,7 +54,7 @@ Contents:
 
 	The sources are available under following address:
 
-	http://www.umitproject.org/umpa/download/
+	http://umpa.umitproject.org
 
 	Download the suitable file and extract it. Change the current directory
 	to the extracted UMPA's directory and run the command:
@@ -76,7 +76,7 @@ Contents:
 	Run the sh script by the following command:
 
 	{{{
-		sh UMPA/install_scripts/utils/create_packages.sh
+		sh UMPA/install_scripts/create_packages.sh
 	}}}
 
 	Binaries and sources Tarball will be created in UMPA/dist directory.
@@ -85,7 +85,7 @@ Contents:
 	the API documentation before by the following command:
 
 	{{{
-		sh UMPA/install_scripts/utils/create_docs.sh
+		sh UMPA/install_scripts/create_docs.sh
 	}}}
 
 == III. UNINSTALL PROCESS ==
@@ -94,9 +94,7 @@ Contents:
 
 	There is a shell script suitable for this process.
 
-	It's located in:
-	 * install_scripts/uninstall_linux.sh -- for sources and SVN repository
-	 * $PREFIX/share/umpa/scripts/uninstall_linux.sh -- for already installed UMPA
+	It's located in $PREFIX/share/umpa/uninstall_umpa for already installed UMPA
 
 === B. Windows ===
 
