@@ -1,7 +1,10 @@
 include README AUTHORS COPYING TODO CHANGES INSTALL run_tests.sh run_tests.bat
 
-include install_scripts/uninstall_linux.sh
+recursive-include docs/tutorials *
+recursive-include docs/API *
+include docs/README
+include docs/UPDATE.README
 
 recursive-include examples *
-recursive-include docs *
 recursive-include tests *
+recursive-include install_scripts *
