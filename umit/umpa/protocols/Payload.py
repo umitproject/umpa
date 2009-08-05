@@ -103,6 +103,7 @@ class Payload(Protocol):
 
     layer = 5
     name = "Payload"
+    payload_fieldname = None
     _ordered_fields = ('data',)
 
     def __init__(self, payload=None, **kwargs):
