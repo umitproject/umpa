@@ -1,72 +1,76 @@
-==========================================
-UMPA - Umit's Manipulations of Packets Art
-==========================================
+============================================
+ UMPA - Umit's Manipulations of Packets Art
+============================================
 
-  Copyright (C) 2008 Adriano Monteiro Marques <py.adriano at gmail dot com>
+Copyright (C) 2008 Adriano Monteiro Marques <py.adriano at gmail dot com>
 
-  Author: Bartosz SKOWRON <getxsick at gmail dot com>
+Author: Bartosz SKOWRON <getxsick at gmail dot com>
 
-  All rights reserved, see COPYING for details.
+All rights reserved, see COPYING for details.
 
-  This library is free software; you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published 
-  by the Free Software Foundation; either version 2.1 of the License, or 
-  (at your option) any later version.
+This library is free software; you can redistribute it and/or modify 
+it under the terms of the GNU Lesser General Public License as published 
+by the Free Software Foundation; either version 2.1 of the License, or 
+(at your option) any later version.
 
-  This library is distributed in the hope that it will be useful, but 
-  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
-  License for more details.
+This library is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+License for more details.
 
-  You should have received a copy of the GNU Lesser General Public License 
-  along with this library; if not, write to the Free Software Foundation, 
-  Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+You should have received a copy of the GNU Lesser General Public License 
+along with this library; if not, write to the Free Software Foundation, 
+Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
 
 Introduction
-------------
+============
 
-  UMPA is a packets manipulation library.
+UMPA is a packets manipulation library.
 
-  UMPA is developed in the Python programming language.
+UMPA is developed in the Python programming language.
 
-  Packet manipulation library aims to provide easy to use system
-  to manipulate packets of every OSI model layers.
+Packet manipulation library aims to provide easy to use system
+to manipulate packets of every OSI model layers.
 
-  Many features are supported like: auto-generating packets, high-level
-  editing header fields, auto-filling, interaction system, sniffing
-  and creating objet's of packets.
-  The goal of the project is to get a powerful, easy to use and intelligent
-  tool for pro and newbies.
+Many features are supported like: auto-generating packets, high-level
+editing header fields, auto-filling, interaction system, sniffing
+and creating objet's of packets.
+The goal of the project is to get a powerful, easy to use and intelligent
+tool for pro and newbies.
 
-  Check docs/* for additional informations.
+Check docs/* for additional informations.
+
 
 Documentation
--------------
+=============
 
-  On the Web:
+On the Web:
 
-  http://www.umpa.umitproject.org
+http://www.umpa.umitproject.org
 
-  This page also points to support resources and informations about UMPA
-  development status and plans.
+This page also points to support resources and informations about UMPA
+development status and plans.
 
-  Local:
+Local:
 
-  See docs/*                    from the sources package tarball
-  See /usr/share/doc/umpa       if you have already installed the library
+See docs/*                    from the sources package tarball
+See /usr/share/doc/umpa       if you have already installed the library
+
 
 Dependencies
-------------
+============
 
   * [1] Python programming language
   * [2] libpcap (for sniffing)
   * [3] libpcap's python wrapper (see INSTALL for more)
 
-Acknowledgements
-----------------
 
-  I would like to thank for a several people, who help and support me with the
-  library, sending patches, testing it and giving ideas:
+Acknowledgements
+================
+
+I would like to thank for a several people, who help and support me with the
+library, sending patches, testing it and giving ideas:
 
    * Adriano Monteiro Marques
    * Francesco Piccinno
@@ -74,14 +78,16 @@ Acknowledgements
    * Guilherme Henrique Polo Gonçalves
    * João Paulo de Souza Medeiros
 
+
 Authors
--------
+=======
 
   * Bartosz SKOWRON <getxsick at gmail dot com>
 
-References
-----------
 
-  [0] UMPA website - http://www.umpa.umitproject.org
-  [1] Python official website - http://www.python.org
-  [2] Umit Project - http://www.umitproject.org
+References
+==========
+
+  * [0] UMPA website - http://www.umpa.umitproject.org
+  * [1] Python official website - http://www.python.org
+  * [2] Umit Project - http://www.umitproject.org
