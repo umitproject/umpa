@@ -10,7 +10,7 @@ Since v0.2 UMPA provides a new feature to capture packets over the network.
 It uses well known libpcap[1] as a background and users who are familiar
 with it can easily understand and use UMPA's sniffing tool.
 
-.. warning::
+.. note::
 
     using libpcap requires root privileges!
 

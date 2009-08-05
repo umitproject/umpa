@@ -55,7 +55,7 @@ to get available protocols/extensions:
  * ``get_globals()`` - return only global plugins
  * ``get_locals()`` - return only local plugins
 
-.. warning::
+.. note::
     protocols' plugins are loaded automatically, but extensions' plugins not.
 
 

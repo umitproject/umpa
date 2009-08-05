@@ -270,7 +270,7 @@ Let's back to the state when we created our packet...
 By importing XML extensions Packet objects get 2 extra methods (``save_xml()``
 and ``load_xml()``). It's so simple now!
 
-.. warning:: 
+.. note:: 
     ``another_packet`` *is not* exactly the same as ``packet``!
     ``id()`` results vary. They have the same values but this is different
     instance of the Packet class.

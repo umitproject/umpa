@@ -151,7 +151,7 @@ headers just call ``get_fields_key()`` method. But this method is a generator,
 so in this case we need to cast it. Names convention is pretty simple.
 Those names are taken from the RFCs documents.
 
-.. warning::
+.. note::
 
     Some fields are started with the underscrored prefix. This has a special
     meaning. These fields may auto-generate values. So usually, we don't need
