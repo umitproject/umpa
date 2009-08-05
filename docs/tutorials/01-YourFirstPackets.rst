@@ -112,8 +112,7 @@ which protocols are available, we can simple check it.
     In [6]:
 
 There are two more functions (``get_globals()`` and ``get_locals()``). We will
-talk about them in [wiki:UMPA/Documentation/Tutorial/PluginsSystem other tutorial].
-But ``get_all()`` is what you usually need.
+talk about them in next tutorials. But ``get_all()`` is what you usually need.
 
 OK, in our example we would like to build TCP/IP packet and UDP/IP.
 Both packets with the same IP header.
@@ -201,7 +200,7 @@ So, we passed 2 protocols into constructor, and included another one with the
 Please remember that including order is important. By default, we can't break
 the OSI model, so protocols need to be packed in the proper order. Otherwise,
 the ``UMPAStrictException`` will raise. If you want to break this rule, please
-read about ``strict`` attribute of the Packet's object [wiki:UMPA/Documentation/Tutorials/BreakYourPacket here].
+read about ``strict`` attribute of the Packet's object in later tutorials.
 
 print statement
 ---------------

@@ -22,7 +22,7 @@ no risk of odd objects behaviour at all.
 
 There is a one function provided by ``umit.umpa.extensions`` package.
 It's called ``load_extensions()``. But it's not necessary to use it here. Read
-more about this function in [wiki:UMPA/Documentation/Tutorials/PluginsSystem Plugins System tutorial].
+more about this function in next tutorial.
 
 
 XML
@@ -37,7 +37,8 @@ to use SAX. But, perhaps it will be rewritten with SAX someday..
 save packets to the file
 ------------------------
 
-Let's create a packet (the same one TCP/IP packet as we created in [wiki:UMPA/Documentation/Tutorials/YourFirstPackets Your First Packets] tutorial).
+Let's create a packet (the same one TCP/IP packet as we created in our first
+tutorial).
 
 .. code-block:: python
 
