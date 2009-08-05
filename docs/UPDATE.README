@@ -1,0 +1,3 @@
+Run install_scripts/create_docs.sh
+if you would like to generate up-to-date API documentation
+and tutorials.
