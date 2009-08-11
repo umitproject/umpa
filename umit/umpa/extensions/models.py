@@ -53,9 +53,12 @@ def react(count, forward=None, filter=None, device=None, timeout=0,
         return pkt
 
     def revports(pkt):
-        tmp = pkt.tcp.dstport
-        pkt.tcp.dstport = pkt.tcp.srcport
-        pkt.tcp.srcport = tmp
+        for proto in pkt.protos:
+            if proto.layer == 4:
+                tmp = proto.dstport
+                proto.dstport = proto.srcport
+                proto.srcport = tmp
+                break
         return pkt
 
     def forwardfunc(pkt, fwd):

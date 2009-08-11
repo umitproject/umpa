@@ -24,7 +24,7 @@ import threading
 
 import umit.umpa
 import umit.umpa.sniffing
-from umit.umpa.protocols import IP, TCP
+from umit.umpa.protocols import IP, TCP, UDP
 from umit.umpa.extensions import models
 from umit.umpa.utils.exceptions import UMPAException
 from tests.utils import SendPacket
@@ -38,9 +38,10 @@ class SniffThread(threading.Thread):
         self._device = device
         self._queue = queue
 
-class RevPortsThread(SniffThread):
+class RevPortsTCPThread(SniffThread):
     def run(self):
-        pkt = umit.umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
+        pkt = umit.umpa.sniffing.sniff(2, device=self._device,
+                                            filter=self._filter)
         try:
             assert pkt[0].ip.src == "127.0.0.1"
             assert pkt[0].ip.dst == "127.0.0.1"
@@ -50,6 +51,22 @@ class RevPortsThread(SniffThread):
             assert pkt[1].ip.dst == "127.0.0.1"
             assert pkt[1].tcp.srcport == 0
             assert pkt[1].tcp.dstport == 80
+        except Exception, e:
+            self._queue.put(e)
+
+class RevPortsUDPThread(SniffThread):
+    def run(self):
+        pkt = umit.umpa.sniffing.sniff(2, device=self._device,
+                                            filter=self._filter)
+        try:
+            assert pkt[0].ip.src == "127.0.0.1"
+            assert pkt[0].ip.dst == "127.0.0.1"
+            assert pkt[0].udp.srcport == 80
+            assert pkt[0].udp.dstport == 0
+            assert pkt[1].ip.src == "127.0.0.1"
+            assert pkt[1].ip.dst == "127.0.0.1"
+            assert pkt[1].udp.srcport == 0
+            assert pkt[1].udp.dstport == 80
         except Exception, e:
             self._queue.put(e)
 
@@ -79,7 +96,7 @@ class TestModels(object):
     pass
 
 class TestReact(TestModels):
-    def test_revports(self):
+    def test_revports_tcp(self):
         # use queue to communicate between threads
         # py.test doesn't catch assertions from threads by itself
         queue = Queue.Queue()
@@ -87,7 +104,26 @@ class TestReact(TestModels):
         th = SendPacket(umit.umpa.Packet(IP(), TCP(srcport=80, dstport=0)))
         th.start()
         
-        th2 = RevPortsThread("host 127.0.0.1 and port 80", "lo", queue)
+        th2 = RevPortsTCPThread("host 127.0.0.1 and port 80", "lo", queue)
+        th2.start()
+        models.react(1, filter="host 127.0.0.1 and port 80", device="lo",
+                    revports=True)
+        th.join()
+        th2.join()
+        if not queue.empty():
+            err = queue.get()
+            raise AssertionError(err)
+        queue.join()
+
+    def test_revports_udp(self):
+        # use queue to communicate between threads
+        # py.test doesn't catch assertions from threads by itself
+        queue = Queue.Queue()
+
+        th = SendPacket(umit.umpa.Packet(IP(), UDP(srcport=80, dstport=0)))
+        th.start()
+        
+        th2 = RevPortsUDPThread("host 127.0.0.1 and port 80", "lo", queue)
         th2.start()
         models.react(1, filter="host 127.0.0.1 and port 80", device="lo",
                     revports=True)
