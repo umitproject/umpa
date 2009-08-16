@@ -43,6 +43,7 @@ def react(count, forward=None, filter=None, device=None, timeout=0,
      1. revhosts -- revert hosts
      2. revports -- revert ports
      3. forward  -- forward packet to a new destination
+     4. ttl      -- decrement TTL of passed amount
     To set reactions use dict-style keywords like revhosts=True.
     """
 
@@ -65,7 +66,11 @@ def react(count, forward=None, filter=None, device=None, timeout=0,
         pkt.ip.dst = fwd
         return pkt
 
-    avail_opts = ('revports', 'revhosts',)
+    def ttl(pkt):
+        pkt.ip.ttl -= kwargs['ttl']
+        return pkt
+
+    avail_opts = ('revports', 'revhosts', 'ttl')
 
     for opt in kwargs:
         if opt not in avail_opts:
@@ -74,13 +79,12 @@ def react(count, forward=None, filter=None, device=None, timeout=0,
     options = {}
     for opt in avail_opts:
         options[opt] = kwargs.get(opt)
-
     sock = umit.umpa.Socket()
     for i in xrange(count):
         pkt = sniff_next(filter=filter, device=device, timeout=timeout,
                         snaplen=snaplen, promisc=promisc)
         for opt in options:
-            if options[opt] is True:
+            if options[opt]:
                 pkt = locals()[opt](pkt)
         if forward is not None:
             pkt = forwardfunc(pkt, forward)

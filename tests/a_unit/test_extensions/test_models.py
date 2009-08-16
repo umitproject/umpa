@@ -92,6 +92,20 @@ class ForwardThread(SniffThread):
         except Exception, e:
             self._queue.put(e)
 
+class TTLThread(SniffThread):
+    def __init__(self, filter, device, queue, **kwargs):
+        super(TTLThread, self).__init__(filter, device, queue)
+        self.ttl_begin = kwargs['begin']
+        self.ttl_decrement = kwargs['decrement']
+
+    def run(self):
+        pkt = umit.umpa.sniffing.sniff(2, device=self._device, filter=self._filter)
+        try:
+            assert pkt[0].ip.ttl == self.ttl_begin
+            assert pkt[1].ip.ttl == self.ttl_begin - self.ttl_decrement
+        except Exception, e:
+            self._queue.put(e)
+
 class TestModels(object):
     pass
 
@@ -170,6 +184,32 @@ class TestReact(TestModels):
             err = queue.get()
             raise AssertionError(err)
         queue.join()
+
+    def test_ttl_decrement(self):
+        def _func(ttl, decrement):
+            # use queue to communicate between threads
+            # py.test doesn't catch assertions from threads by itself
+            queue = Queue.Queue()
+
+            th = SendPacket(umit.umpa.Packet(IP(src="127.0.0.1", dst="127.0.0.1", ttl=ttl),
+                            TCP(srcport=888)))
+            th.start()
+            
+            th2 = TTLThread(
+                    "host 127.0.0.1 and port 888 and tcp[tcpflags] == 0x0",
+                    "any", queue, begin=ttl, decrement=decrement)
+            th2.start()
+            models.react(1, filter="host 127.0.0.1 and port 888", device="any",
+                        ttl=decrement)
+            th.join()
+            th2.join()
+            if not queue.empty():
+                err = queue.get()
+                raise AssertionError(err)
+            queue.join()
+
+        _func(200, 1)
+        _func(150, 10)
 
     def test_wrongargs(self):
         py.test.raises(UMPAException, "models.react(1, foo=True)")
