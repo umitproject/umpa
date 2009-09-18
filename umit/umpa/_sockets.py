@@ -72,6 +72,31 @@ class Socket(object):
 
         sent_bits = []
         for packet in packets:
+            # XXX try to use similar mechanism as is for SocketL2
+            # to pick up correct interface, using bind() and send()
+            # then there is no need to pick out a destination address
+            dst_addr = self._get_address(packet)
+            # if dst_addr is a tuple, convert it to a string; works only for IPv4
+            if type(dst_addr) is tuple:
+                dst_addr = ".".join(str(y) for y in dst_addr)
             sent_bits.append(self._sock.sendto(packet.get_raw(),
-                                                            ('127.0.0.1', 0)))
+                                                            (dst_addr, 0)))
         return sent_bits
+
+    def _get_address(self, packet):
+        """
+        Pick out the destination address from 3rd layer.
+
+        Because of the Ethernet issue (check the comments in send() method for
+        more), we have to parse packets for destination addresses.
+
+        @return: destination address from 3rd layer of OSI model.
+        """
+        for proto in packet.protos:
+            if proto.layer == 3:    # XXX: if we included more than one protocol
+                break               #   of layer 3 we got IP from the first one
+
+        if not proto:
+            raise UMPAException("There is not prototocol from 3rd layer.")
+
+        return proto.dst
