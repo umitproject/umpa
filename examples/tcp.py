@@ -21,19 +21,19 @@
 
 # this example shows how to send TCP/IP packets with TCP flags set up
 
-import umpa
-import umpa.utils.security
+import umit.umpa
+import umit.umpa.utils.security
 
-from umpa.protocols import IP, TCP
+from umit.umpa.protocols import IP, TCP
 
 # NOTE:
 # to create RAW_SOCKET we need SUID, but for normal usage it's not
-# necessary. we recommend to use umpa.utils.security to make our programs
+# necessary. we recommend to use umit.umpa.utils.security to make our programs
 # more safety. also dropping priviliges should be done at the same beginning
 # of the application
 
 # dropping unnecessary priviliges
-umpa.utils.security.drop_priviliges()
+umit.umpa.utils.security.drop_priviliges()
 
 # create new IP object
 ip = IP()
@@ -51,10 +51,10 @@ tcp.dstport = 0
 tcp.set_flags('flags', syn=True, ack=True)
 
 # create a new packet and include one protocol (ip)
-packet = umpa.Packet(ip)
+packet = umit.umpa.Packet(ip)
 # packing another protocol into our packet
 packet.include(tcp)
-# NOTE: we could do the same this way: packet = umpa.Packet(ip, tcp)
+# NOTE: we could do the same this way: packet = umit.umpa.Packet(ip, tcp)
 
 # creating new socket connection
 # NOTE: we need to raise our priviliges.
@@ -62,11 +62,11 @@ packet.include(tcp)
 # priviliges as an argument. after that, we drop priviliges automatically
 
 # we can do the same with the code:
-# umpa.utils.security.super_priviliges()
-# sock = umpa.Socket()
-# umpa.utils.security.drop_priviliges()
+# umit.umpa.utils.security.super_priviliges()
+# sock = umit.umpa.Socket()
+# umit.umpa.utils.security.drop_priviliges()
 
-sock = umpa.utils.security.super_priviliges(umpa.Socket)
+sock = umit.umpa.utils.security.super_priviliges(umit.umpa.Socket)
 
 # sending packet
 sock.send(packet)

@@ -24,9 +24,9 @@
 import time
 import threading
 
-import umpa
-from umpa.extensions import models
-from umpa.protocols import IP, TCP, Payload
+import umit.umpa
+from umit.umpa.extensions import models
+from umit.umpa.protocols import IP, TCP, Payload
 
 # models it's just to make our life easier
 
@@ -43,12 +43,12 @@ class SendPacket(threading.Thread):
         self._packet = packet
         self._amount = amount
     def run(self):
-        s = umpa.Socket()
+        s = umit.umpa.Socket()
         for i in xrange(self._amount):
             time.sleep(2)
             s.send(self._packet)
 
-packet = umpa.Packet(IP(src="1.2.3.4", dst="127.0.0.1"),
+packet = umit.umpa.Packet(IP(src="1.2.3.4", dst="127.0.0.1"),
                     TCP(srcport=99), Payload(data="sniff me"))
 
 # run thread and send 2 packets

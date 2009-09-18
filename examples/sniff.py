@@ -24,9 +24,9 @@
 import time
 import threading
 
-import umpa
-import umpa.sniffing
-from umpa.protocols import IP, TCP, Payload
+import umit.umpa
+import umit.umpa.sniffing
+from umit.umpa.protocols import IP, TCP, Payload
 
 # prepare packet which we want to sniff
 # to get possibility of sniffing and sending packets at the same
@@ -40,12 +40,12 @@ class SendPacket(threading.Thread):
         self._amount = amount
     def run(self):
         print "Sending %d packets..." % self._amount
-        s = umpa.Socket()
+        s = umit.umpa.Socket()
         for i in xrange(self._amount):
             time.sleep(2)
             s.send(self._packet)
 
-packet = umpa.Packet(IP(src="1.2.3.4", dst="127.0.0.1"),
+packet = umit.umpa.Packet(IP(src="1.2.3.4", dst="127.0.0.1"),
                     TCP(srcport=99), Payload(data="sniff me"))
 
 # run thread and send packet
@@ -65,7 +65,7 @@ th.start()
 # NOTE: if we are interested only with 1 packet,
 #       we can call sniff_next() instead of sniff()
 #       returning object will be umpa.Packet not list of umpa.Packet then
-received_packets = umpa.sniffing.sniff(1, filter="src 1.2.3.4 and port 99",
+received_packets = umit.umpa.sniffing.sniff(1, filter="src 1.2.3.4 and port 99",
                                                                 device="any")
 
 # collect terminated thread
@@ -79,7 +79,7 @@ print "\n_____________________"
 # the same but send and receive 2 packets
 th = SendPacket(packet, 2)
 th.start()
-received_packets = umpa.sniffing.sniff(2, filter="src 1.2.3.4 and port 99",
+received_packets = umit.umpa.sniffing.sniff(2, filter="src 1.2.3.4 and port 99",
                                                                 device="any")
 th.join()
 print "Captured %d packets:" % len(received_packets)
@@ -94,6 +94,6 @@ def cbk(ts, pkt, *args):
 
 th = SendPacket(packet, 2)
 th.start()
-umpa.sniffing.sniff_loop(2, filter="src 1.2.3.4 and port 99",
+umit.umpa.sniffing.sniff_loop(2, filter="src 1.2.3.4 and port 99",
                                     device="any", callback=cbk)
 th.join()

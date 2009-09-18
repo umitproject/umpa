@@ -21,10 +21,10 @@
 
 # this example shows how to send broken packets with not saved layers order
 
-import umpa
-import umpa.utils.security
+import umit.umpa
+import umit.umpa.utils.security
 
-from umpa.protocols import IP, TCP
+from umit.umpa.protocols import IP, TCP
 
 # NOTE:
 # to create RAW_SOCKET we need SUID, but for normal usage it's not
@@ -33,7 +33,7 @@ from umpa.protocols import IP, TCP
 # of the application
 
 # dropping unnecessary priviliges
-umpa.utils.security.drop_priviliges()
+umit.umpa.utils.security.drop_priviliges()
 
 # create new IP object
 ip = IP()
@@ -52,7 +52,7 @@ tcp.set_flags('flags', syn=True, ack=True)
 
 # create new packet with strict=False
 # we can build compleate insane packets now
-packet = umpa.Packet(strict=False)
+packet = umit.umpa.Packet(strict=False)
 # packing protocols into our packet
 # NOTE: the order of the protocols are abnormal
 # you will get the warning.
@@ -66,11 +66,11 @@ packet.include(tcp, ip)
 # priviliges as an argument. after that, we drop priviliges automatically
 
 # we can do the same with the code:
-# umpa.utils.security.super_priviliges()
-# sock = umpa.Socket()
-# umpa.utils.security.drop_priviliges()
+# umit.umpa.utils.security.super_priviliges()
+# sock = umit.umpa.Socket()
+# umit.umpa.utils.security.drop_priviliges()
 
-sock = umpa.utils.security.super_priviliges(umpa.Socket)
+sock = umit.umpa.utils.security.super_priviliges(umit.umpa.Socket)
 
 # sending packet
 sock.send(packet)
