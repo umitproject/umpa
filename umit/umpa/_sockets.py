@@ -87,9 +87,6 @@ class Socket(object):
         """
         Pick out the destination address from 3rd layer.
 
-        Because of the Ethernet issue (check the comments in send() method for
-        more), we have to parse packets for destination addresses.
-
         @return: destination address from 3rd layer of OSI model.
         """
         for proto in packet.protos:
