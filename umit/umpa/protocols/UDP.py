@@ -333,7 +333,7 @@ class UDP(_protocols.Protocol):
         """
 
         # Length
-        self.get_field('_checksum')._tmp_value = protocol_bits
+        self.get_field('_length')._tmp_value = protocol_bits
 
         return raw_value, bit
 
