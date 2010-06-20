@@ -21,9 +21,10 @@
 
 import sys
 from umit.umpa import Packet
-from umit.umpa.protocols import IP, TCP, UDP, Payload
+from umit.umpa.protocols import Ethernet, IP, TCP, UDP, Payload
 from umit.umpa.protocols import _consts
-from umit.umpa.utils.exceptions import UMPAException, UMPAStrictException
+from umit.umpa.utils.exceptions import UMPAException, UMPAStrictException, \
+                                       UMPAAttributeException
 from umit.umpa._packets import StrictWarning
 
 import py.test
@@ -96,6 +97,19 @@ class TestUMPAPackets(object):
         p.include(UDP(), Payload())
         for i in xrange(len(order)):
             assert isinstance(p.protos[i], order[i])
+
+    def test_get_destination(self):
+        p = Packet(Ethernet(dst='00:11:22:33:44:55'),
+                   IP(dst='1.2.3.4'),
+                   UDP(dstport=1234),
+                   Payload('UMPA'))
+        
+        py.test.raises(UMPAException, p._get_destination, 1);
+        assert p._get_destination(2) == '00:11:22:33:44:55'
+        assert p._get_destination(3) == '1.2.3.4'
+        py.test.raises(UMPAAttributeException, p._get_destination, 4);
+        py.test.raises(UMPAAttributeException, p._get_destination, 5);
+        py.test.raises(UMPAException, p._get_destination, 6);
 
 class TestUMPAPacketsOutput(object):
     def test_get_raw__ip(self):

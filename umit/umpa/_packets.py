@@ -162,6 +162,25 @@ class Packet(object):
                 last_proto.__dict__['payload'] = proto
             self.protos.append(proto)
 
+    def _get_destination(self, layer):
+        """
+        Get packet's destination address.
+
+        @type layer: C{int}
+        @param layer: Protocol layer.
+
+        @return: destination address from the selected layer.
+        """
+
+        for proto in self.protos:
+            if proto.layer == layer:
+                break
+
+        if not proto:
+            raise UMPAException("The packet does not contain a layer %d protocol." % level)
+
+        return proto.dst
+
     def get_raw(self):
         """
         Return raw packet in the bit-mode (big-endian).

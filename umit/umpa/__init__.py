@@ -40,7 +40,7 @@ import sys
 
 from umit.umpa._config import config
 from umit.umpa._packets import Packet
-from umit.umpa._sockets import Socket
+from umit.umpa._sockets import Socket, SocketL2
 
 # UMPA handles with the local directory $HOME/.umpa
 # especially with the $HOME/.umpa/umpa_plugins

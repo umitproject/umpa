@@ -34,3 +34,15 @@ class SendPacket(threading.Thread):
         for i in xrange(self._amount):
             time.sleep(2)
             s.send(self._packet)
+
+class SendPacketL2(threading.Thread):
+    def __init__(self, packet, amount=1, iface=None):
+        super(SendPacketL2, self).__init__()
+        self._packet = packet
+        self._amount = amount
+        self._iface  = iface
+    def run(self):
+        s = umit.umpa.SocketL2(iface=self._iface)
+        for i in xrange(self._amount):
+            time.sleep(2)
+            s.send(self._packet)

@@ -345,6 +345,21 @@ Ok, actually we have a socket object, so let's send the packet!
 ``Socket.send()`` method returns a list with sent bytes of each packets (we can
 pass more than one packet at the same time).
 
+Raw IP sockets under Windows
+----------------------------
+
+If you plan to use raw sockets under Windows XP SP2 or later, be aware of
+the restrictions imposed by the Windows' networking stack. They generally boil
+down to two things:
+
+ 1. TCP data cannot be sent over raw sockets.
+ 2. The IP source address for any outgoing UDP datagram must exist on a network
+    interface.
+
+The detailed description of those restrictions can be found at the following URL:
+http://msdn.microsoft.com/en-us/library/ms740548%28VS.85%29.aspx.
+If you find them to be too limiting, consider using Layer 2 sockets (``SocketL2``
+class) instead.
 
 UDP protocol
 ------------

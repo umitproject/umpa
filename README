@@ -2,9 +2,9 @@
  UMPA - Umit's Manipulations of Packets Art
 ============================================
 
-Copyright (C) 2008 Adriano Monteiro Marques <py.adriano at gmail dot com>
+Copyright (C) 2008-2010 Adriano Monteiro Marques <py.adriano at gmail dot com>
 
-Author: Bartosz SKOWRON <getxsick at gmail dot com>
+Authors: Bartosz SKOWRON <getxsick at gmail dot com>
 
 All rights reserved, see COPYING for details.
 
@@ -26,28 +26,27 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 Introduction
 ============
 
-UMPA is a packets manipulation library.
+UMPA is a packet generation and manipulation library. It aims to provide
+an easy-to-use system to manipulate packets on every layer of the OSI model.
+UMPA supports many sophisticated features, including:
 
-UMPA is developed in the Python programming language.
+  * auto-generating packets - defaults are provided for most fields
+  * high-level editing of header fields - no knowledge of bit-level
+    representation needed
+  * auto-filling - checksum/length fields are generated automatically
+  * interaction system - reacting and responding to network events
+  * sniffing and sending packets - easy communication with the real world 
 
-Packet manipulation library aims to provide easy to use system
-to manipulate packets of every OSI model layers.
-
-Many features are supported like: auto-generating packets, high-level
-editing header fields, auto-filling, interaction system, sniffing
-and creating objet's of packets.
 The goal of the project is to get a powerful, easy to use and intelligent
-tool for pro and newbies.
-
-Check docs/* for additional informations.
+packet manipulation tool suitable both for beginners and experienced users.
+UMPA has a wide range of uses, including network diagnostics, auditing,
+stress testing and network stack debugging. 
 
 
 Documentation
 =============
 
-On the Web:
-
-http://www.umpa.umitproject.org
+On the Web: http://www.umpa.umitproject.org
 
 This page also points to support resources and informations about UMPA
 development status and plans.
@@ -63,7 +62,7 @@ Dependencies
 
   * [1] Python programming language
   * [2] libpcap (for sniffing)
-  * [3] libpcap's python wrapper (see INSTALL for more)
+  * [3] libpcap's python wrapper (see INSTALL for details)
 
 
 Acknowledgements
@@ -72,11 +71,11 @@ Acknowledgements
 I would like to thank for a several people, who help and support me with the
 library, sending patches, testing it and giving ideas:
 
-   * Adriano Monteiro Marques
-   * Francesco Piccinno
-   * Luís António Bastião Silva
-   * Guilherme Henrique Polo Gonçalves
-   * João Paulo de Souza Medeiros
+  * Adriano Monteiro Marques
+  * Francesco Piccinno
+  * Luís António Bastião Silva
+  * Guilherme Henrique Polo Gonçalves
+  * João Paulo de Souza Medeiros
 
 
 Authors
@@ -88,6 +87,6 @@ Authors
 References
 ==========
 
-  * [0] UMPA website - http://www.umpa.umitproject.org
-  * [1] Python official website - http://www.python.org
-  * [2] Umit Project - http://www.umitproject.org
+  * [0] UMPA website - http://umpa.umitproject.org/
+  * [1] Umit Project - http://www.umitproject.org/
+  * [2] Python official website - http://www.python.org/
