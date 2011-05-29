@@ -41,23 +41,27 @@ ETH_P_ALL = 3                     # from linux/if_ether.h
 BIOCSETIF = 2149597804            # from net/bpf.h
 
 # Detect socket programming model. This greatly simplifies socket code.
+
+#
+#need to add AF_INET6 for ipv6 or we can use AF_UNSPEC for l3model so thatit accept any address 
+#
 if sys.platform == 'linux2':
     _l2model = 'AF_PACKET'
-    _l3model = 'AF_INET'
+    _l3model = 'AF_UNSPEC'
     _l3quirk = None
 elif sys.platform.startswith('freebsd') or \
      sys.platform.startswith('netbsd') or \
      sys.platform.startswith('darwin'):
     _l2model = 'bpf'
-    _l3model = 'AF_INET'
+    _l3model = 'AF_UNSPEC'
     _l3quirk = 'ntohs'
 elif sys.platform.startswith('openbsd'):
     _l2model = 'bpf'
-    _l3model = 'AF_INET'
+    _l3model = 'AF_UNSPEC'
     _l3quirk = None
 elif os.name == 'nt':
     _l2model = 'NDIS'
-    _l3model = 'AF_INET'
+    _l3model = 'AF_UNSPEC'
     _l3quirk = 'windows'
 else:
     _l2model = None
@@ -193,10 +197,14 @@ class SocketL3(_Socket):
 
         Requires root/administrator rights and/or CAP_NET_RAW capability.
         """
-
-        if _l3model == 'AF_INET':
+		#
+		#here create socket for AF_UNSPEC and and while sending the packet in send 
+		#use any ipaddress (IPv4 or IPv6)
+		#
+		#
+        if _l3model == 'AF_UNSPEC':
             try:
-                self._sock = socket.socket(socket.AF_INET,
+                self._sock = socket.socket(socket.AF_UNSPEC,
                                            socket.SOCK_RAW,
                                            socket.IPPROTO_RAW)
             except socket.error, msg:
@@ -219,12 +227,19 @@ class SocketL3(_Socket):
 
         sent_bytes = []
         for packet in packets:
-            if _l3model == 'AF_INET':
+            if _l3model == 'AF_UNSPEC':
                 # get destination address and convert it to IPv4 notation
                 # TODO: move this to utils.net
                 dst_addr = packet._get_destination(layer=3)
+                #
+                #Here check the destination address thet whether it is ipv4 or ipv6
+                #
+                #
                 if type(dst_addr) is tuple:
-                    dst_addr = ".".join(str(y) for y in dst_addr)
+                	if len(dst_addr) == 6:
+                    	dst_addr = ".".join(str(y) for y in dst_addr)
+                    else:
+                    	dst_addr = ":".join(str(y) for y in dst_addr)
 
                 raw = packet.get_raw()
 

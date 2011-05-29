@@ -601,6 +601,8 @@ class TCP(_protocols.Protocol):
             total_length /= 8
 
             # create pseudo header object
+            #in _layer4 also need to add ipv6 notation
+            #
             pheader = _layer4.PseudoHeader(self.protocol_id, total_length)
             # generate raw value of it
             pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]

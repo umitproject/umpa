@@ -72,7 +72,10 @@ class PseudoHeader(Protocol):
         @type total_length: C{int}
         @param total_length: length of the real header and payload.
         """
-
+		#
+		#For Ipv6 fieldlist creation 
+		#
+		#
         fields_list = [ IPv4AddrField("Source Address"),
                         IPv4AddrField("Destination Address"),
                         IntField("Reserved", 0, bits=8),
