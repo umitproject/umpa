@@ -41,27 +41,23 @@ ETH_P_ALL = 3                     # from linux/if_ether.h
 BIOCSETIF = 2149597804            # from net/bpf.h
 
 # Detect socket programming model. This greatly simplifies socket code.
-
-#
-#need to add AF_INET6 for ipv6 or we can use AF_UNSPEC for l3model so thatit accept any address 
-#
 if sys.platform == 'linux2':
     _l2model = 'AF_PACKET'
-    _l3model = 'AF_UNSPEC'
+    _l3model = 'AF_INET6'
     _l3quirk = None
 elif sys.platform.startswith('freebsd') or \
      sys.platform.startswith('netbsd') or \
      sys.platform.startswith('darwin'):
     _l2model = 'bpf'
-    _l3model = 'AF_UNSPEC'
+    _l3model = 'AF_INET6'
     _l3quirk = 'ntohs'
 elif sys.platform.startswith('openbsd'):
     _l2model = 'bpf'
-    _l3model = 'AF_UNSPEC'
+    _l3model = 'AF_INET6'
     _l3quirk = None
 elif os.name == 'nt':
     _l2model = 'NDIS'
-    _l3model = 'AF_UNSPEC'
+    _l3model = 'AF_INET6'
     _l3quirk = 'windows'
 else:
     _l2model = None
@@ -176,7 +172,7 @@ class SocketL3(_Socket):
     """
     Level 3 (network layer) socket class.
 
-    Supported platforms: Linux, BSD, Windows (AF_INET).
+    Supported platforms: Linux, BSD, Windows (AF_INET6).
 
     Note: If you plan to use raw sockets under Windows XP SP2 or later, be aware
     of the restrictions imposed by the Windows’ networking stack. They generally
@@ -191,29 +187,25 @@ class SocketL3(_Socket):
     them to be too limiting, consider using Layer 2 sockets (SocketL2 class) instead.
     """
 
-    def __init__(self):
+    def __init__(self,Self_sock,L3model):
         """
         Create a new SocketL3 instance.
 
         Requires root/administrator rights and/or CAP_NET_RAW capability.
         """
-		#
-		#here create socket for AF_UNSPEC and and while sending the packet in send 
-		#use any ipaddress (IPv4 or IPv6)
-		#
-		#
-        if _l3model == 'AF_UNSPEC':
-            try:
-                self._sock = socket.socket(socket.AF_UNSPEC,
-                                           socket.SOCK_RAW,
-                                           socket.IPPROTO_RAW)
-            except socket.error, msg:
-                raise UMPANotPermittedException(msg)
+        self.model = L3model
 
-            # tell the kernel we are including our own IP header
+        if self.model == 'AF_INET6':
+            self._sock = Self_sock
+            #print "In if case of socket l3 for ipv6"
+            self._sock.setsockopt(socket.IPPROTO_IPV6, socket.IP_HDRINCL, 1)
+        elif self.model == 'AF_INET':
+            self._sock = Self_sock
             self._sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
         else:
             raise NotImplementedError('L3 sockets unsupported on your platform')
+
+            
 
     def send(self, *packets):
         """
@@ -227,19 +219,12 @@ class SocketL3(_Socket):
 
         sent_bytes = []
         for packet in packets:
-            if _l3model == 'AF_UNSPEC':
+            if self.model == 'AF_INET':
                 # get destination address and convert it to IPv4 notation
                 # TODO: move this to utils.net
                 dst_addr = packet._get_destination(layer=3)
-                #
-                #Here check the destination address thet whether it is ipv4 or ipv6
-                #
-                #
                 if type(dst_addr) is tuple:
-                	if len(dst_addr) == 6:
-                    	dst_addr = ".".join(str(y) for y in dst_addr)
-                    else:
-                    	dst_addr = ":".join(str(y) for y in dst_addr)
+                    dst_addr = ".".join(str(y) for y in dst_addr)
 
                 raw = packet.get_raw()
 
@@ -247,10 +232,47 @@ class SocketL3(_Socket):
                     raw = _ntohs_quirk(raw)
 
                 sent_bytes.append(self._sock.sendto(raw, (dst_addr, 0)))
+            elif self.model == 'AF_INET6':
+                dst_addr = packet._get_destination(layer=3)
+                #print "In elif case of send packet with dest address",
+                #print(dst_addr)
+                if type(dst_addr) is tuple:
+                    dst_addr = ":".join(str(y) for y in dst_addr)
+                    
+                raw = packet.get_raw()
+                if _l3quirk == 'ntohs':
+                    raw = _ntohs_quirk(raw)
+                sent_bytes.append(self._sock.sendto(raw, (dst_addr, 0)))
             else:
                 raise NotImplementedError("L3 send unsupported on your platform")
         return sent_bytes
 
+class INET6(SocketL3):
+	"""
+	"""
+	def __init__(self):
+		try:
+			 self._sock = socket.socket(socket.AF_INET6,socket.SOCK_RAW, socket.IPPROTO_RAW)
+		except socket.error, msg:
+			raise UMPANotPermittedException(msg)
+			
+		#self._sock.setsockopt(socket.IPPROTO_IPV6, socket.IP_HDRINCL, 1)
+		
+		super(INET6, self).__init__(self._sock, "AF_INET6")	
+	
+class INET(SocketL3):
+	"""
+	"""
+	def __init__(self):
+		try:
+			 self._sock = socket.socket(socket.AF_INET,socket.SOCK_RAW, socket.IPPROTO_RAW)
+		except socket.error, msg:
+			raise UMPANotPermittedException(msg)
+			
+		#self._sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+		
+		super(INET, self).__init__(self._sock, "AF_INET")	
+					
 def _ntohs_quirk(raw):
     """
     FreeBSD raw socket endianness quirk support.

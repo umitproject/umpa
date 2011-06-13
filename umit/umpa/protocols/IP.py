@@ -293,21 +293,11 @@ class IP(_protocols.Protocol):
     protocol_id = _consts.ETHERTYPE_IP
     payload_fieldname = '_proto'
     name = "IP"
-	#
-	# use from umit.umpa import _packets
-	# find deastination and source address 
-	#according to them form header if saddrr is ipv4 and destination is ipv6 then convert 
-	#saddress in ipv6 using ipv4 compatible notation
-	#
-	#
+
     _ordered_fields = ('_version', '_hdr_len', 'tos', '_len', '_id', 'flags',
                     '_frag_offset', 'ttl', '_proto', '_checksum', 'src', 'dst',
                     'options', '_padding',)
-	#
-	# ordered field for ipv6
-	#_ordered_fields = ('_version','_taffic_class',_flow_label','_payload','_nxt_hdr','_hop_limit','src','dst',)
-	#
-	#
+
     def __init__(self, **kwargs):
         """
         Create a new IP().
@@ -324,24 +314,7 @@ class IP(_protocols.Protocol):
         #   - support for fragmentation
         #       defaulty we don't use fragmentation but we should support it
         #       if user choose this option
-        #
-        #
-        #How to get source and destination address to create field list.
-        #
-        #
-        #
-        #
-        #create field list for ipv6 also
-        #fields_list = [ _Hversion("Version",6),
-        #				 _TClass("Traffic Class",0),
-        #				 _FLabel("Flow label",0),
-        #				 _PLoad("Pay Load",0),
-        #				 _NHeader("Next header",0)
-        #				 _HLimit("Hop Limit",32),
-        #				 _fields.IPv6AddrField("Source Address", "0:0:0:0:0:0:0:1"),
-        #				 _fields.IPv6AddrField("Destination Address","0:0:0:0:0:0:0:1"),
-        #
-        #
+
         fields_list = [ _HVersion("Version", 4),
                         _HIHL("IHL"),
                         _fields.Flags("TOS", tos, **tos_predefined),

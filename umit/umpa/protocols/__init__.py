@@ -42,9 +42,12 @@ from Ethernet import Ethernet
 from SLL import SLL
 from ARP import ARP
 from IP import IP
+from IPV6 import IPV6
 # from ICMP import ICMP
 from TCP import TCP
+from TCP6 import TCP6
 from UDP import UDP
+from UDP6 import UDP6
 from Payload import Payload
 
 def get_locals():
@@ -133,7 +136,7 @@ def _dict_protos(protos_list):
         protos_dict[proto.name] = proto
     return protos_dict
 
-_gprotos_list = [ Ethernet, SLL, ARP, IP, TCP, UDP, Payload ]
+_gprotos_list = [ Ethernet, SLL, ARP, IP, IPV6, TCP, TCP6, UDP, UDP6, Payload ]
 _lprotos_list = _load_local_protocols()
 
 _gproto = _dict_protos(_gprotos_list)

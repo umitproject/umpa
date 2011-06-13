@@ -25,7 +25,7 @@ import py.test
 
 from umit.umpa import Socket, SocketL2, Packet
 import umit.umpa.sniffing
-from umit.umpa.protocols import Ethernet, IP, TCP, UDP, Payload
+from umit.umpa.protocols import Ethernet, IP, TCP, UDP, Payload ,IPV6 , TCP6
 from umit.umpa.utils.exceptions import UMPAException, UMPANotPermittedException
 from tests.utils import SendPacket, SendPacketL2
 

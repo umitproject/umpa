@@ -22,7 +22,7 @@ else
 fi
 
 echo "#### TESTS FOR UMPA [ START ] ####"
-$cur/tests/coverage.py -x $cur/py/bin/py.test $* $cur/tests
+$cur/tests/coverage.py -x /usr/local/bin/py.test $* $cur/tests
 echo "#### TESTS FOR UMPA [ FINISH ] ####"
 
 echo "#### STATS FOR UMPA [ START ] ####"

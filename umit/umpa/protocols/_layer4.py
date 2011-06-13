@@ -28,7 +28,7 @@ are provided.
 
 from umit.umpa.protocols._protocols import Protocol
 from umit.umpa.protocols.IP import IP
-from umit.umpa.protocols._fields import IntField, IPv4AddrField
+from umit.umpa.protocols._fields import IntField, IPv4AddrField, IPv6AddrField
 
 class Layer4ChecksumField(IntField):
     """
@@ -76,6 +76,7 @@ class PseudoHeader(Protocol):
 		#For Ipv6 fieldlist creation 
 		#
 		#
+		
         fields_list = [ IPv4AddrField("Source Address"),
                         IPv4AddrField("Destination Address"),
                         IntField("Reserved", 0, bits=8),
