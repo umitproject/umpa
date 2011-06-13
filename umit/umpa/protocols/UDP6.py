@@ -254,19 +254,12 @@ class _HPort(_fields.EnumField):
 
 class _HLength(_fields.SpecialIntField):
     """
-    Length  is the length  in octets  of this user datagram  including  this
-    header  and the data.
-
-    See RFC 768 for more.
     """
     
     bits = 16
     auto = True
     def _generate_value(self):
         """
-        Generate value for undefined field yet.
-        
-        @return: auto-generated value of the field.
         """
 
         # returns in byte units
@@ -274,12 +267,6 @@ class _HLength(_fields.SpecialIntField):
 
 class UDP6(_protocols.Protocol):
     """
-    User Datagram Protocol implementation.
-    
-    This protocol  provides  a procedure  for application  programs  to send
-    messages  to other programs  with a minimum  of protocol mechanism.  The
-    protocol  is transaction oriented, and delivery and duplicate protection
-    are not guaranteed.
     """
 
     layer = 4
@@ -313,23 +300,6 @@ class UDP6(_protocols.Protocol):
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
-        Handle with fields before calling fillout() for them.
-
-        Store temp value of protocols bits for checksum field.
-
-        @type raw_value: C{int}
-        @param raw_value: currently raw value for the packet.
-
-        @type bit: C{int}
-        @param bit: currently length of the protocol.
-
-        @type protocol_container: C{tuple}
-        @param protocol_container: tuple of protocols included in the packet.
-
-        @type protocol_bits: C{int}
-        @param protocol_bits: currently length of the packet.
-
-        @return: C{raw_value, bit}
         """
 
         # Length
@@ -339,23 +309,6 @@ class UDP6(_protocols.Protocol):
 
     def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
-        Handle with fields after calling fillout() for them.
-
-        Calculate header checksum with new instance of PseudoHeader object.
-
-        @type raw_value: C{int}
-        @param raw_value: currently raw value for the packet.
-
-        @type bit: C{int}
-        @param bit: currently length of the protocol.
-
-        @type protocol_container: C{tuple}
-        @param protocol_container: tuple of protocols included in the packet.
-
-        @type protocol_bits: C{int}
-        @param protocol_bits: currently length of the packet.
-
-        @return: C{raw_value, bit}
         """
 
         cksum_rev_offset = 0
@@ -391,9 +344,6 @@ class UDP6(_protocols.Protocol):
 
     def load_raw(self, buffer):
         """
-        Load raw and update a protocol's fields.
-
-        @return: raw payload
         """
         
         header_size = 8

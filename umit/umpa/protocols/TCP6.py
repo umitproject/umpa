@@ -36,8 +36,6 @@ __all__ = [ "TCP6", ]
 
 class _HPort(_fields.EnumField):
     """
-    TCP uses the notion of port numbers to identify sending and receiving
-    application end-points on a host, or Internet sockets.
     """
 
     bits = 16
