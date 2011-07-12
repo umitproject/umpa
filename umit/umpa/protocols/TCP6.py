@@ -29,6 +29,7 @@ from umit.umpa.protocols import _consts
 from umit.umpa.protocols import _fields
 from umit.umpa.protocols import _protocols
 from umit.umpa.protocols import _layer4_ipv6
+from umit.umpa.protocols import _layer4
 import umit.umpa.utils.net as _net
 import umit.umpa.utils.bits as _bits
 
@@ -522,6 +523,8 @@ class TCP6(_protocols.Protocol):
             # create pseudo header object
             #in _layer4_ipv6 also need to add ipv6 notation
             #
+            print "value of total length"
+            print total_length
             pheader = _layer4_ipv6.PseudoHeader(self.protocol_id, total_length)
             # generate raw value of it
             pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
@@ -537,7 +540,7 @@ class TCP6(_protocols.Protocol):
     def load_raw(self, buffer):
         """
         """
-        
+        print "iiiiiiiiiiiiiiiiiiiiiiiiii"
         header_size = 20
         header_format = '!HHIIBBHHH'
         fields = struct.unpack(header_format, buffer[:header_size])

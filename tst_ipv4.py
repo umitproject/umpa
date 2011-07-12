@@ -17,8 +17,8 @@ print(list(ip.get_fields_keys()))
 print "______________________________"
 
 tcp = TCP()
-tcp.srcport = 2958
-tcp.dstport = 0
+tcp.srcport = 2952
+tcp.dstport = 2554
 tcp.set_flags('flags', syn=True)
 payload = Payload()
 payload.data = "this is umpa!"
@@ -31,11 +31,4 @@ print "_____________________"
 sock = super_priviliges(INET)
 sock.send(first_packet)
 
-print "Test for UDP protcol"
-udp = UDP(srcport=0, dstport=7)
-print(ip.get_field("_proto").enumerable)
-ip.ttl = "windows"
-second_packet = Packet(ip, udp)
-print second_packet
-sock.send(second_packet)
 

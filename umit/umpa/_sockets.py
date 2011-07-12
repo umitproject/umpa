@@ -216,6 +216,7 @@ class SocketL3(_Socket):
 
         @returns: List of return values (byte counts) from the send() function.
         """
+        #print "in send of sock send"
 
         sent_bytes = []
         for packet in packets:
@@ -234,6 +235,7 @@ class SocketL3(_Socket):
                 sent_bytes.append(self._sock.sendto(raw, (dst_addr, 0)))
             elif self.model == 'AF_INET6':
                 dst_addr = packet._get_destination(layer=3)
+                #print "in send of sock send"
                 #print "In elif case of send packet with dest address",
                 #print(dst_addr)
                 if type(dst_addr) is tuple:
@@ -241,6 +243,7 @@ class SocketL3(_Socket):
                     
                 raw = packet.get_raw()
                 if _l3quirk == 'ntohs':
+                    #print "in send of sock send ntohs quirk"
                     raw = _ntohs_quirk(raw)
                 sent_bytes.append(self._sock.sendto(raw, (dst_addr, 0)))
             else:

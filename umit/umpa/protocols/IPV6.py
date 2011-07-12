@@ -24,6 +24,17 @@ class _HVersion(_fields.EnumField):
         """
 
         return _consts.IPVERSION_6
+class _TClass(_fields.SpecialIntField):
+    """
+    """
+    bits = 8
+    auto = True
+    
+    def _generate_value(self):
+        """
+        """
+        
+        return 0
 class _FLabel(_fields.IntField):
     """
    .
@@ -39,7 +50,7 @@ class _FLabel(_fields.IntField):
         return 1
         
                 
-class  _PLoad(_fields.IntField):
+class  _PLoad(_fields.SpecialIntField):
 	"""
 	"""
 	bits = 16
@@ -50,7 +61,7 @@ class  _PLoad(_fields.IntField):
 		
 		
 		"""
-		return 0
+		return self._tmp_value / _consts.BYTE
 
 class  _HLimit(_fields.IntField):
 	"""
@@ -64,7 +75,7 @@ class  _HLimit(_fields.IntField):
 		
 		
 		"""
-		return 64
+		return 255
 		
 		
 class _NHeader(_fields.SpecialIntField, _fields.EnumField):
@@ -111,7 +122,7 @@ class _NHeader(_fields.SpecialIntField, _fields.EnumField):
         """
         """
 
-        return 
+        return self._tmp_value
 
 
 
@@ -143,11 +154,11 @@ class IPV6(_protocols.Protocol):
 		#Flabel and Pload in ipv6 is not done
 		#create field list for ipv6 also
 		fields_list = [ _HVersion("Version",6),
-					 _fields.Flags("Traffic Class", tos, **tos_predefined),
+					 _TClass("Traffic Class", 0),
 					 _FLabel("Flow label",0),
-					 _PLoad("Pay Load",0),
-					 _NHeader("Next header",0),
-					 _HLimit("Hop Limit",32),
+					 _PLoad("Pay Load"),
+					 _NHeader("Next header"),
+					 _HLimit("Hop Limit"),
 					 _fields.IPv6AddrField("Source Address", "0:0:0:0:0:0:0:1"),
 					 _fields.IPv6AddrField("Destination Address","0:0:0:0:0:0:0:1")]
 		
@@ -171,7 +182,7 @@ class IPV6(_protocols.Protocol):
 		"""
 		"""
 
-	   
+		self.get_field('_payload')._tmp_value = protocol_bits
 		# Next Header protocol
 		# field indicates the next level protocol used in the data
 		# portion of the internet datagram.

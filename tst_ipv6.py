@@ -17,11 +17,11 @@ print(list(ip.get_fields_keys()))
 print "______________________________"
 
 tcp = TCP6()
-tcp.srcport = 2958
-tcp.dstport = 0
+tcp.srcport = 2951
+tcp.dstport = 254
 tcp.set_flags('flags', syn=True)
 payload = Payload()
-payload.data = "this is umpa!"
+payload.data = "this is umpa! : Gaurav"
 first_packet = Packet(ip, tcp)
 first_packet.include(payload)
 print "Structure Of Ipv6 Packet"
@@ -31,11 +31,5 @@ print "_____________________"
 sock = super_priviliges(INET6)
 sock.send(first_packet)
 
-print "Test for UDP protcol"
-udp = UDP6(srcport=0, dstport=7)
-print(ip.get_field("_nxt_hdr").enumerable)
-ip._nxt_hdr = "UDP"
-second_packet = Packet(ip, udp)
-print second_packet
-sock.send(second_packet)
+
 

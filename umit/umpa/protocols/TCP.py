@@ -29,6 +29,7 @@ from umit.umpa.protocols import _consts
 from umit.umpa.protocols import _fields
 from umit.umpa.protocols import _protocols
 from umit.umpa.protocols import _layer4
+from umit.umpa.protocols import _layer4_ipv6
 import umit.umpa.utils.net as _net
 import umit.umpa.utils.bits as _bits
 
