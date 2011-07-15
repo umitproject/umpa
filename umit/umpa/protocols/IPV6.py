@@ -24,10 +24,11 @@ class _HVersion(_fields.EnumField):
         """
 
         return _consts.IPVERSION_6
-class _TClass(_fields.SpecialIntField):
+        
+class _TClassDSCP(_fields.SpecialIntField):
     """
     """
-    bits = 8
+    bits = 6
     auto = True
     
     def _generate_value(self):
@@ -63,19 +64,6 @@ class  _PLoad(_fields.SpecialIntField):
 		"""
 		return self._tmp_value / _consts.BYTE
 
-class  _HLimit(_fields.IntField):
-	"""
-	Hop limit tell about maximum hop a packet can travel before descrcaered default 64
-	"""
-	bits = 8
-	auto = True
-	
-	def _generate_value(self):
-		"""
-		
-		
-		"""
-		return 255
 		
 		
 class _NHeader(_fields.SpecialIntField, _fields.EnumField):
@@ -124,6 +112,19 @@ class _NHeader(_fields.SpecialIntField, _fields.EnumField):
 
         return self._tmp_value
 
+class  _HLimit(_fields.IntField):
+	"""
+	Hop limit tell about maximum hop a packet can travel before descrcaered default 64
+	"""
+	bits = 8
+	auto = True
+	
+	def _generate_value(self):
+		"""
+		
+		
+		"""
+		return 255
 
 
 
@@ -137,7 +138,7 @@ class IPV6(_protocols.Protocol):
 	payload_fieldname = '_proto'
 	name = "IPV6"
 
-	_ordered_fields = ('_version','_taffic_class','_flow_label','_payload','_nxt_hdr','_hop_limit','src','dst',)
+	_ordered_fields = ('_version','dscp','ds','_flow_label','_payload','_nxt_hdr','_hop_limit','src','dst',)
 
 
 	def __init__(self, **kwargs):
@@ -145,8 +146,7 @@ class IPV6(_protocols.Protocol):
 		Create a new IPV6().
 		"""
 
-		tos = ('precedence0', 'precedence1', 'precedence2', 'delay',
-				    'throughput', 'reliability', 'reserved0', 'reserved1')
+		tos = ('ect','ecn_ce')
 		tos_predefined = dict.fromkeys(tos, 0)
 
 		
@@ -154,7 +154,8 @@ class IPV6(_protocols.Protocol):
 		#Flabel and Pload in ipv6 is not done
 		#create field list for ipv6 also
 		fields_list = [ _HVersion("Version",6),
-					 _TClass("Traffic Class", 0),
+					 _TClassDSCP("dscp", 0),
+					 _fields.Flags("TOS", tos, **tos_predefined),
 					 _FLabel("Flow label",0),
 					 _PLoad("Pay Load"),
 					 _NHeader("Next header"),
@@ -170,7 +171,7 @@ class IPV6(_protocols.Protocol):
 
 		# set __doc__ for fields - it's important if you want to get hints
 		# in some frontends. E.g. Umit Project provides one...
-		self.get_field('_taffic_class').set_doc("This 8-bit field is similar in spirit to the ToS field in IPv4")
+		self.get_field('dscp').set_doc("This 6-bit field is similar in spirit to the ToS field in IPv4 but it is part 8 bit traffic class field")
 		self.get_field('_flow_label').set_doc("Used for specifying special router handling from source to destination(s) for a sequence of packets.")
 		self.get_field('_payload').set_doc("This 16-bit value is treated as an unsigned integer giving the number of bytes in the IPv6 datagram following 												the 40-byte packet header.")
 		self.get_field('_nxt_hdr').set_doc("Specifies the next encapsulated protocol. The values are compatible with those specified for the IPv4 protocol 												field.")

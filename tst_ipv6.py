@@ -10,26 +10,31 @@ from umit.umpa._sockets import INET6
 from umit.umpa.utils.security import super_priviliges
 
 
-ip = IPV6(src='0:0:0:0:0:0:0:1', dst='0:0:0:0:0:0:0:1')
-print "Value Of fielf key for Ipv6 is Here"
-print(ip)
-print(list(ip.get_fields_keys()))
-print "______________________________"
+ip = IPV6(src='0000:0000:0000:0000:0000:0000:0000:0001', dst='0000:0000:0000:0000:0000:0000:0000:0001')
+ip.set_flags('ds',ect=True)
+ip.set_flags('ds',ecn_ce=True)
+#print "Value Of fielf key for Ipv6 is Here"
+#print(ip)
+#print(list(ip.get_fields_keys()))
+#print "______________________________"
 
 tcp = TCP6()
-tcp.srcport = 2951
-tcp.dstport = 254
+tcp.srcport = 2561
+tcp.dstport = 253
 tcp.set_flags('flags', syn=True)
-payload = Payload()
-payload.data = "this is umpa! : Gaurav"
+#tcp._checksum = 38211
+#tcp.set_flags('flags', ack=True)
+#payload = Payload()
+#payload.data = "this is umpa!"
 first_packet = Packet(ip, tcp)
-first_packet.include(payload)
-print "Structure Of Ipv6 Packet"
+#first_packet.include(payload)
+#print "Structure Of Ipv6 Packet"
 
-print first_packet
-print "_____________________"
+#print first_packet
+#print "_____________________"
 sock = super_priviliges(INET6)
 sock.send(first_packet)
+
 
 
 

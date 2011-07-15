@@ -605,6 +605,8 @@ class TCP(_protocols.Protocol):
             #in _layer4 also need to add ipv6 notation
             #
             pheader = _layer4.PseudoHeader(self.protocol_id, total_length)
+            #print "pseudeo header"
+            #print pheader
             # generate raw value of it
             pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
             # added pseudo header bits to cksum value

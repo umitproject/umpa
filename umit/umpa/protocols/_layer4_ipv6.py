@@ -24,40 +24,45 @@ class Layer4ChecksumField(IntField):
 
         return 0
 
-class PseudoHeader(Protocol):
+class PseudoHeader6(Protocol):
     """
     """
 
-    _ordered_fields = ('src', 'dst', 'uplaylen',
-                    'zero', 'protocol')
+    _ordered_fields = ('src', 'dst', 'up_layer_length',
+                    'zero', 'protocol_id')
 
     def __init__(self, protocol_id, total_length):
         """
         """
-        print "=================::::::::::::::::::::::"
-        print total_length
-        print protocol_id
+        #print "=================::::::::::::::::::::::"
+        #print total_length
+        #print protocol_id
 		
         fields_list = [ IPv6AddrField("Source Address"),
                         IPv6AddrField("Destination Address"),
                         IntField("Upper layer length", total_length, bits=32),
                         IntField("zero", 0, bits=24),
                         IntField("Next Header ", protocol_id , bits=8) ]
-        super(PseudoHeader, self).__init__(fields_list)
+        super(PseudoHeader6, self).__init__(fields_list)
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
         """
 
         # assign localhost first becuase if there is none IP instance
+        #print "i am here "
         self.src = "0000:0000:0000:0000:0000:0000:0000:0001"
-        self.dst = "0000:0000:0000:0000:0000:0000:0000:0001"
+        self.dst = "0:0:0:0:0:0:0:1"
         # grabbing informations from the IP's header
         it = iter(protocol_container)
         for proto in it:
+            #print proto
             if isinstance(proto, IPV6):
+                #print "in if case"
                 self.src = proto.src
                 self.dst = proto.dst
+                #print self.src
+                #print self.dst
                 break
 
         return raw_value, bit

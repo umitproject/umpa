@@ -30,5 +30,6 @@ print first_packet
 print "_____________________"
 sock = super_priviliges(INET)
 sock.send(first_packet)
+print tcp._checksum
 
 

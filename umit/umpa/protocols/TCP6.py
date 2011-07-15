@@ -3,7 +3,7 @@
 
 # Copyright (C) 2008-2009 Adriano Monteiro Marques.
 #
-# Author: Bartosz SKOWRON <getxsick at gmail dot com>
+# Author: Gaurav Ranjan <g.ranjan143@gmail.com>
 #
 # This library is free software; you can redistribute it and/or modify 
 # it under the terms of the GNU Lesser General Public License as published 
@@ -28,15 +28,17 @@ import struct
 from umit.umpa.protocols import _consts
 from umit.umpa.protocols import _fields
 from umit.umpa.protocols import _protocols
-from umit.umpa.protocols import _layer4_ipv6
 from umit.umpa.protocols import _layer4
+from umit.umpa.protocols import _layer4_ipv6
 import umit.umpa.utils.net as _net
 import umit.umpa.utils.bits as _bits
 
-__all__ = [ "TCP6", ]
+__all__ = [ "TCP", ]
 
 class _HPort(_fields.EnumField):
     """
+    TCP uses the notion of port numbers to identify sending and receiving
+    application end-points on a host, or Internet sockets.
     """
 
     bits = 16
@@ -336,6 +338,10 @@ class _HPort(_fields.EnumField):
 
 class _HSequenceNumber(_fields.IntField):
     """
+    The sequence number of the first data octet in this segment (except
+    when SYN is present).
+
+    See RFC 793 for more.
     """
 
     bits = 32
@@ -343,14 +349,21 @@ class _HSequenceNumber(_fields.IntField):
     
     def _generate_value(self):
         """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
         """
 
         # TODO: implemention real auto-filling here ;)
         # otherwise we can simple return 0
         return 0
 
-class _HAcknowledgmentNumber(_fields.IntField):
+class _HAcknowledgmentNumber(_fields.SpecialIntField):
     """
+    If the ACK control bit is set this field contains the value of the
+    next sequence number the sender of the segment is expecting to receive.
+
+    See RFC 793 for more.
     """
     
     bits = 32
@@ -358,14 +371,21 @@ class _HAcknowledgmentNumber(_fields.IntField):
     
     def _generate_value(self):
         """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
         """
 
         # TODO: implemention real auto-filling here ;)
         # otherwise we can simple return 0
-        return 1
+        return self._tmp_value
 
 class _HDataOffset(_fields.SpecialIntField):
     """
+    The number of 32 bit words in the TCP Header. This indicates where
+    the data begins.
+
+    See RFC 793 for more.
     """
     
     bits = 4
@@ -373,6 +393,9 @@ class _HDataOffset(_fields.SpecialIntField):
     
     def _generate_value(self):
         """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
         """
 
         # returns in 32-bits units
@@ -380,6 +403,9 @@ class _HDataOffset(_fields.SpecialIntField):
 
 class _HReserved(_fields.IntField):
     """
+    Reserved for future use.
+
+    See RFC 793 for more.
     """
     
     bits = 6
@@ -387,12 +413,19 @@ class _HReserved(_fields.IntField):
     
     def _generate_value(self):
         """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
         """
 
         return 0
 
 class _HWindow(_fields.IntField):
     """
+    The number of data octets beginning with the one indicated in the
+    acknowledgment field which the sender of this segment is willing to accept.
+
+    See RFC 793 for more.
     """
     
     bits = 16
@@ -400,14 +433,21 @@ class _HWindow(_fields.IntField):
     
     def _generate_value(self):
         """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
         """
 
         # TODO: implemention real auto-filling here ;)
         # otherwise we can simple return 0
-        return 512
+        return 4000
 
 class _HUrgentPointer(_fields.IntField):
     """
+    This field communicates the current value of the urgent pointer as a
+    positive offset from the sequence number in this segment.
+
+    See RFC 793 for more.
     """
     
     bits = 16
@@ -415,6 +455,9 @@ class _HUrgentPointer(_fields.IntField):
     
     def _generate_value(self):
         """
+        Generate value for undefined field yet.
+        
+        @return: auto-generated value of the field.
         """
 
         # TODO: implemention real auto-filling here ;)
@@ -423,12 +466,16 @@ class _HUrgentPointer(_fields.IntField):
 
 class TCP6(_protocols.Protocol):
     """
+    Transmission Control Protocol implementation.
+
+    It the most common protocol in the Internet on fourth layer
+    of the OSI model.
     """
     
     layer = 4       # layer of the OSI
     protocol_id = _consts.PROTOCOL_TCP
     payload_fieldname = None
-    name = "TCP6"
+    name = "TCP"
 
     _ordered_fields = ('srcport', 'dstport', '_seq', '_ack', '_hdr_len', 
                     '_reserved', 'flags', '_window_size', '_checksum',
@@ -478,7 +525,30 @@ class TCP6(_protocols.Protocol):
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
+        Handle with fields before calling fillout() for them.
+
+        Set Padding field and calculate header length.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet
+
+        @return: C{raw_value, bit}
         """
+        #print "::::::::::::::::::::::"
+        #print self.get_flags('flags', 'ack')
+        if self.get_flags('flags', 'ack')[0] == True:
+            self.get_field('_ack')._tmp_value = self.get_field('_ack')._tmp_value + 1
+        else:
+            self.get_field('_ack')._tmp_value = 0
 
         # Padding
         self.get_field('_padding')._tmp_value = \
@@ -488,15 +558,38 @@ class TCP6(_protocols.Protocol):
         self.get_field('_hdr_len')._tmp_value = \
             self.get_field('options').bits + self.get_field('_padding').bits
 
+        #self.get_field('_checksum') = 38211
+        
         return raw_value, bit
 
     def _post_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
+        Handle with fields after calling fillout() for them.
+
+        Calculate header checksum with new instance of PseudoHeader object.
+
+        @type raw_value: C{int}
+        @param raw_value: currently raw value for the packet.
+
+        @type bit: C{int}
+        @param bit: currently length of the protocol.
+
+        @type protocol_container: C{tuple}
+        @param protocol_container: tuple of protocols included in the packet.
+
+        @type protocol_bits: C{int}
+        @param protocol_bits: currently length of the packet.
+
+        @return: C{raw_value, bit}
         """
 
         # rev_offset it the offset from the right side
         cksum_rev_offset = bit - self.get_offset('_checksum') - \
                                             self.get_field('_checksum').bits
+        #print cksum_rev_offset
+        #print self.get_field('_checksum').bits
+        
+        
         # checking if user not defined his own value of checksum
         if _bits.get_bits(raw_value, self.get_field('_checksum').bits,
                                     cksum_rev_offset, rev_offset=True) == 0:
@@ -505,17 +598,26 @@ class TCP6(_protocols.Protocol):
                 cksum = self.payload.__dict__['__raw_value']
             else:
                 cksum = 0
+                
+            #print cksum
+            #print protocol_bits
+            #print raw_value
+            #print bit
             offset = protocol_bits
 
             # TCP Header
             cksum |= raw_value << offset
+            
+            #print cksum
             offset += bit
+            #print offset
 
             # Pseudo Header
             #
             # TCP header length...converted to bits unit
             total_length = self.get_field('_hdr_len').fillout()*32
             # add payload
+            #print total_length
             total_length += protocol_bits
             # conversion to bytes unit
             total_length /= 8
@@ -523,24 +625,36 @@ class TCP6(_protocols.Protocol):
             # create pseudo header object
             #in _layer4_ipv6 also need to add ipv6 notation
             #
-            print "value of total length"
-            print total_length
-            pheader = _layer4_ipv6.PseudoHeader(self.protocol_id, total_length)
+            pheader = _layer4_ipv6.PseudoHeader6(self.protocol_id, total_length)
+            #print "pseudeo header"
+            #print pheader
             # generate raw value of it
             pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
+            #print pheader_raw
+            #print "cksum before"
+            #print cksum
             # added pseudo header bits to cksum value
+            #print pheader_raw << offset
             cksum |= pheader_raw << offset
+            #print cksum
 
             # finally, calcute and apply checksum
             raw_cksum = _net.in_cksum(cksum)
-            raw_value |= raw_cksum << cksum_rev_offset
+            #print "++++++++++++++++++++++++++++++++++++++++++"
+            #print raw_cksum
+            cksum_cal = ((raw_cksum << 8) | (raw_cksum >> 8)) & 0xFFFF
+            #print cksum_cal
+            
+            raw_value |= cksum_cal << cksum_rev_offset
+            
+            #print ""
 
         return raw_value, bit
 
     def load_raw(self, buffer):
         """
         """
-        print "iiiiiiiiiiiiiiiiiiiiiiiiii"
+        
         header_size = 20
         header_format = '!HHIIBBHHH'
         fields = struct.unpack(header_format, buffer[:header_size])
