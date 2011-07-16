@@ -338,7 +338,8 @@ class UDP6(_protocols.Protocol):
 
             # finally, calcute and apply checksum
             raw_cksum = _net.in_cksum(cksum)
-            raw_value |= raw_cksum << cksum_rev_offset
+            cksum_cal = ((raw_cksum << 8) | (raw_cksum >> 8)) & 0xFFFF
+            raw_value |= cksum_cal << cksum_rev_offset
 
         return raw_value, bit
 

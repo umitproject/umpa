@@ -40,10 +40,7 @@ class _HVersion(_fields.EnumField):
     
     See RFC 791 for more.
     """
-    #
-    #it always return consts.IPVERSION_4 so have to change or define new class for ipv6
-    #
-    #
+
     bits = 4
     auto = True
     enumerable = {

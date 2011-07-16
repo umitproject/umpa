@@ -586,8 +586,7 @@ class TCP6(_protocols.Protocol):
         # rev_offset it the offset from the right side
         cksum_rev_offset = bit - self.get_offset('_checksum') - \
                                             self.get_field('_checksum').bits
-        #print cksum_rev_offset
-        #print self.get_field('_checksum').bits
+
         
         
         # checking if user not defined his own value of checksum
@@ -599,25 +598,18 @@ class TCP6(_protocols.Protocol):
             else:
                 cksum = 0
                 
-            #print cksum
-            #print protocol_bits
-            #print raw_value
-            #print bit
             offset = protocol_bits
 
             # TCP Header
             cksum |= raw_value << offset
-            
-            #print cksum
+
             offset += bit
-            #print offset
 
             # Pseudo Header
             #
             # TCP header length...converted to bits unit
             total_length = self.get_field('_hdr_len').fillout()*32
             # add payload
-            #print total_length
             total_length += protocol_bits
             # conversion to bytes unit
             total_length /= 8
@@ -626,28 +618,21 @@ class TCP6(_protocols.Protocol):
             #in _layer4_ipv6 also need to add ipv6 notation
             #
             pheader = _layer4_ipv6.PseudoHeader6(self.protocol_id, total_length)
-            #print "pseudeo header"
-            #print pheader
             # generate raw value of it
             pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
-            #print pheader_raw
-            #print "cksum before"
-            #print cksum
+
             # added pseudo header bits to cksum value
-            #print pheader_raw << offset
+
             cksum |= pheader_raw << offset
-            #print cksum
 
             # finally, calcute and apply checksum
             raw_cksum = _net.in_cksum(cksum)
-            #print "++++++++++++++++++++++++++++++++++++++++++"
-            #print raw_cksum
+            # To swap last two byte of tcp checksum
             cksum_cal = ((raw_cksum << 8) | (raw_cksum >> 8)) & 0xFFFF
-            #print cksum_cal
+
             
             raw_value |= cksum_cal << cksum_rev_offset
             
-            #print ""
 
         return raw_value, bit
 

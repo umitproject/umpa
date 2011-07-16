@@ -1,4 +1,28 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2008-2009 Adriano Monteiro Marques.
+#
+# Author: Gaurav Ranjan <g.ranjan143@gmail.com>
+#
+# This library is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU Lesser General Public License as published 
+# by the Free Software Foundation; either version 2.1 of the License, or 
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License 
+# along with this library; if not, write to the Free Software Foundation, 
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
+"""
+IPv6 (Internet Protocol version 6 ) protocol implementation.
+"""
+
 import sys
 import struct
 
@@ -11,11 +35,9 @@ import umit.umpa.utils.bits as _bits
 
 class _HVersion(_fields.EnumField):
     """
-    The Version field indicates the format of the internet header Ipv6.
+    The Version field indicates the format of the internet header for Ipv6.
     
     """
-    #
-    #
     bits = 4
     auto = True
 
@@ -27,6 +49,8 @@ class _HVersion(_fields.EnumField):
         
 class _TClassDSCP(_fields.SpecialIntField):
     """
+    This is a part of 8 bit Traffic class (divide into thrree part)
+    DSCP , ECT , ECN-CE
     """
     bits = 6
     auto = True
@@ -38,7 +62,8 @@ class _TClassDSCP(_fields.SpecialIntField):
         return 0
 class _FLabel(_fields.IntField):
     """
-   .
+    Used for specifying special router handling from source to 
+    destination(s) for a sequence of packets.
     """
     
     bits = 20
@@ -53,6 +78,7 @@ class _FLabel(_fields.IntField):
                 
 class  _PLoad(_fields.SpecialIntField):
 	"""
+	This field contation value of payload in Ipv6 header 
 	"""
 	bits = 16
 	auto = True
@@ -114,7 +140,7 @@ class _NHeader(_fields.SpecialIntField, _fields.EnumField):
 
 class  _HLimit(_fields.IntField):
 	"""
-	Hop limit tell about maximum hop a packet can travel before descrcaered default 64
+	Hop limit tell about maximum hop a packet can travel before descrcaered default 255
 	"""
 	bits = 8
 	auto = True
@@ -150,9 +176,6 @@ class IPV6(_protocols.Protocol):
 		tos_predefined = dict.fromkeys(tos, 0)
 
 		
-	   
-		#Flabel and Pload in ipv6 is not done
-		#create field list for ipv6 also
 		fields_list = [ _HVersion("Version",6),
 					 _TClassDSCP("dscp", 0),
 					 _fields.Flags("TOS", tos, **tos_predefined),
