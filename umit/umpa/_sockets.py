@@ -188,7 +188,7 @@ class SocketL3(_Socket):
     them to be too limiting, consider using Layer 2 sockets (SocketL2 class) instead.
     """
 
-    def __init__(self,Self_sock,L3model):
+    def __init__(self,self_sock,L3model):
         """
         Create a new SocketL3 instance.
 
@@ -197,11 +197,11 @@ class SocketL3(_Socket):
         self.model = L3model
 
         if self.model == 'AF_INET6':
-            self._sock = Self_sock
+            self._sock = self_sock
             #print "In if case of socket l3 for ipv6"
             self._sock.setsockopt(socket.IPPROTO_IPV6, socket.IP_HDRINCL, 1)
         elif self.model == 'AF_INET':
-            self._sock = Self_sock
+            self._sock = self_sock
             self._sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
         else:
             raise NotImplementedError('L3 sockets unsupported on your platform')

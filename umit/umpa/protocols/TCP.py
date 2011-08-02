@@ -32,6 +32,8 @@ from umit.umpa.protocols import _layer4
 from umit.umpa.protocols import _layer4_ipv6
 import umit.umpa.utils.net as _net
 import umit.umpa.utils.bits as _bits
+from umit.umpa.protocols.IPV6 import IPV6
+from umit.umpa.protocols.IP import IP
 
 __all__ = [ "TCP", ]
 
@@ -597,6 +599,8 @@ class TCP(_protocols.Protocol):
             # TCP header length...converted to bits unit
             total_length = self.get_field('_hdr_len').fillout()*32
             # add payload
+            print "prot bit value"
+            print offset
             total_length += protocol_bits
             # conversion to bytes unit
             total_length /= 8
@@ -604,15 +608,32 @@ class TCP(_protocols.Protocol):
             # create pseudo header object
             #in _layer4 also need to add ipv6 notation
             #
-            pheader = _layer4.PseudoHeader(self.protocol_id, total_length)
+            it = iter(protocol_container)
+            for proto in it:
+                if isinstance(proto, IPV6):
+                    print "i am here "
+                    pheader = _layer4_ipv6.PseudoHeader6(self.protocol_id, total_length)
+                    pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
+                    cksum |= pheader_raw << offset
+                    raw_cksum = _net.in_cksum(cksum)
+                    cksum_cal = ((raw_cksum << 8) | (raw_cksum >> 8)) & 0xFFFF
+                    raw_value |= cksum_cal << cksum_rev_offset
+                elif isinstance(proto, IP):
+                    pheader = _layer4.PseudoHeader(self.protocol_id, total_length)
+                    pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
+                    cksum |= pheader_raw << offset
+                    raw_cksum = _net.in_cksum(cksum)
+                    raw_value |= raw_cksum << cksum_rev_offset
+                    
+            #pheader = _layer4.PseudoHeader(self.protocol_id, total_length)
             # generate raw value of it
-            pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
+            #pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
             # added pseudo header bits to cksum value
-            cksum |= pheader_raw << offset
+            #cksum |= pheader_raw << offset
 
             # finally, calcute and apply checksum
-            raw_cksum = _net.in_cksum(cksum)
-            raw_value |= raw_cksum << cksum_rev_offset
+            #raw_cksum = _net.in_cksum(cksum)
+            #raw_value |= raw_cksum << cksum_rev_offset
 
         return raw_value, bit
 
