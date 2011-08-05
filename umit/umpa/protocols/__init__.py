@@ -4,6 +4,7 @@
 # Copyright (C) 2008-2009 Adriano Monteiro Marques.
 #
 # Author: Bartosz SKOWRON <getxsick at gmail dot com>
+#         Gaurav Ranjan <g.ranjan143@gmail.com>
 #
 # This library is free software; you can redistribute it and/or modify 
 # it under the terms of the GNU Lesser General Public License as published 
@@ -47,6 +48,7 @@ from IPV6 import IPV6
 from TCP import TCP
 from TCP6 import TCP6
 from UDP import UDP
+from ICMP import ICMP
 from UDP6 import UDP6
 from Payload import Payload
 
@@ -136,7 +138,7 @@ def _dict_protos(protos_list):
         protos_dict[proto.name] = proto
     return protos_dict
 
-_gprotos_list = [ Ethernet, SLL, ARP, IP, IPV6, TCP, TCP6, UDP, UDP6, Payload ]
+_gprotos_list = [ Ethernet, SLL, ARP, IP, IPV6, TCP, TCP6, UDP, UDP6, Payload, ICMP , ]
 _lprotos_list = _load_local_protocols()
 
 _gproto = _dict_protos(_gprotos_list)

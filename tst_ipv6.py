@@ -3,7 +3,6 @@
 from umit.umpa.protocols import IPV6
 from umit.umpa.protocols import TCP
 from umit.umpa.protocols import UDP
-from umit.umpa.protocols import ICMPV6
 from umit.umpa.protocols import Payload
 from umit.umpa import Packet
 from umit.umpa import Socket
@@ -35,15 +34,11 @@ ip = IPV6(src='0000:0000:0000:0000:0000:0000:0000:0001', dst='0000:0000:0000:000
 #print "_____________________"
 sock = super_priviliges(INET6)
 #sock.send(first_packet)
-#udp = UDP(srcport=263, dstport=153)
-#second_packet = Packet(ip, udp)
-#print second_packet
-#sock.send(second_packet)
-icmp = ICMPV6(type = 133 , code = 0)
-icmp.data = '0000:0000:0000:0000:0000:0000:0000:0001'
-second_packet = Packet(ip, icmp)
+udp = UDP(srcport=263, dstport=153)
+second_packet = Packet(ip, udp)
 print second_packet
 sock.send(second_packet)
+
 
 
 

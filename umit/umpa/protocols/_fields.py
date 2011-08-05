@@ -32,6 +32,7 @@ Use these fields' classes to create new implementation of any protocols.
 import types
 
 from umit.umpa.utils.exceptions import UMPAException, UMPAAttributeException
+from umit.umpa.utils.bits import BYTE, str_to_bits
 
 class Field(object):
     """
@@ -48,7 +49,8 @@ class Field(object):
 
     bits = 0
     auto = False
-    def __init__(self, name, value=None, bits=None, auto=None):
+    active = True
+    def __init__(self, name, value=None, bits=None, auto=None, active=True):
         """
         Create a new Field().
 
@@ -66,6 +68,7 @@ class Field(object):
         """
 
         self.name = name
+        self.active = active
         if auto is not None:
             self.auto = auto
         else:
@@ -468,6 +471,57 @@ class AddrField(Field):
                 return False
 
         return True
+
+
+class DataField(Field):
+    """
+    Raw binary data stored as a string.
+    """
+    
+    bits = 0
+    auto = False
+
+    def set(self, value):
+        """
+        Set the new value of the field.
+
+        @param value: assign new value with str() casting.
+        """
+
+        super(DataField, self).set(str(value))
+        # calculate how many bits we need
+        self.bits = len(self._value) * BYTE
+
+    def clear(self):
+        """
+        Clear the current value of the field.
+        """
+
+        super(DataField, self).clear()
+        self.bits = 0
+
+    def _is_valid(self, val):
+        """
+        Validate if the value is not bigger than expected.
+
+        @param val: the new value.
+
+        @rtype: C{bool}
+        @return: C{True}.
+        """
+        return True   
+
+    def _raw_value(self):
+        """
+        Convert the value to the raw mode.
+
+        @rtype: C{number}
+        @return: raw value of the field.
+        """
+
+        return str_to_bits(self._value)
+
+
 
 class IPAddrField(AddrField):
     """

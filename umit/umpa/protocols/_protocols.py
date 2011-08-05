@@ -113,7 +113,9 @@ class Protocol(object):
         print "+-< %-27s >" % self.name
         print "| \\"
         for field in self.get_fields():
-            print field
+            # print active fields only
+            if field.active:
+                print field
         print "\\-< %-27s >\tcontains %d fields" % (self.name,
                                                             len(self._fields))
         return super(Protocol, self).__str__()
@@ -193,6 +195,28 @@ class Protocol(object):
 
         for key in kwargs:
             setattr(self, key, kwargs[key])
+
+    def disable_fields(self, *args):
+        """
+        Disable the selected fields by setting the `active' flag to False.
+
+        @type args: list of C{str}
+        @param args: list of field names to disable
+        """
+
+        for name in args:
+            self.get_field(name).active = False
+
+    def enable_fields(self, *args):
+        """
+        Enable the selected fields by setting the `active' flag to True.
+
+        @type args: list of C{str}
+        @param args: list of field names to enable
+        """
+
+        for name in args:
+            self.get_field(name).active = True
 
     def get_flags(self, name, *args):
         """
@@ -274,7 +298,9 @@ class Protocol(object):
         for i, val in enumerate(field_list):
             if field == val:
                 break
-            offset += self.get_field(self._ordered_fields[i]).bits
+            # only active fields are included in the raw packet
+            if self.get_field(self._ordered_fields[i]).active:
+                offset += self.get_field(self._ordered_fields[i]).bits
         return offset
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
@@ -333,11 +359,13 @@ class Protocol(object):
         raw_value, bit = self._pre_raw(raw_value, bit, protocol_container,
                                                                 protocol_bits)
 
-        # so we make a big number with bits of every fields of the protocol
+        # so we make a big number with bits of every active field of the protocol
         for field in reversed(self._ordered_fields):
-            field_bits = self.get_field(field).fillout()
-            raw_value |= field_bits << bit
-            bit += self.get_field(field).bits
+            # only active fields are included in the raw packet
+            if self.get_field(field).active:
+                field_bits = self.get_field(field).fillout()
+                raw_value |= field_bits << bit
+                bit += self.get_field(field).bits
 
         # because of some protocols implementation, there are some tasks after
         # we call fillout() for fields

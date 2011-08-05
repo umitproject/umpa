@@ -86,3 +86,21 @@ def get_bits(number, bits, offset=0, rev_offset=False):
             length += 1
         offset = length - offset - bits
     return (number & (2**bits-1 << offset)) >> offset
+    
+def str_to_bits(chars):
+    """
+    Convert a raw string value to bits format.
+
+    @type chars: C{str}
+    @param chars: raw string value
+
+    @rtype: C{int}
+    @return: value represented as bits
+    """
+
+    raw = 0
+    for char in chars:
+        raw <<= BYTE
+        raw += ord(char)
+
+    return raw

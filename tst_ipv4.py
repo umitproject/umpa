@@ -38,6 +38,7 @@ sock.send(first_packet)
 #second_packet = Packet(ip, udp)
 #print second_packet
 #sock.send(second_packet)
+#########################################################################
 #icmp = ICMP(type = 8 , code = 0)
 #second_packet = Packet(ip, icmp)
 #print second_packet
