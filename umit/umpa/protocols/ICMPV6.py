@@ -108,6 +108,47 @@ class _HMtu(_fields.IntField):
 
     bits = 32
 
+class _HCurLimit(_fields.IntField):
+    """
+    """
+
+    bits = 8
+
+class _HMValue(_fields.IntField):
+    """
+    """
+
+    bits = 1
+    
+class _HOValue(_fields.IntField):
+    """
+    """
+
+    bits = 1
+class _HReserved(_fields.IntField):
+    """
+    """
+
+    bits = 6
+class _HLifeTime(_fields.IntField):
+    """
+    """
+
+    bits = 16
+
+class _HReacbleTime(_fields.IntField):
+    """
+    """
+
+    bits = 32
+
+class _HRetransTime(_fields.IntField):
+    """
+    """
+
+    bits = 32
+
+
 class _HPointer(_fields.IntField):
     """
     """
@@ -137,7 +178,9 @@ class ICMPV6(_protocols.Protocol):
                        'mtu',
                        'pointer',
                        'unused',
+                       'cur_limit','m','o','reserverd','life_time',
                        # data part, one per line
+                       'reachable_time','retrans_tme',
                        'data',
                        )
     def __init__(self, **kwargs):
@@ -154,8 +197,14 @@ class ICMPV6(_protocols.Protocol):
                         _HMtu("Max Trans Unit", 64, active=False),
                         _HPointer("Pointer",0, active=False),
                         _HUnused("Unused", 0),
-                        
+                        _HCurLimit("Cur Hop Limit",24,active=False),
+                        _HMValue("M",0,active=False),
+                        _HOValue("O",0,active=False),
+                        _HReserved("Reserved",0,active=False),
+                        _HLifeTime("Router Lifetime",0,active=False),                        
                         ### Data part:
+                        _HReacbleTime("Reachable Time  " ,0, active=False),
+                        _HRetransTime("Retrans Timer ", 0, active=False),                        
                         _fields.DataField("Data", ''),
                         ]
 
@@ -171,7 +220,7 @@ class ICMPV6(_protocols.Protocol):
         super(ICMPV6, self).__setattr__(attr, value)   
         
         if attr == 'type':
-            self.disable_fields('unused', 'ident', 'seq','pointer','mtu','data')
+            self.disable_fields('unused', 'ident', 'seq','pointer','mtu','cur_limit','m','o','reserverd','life_time','data')
             # activate dynamic header fields depending on the type  
             if self.type in ( _consts.ICMPV6_TYPE_ECHO_REQUEST, _consts.ICMPV6_TYPE_ECHO_REPLY, ):
                 self.enable_fields('ident', 'seq')
@@ -179,6 +228,8 @@ class ICMPV6(_protocols.Protocol):
                 self.enable_fields('pointer')
             elif self.type in (_consts.ICMPV6_TYPE_PACKET_BIG, ):
                 self.enable_fields('mtu') 
+            elif self.type in (_consts.ICMPV6_TYPE_ROUTER_ADVERTISMENT, ):
+                self.enable_fields('cur_limit','m','o','reserverd','life_time','reachable_time','retrans_tme') 
             else:
                 self.enable_fields('unused') 
             # activate data fields depending on the type
