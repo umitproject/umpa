@@ -155,6 +155,31 @@ class _HPointer(_fields.IntField):
 
     bits = 32
 
+class _HRValue(_fields.IntField):
+    """
+    """
+
+    bits = 1
+    
+class _HSValue(_fields.IntField):
+    """
+    """
+
+    bits = 1
+
+class _HONAValue(_fields.IntField):
+    """
+    """
+
+    bits = 1
+        
+class _HReservedNA(_fields.IntField):
+    """
+    """
+    print "i am here=="
+
+    bits = 29
+
     
 class _HUnused(_fields.IntField):
     """
@@ -179,6 +204,7 @@ class ICMPV6(_protocols.Protocol):
                        'pointer',
                        'unused',
                        'cur_limit','m','o','reserverd','life_time',
+                       'r','s','o_na','reserved_na',
                        # data part, one per line
                        'reachable_time','retrans_tme',
                        'ip_addr',
@@ -202,10 +228,14 @@ class ICMPV6(_protocols.Protocol):
                         _HMValue("M",0,active=False),
                         _HOValue("O",0,active=False),
                         _HReserved("Reserved",0,active=False),
-                        _HLifeTime("Router Lifetime",0,active=False),                        
+                        _HLifeTime("Router Lifetime",0,active=False),
+                        _HRValue("R",0,active=False),
+                        _HSValue("S",1,active=False), 
+                        _HONAValue("R",0,active=False), 
+                        _HReservedNA("Reserved",0,active=False),                        
                         ### Data part:
                         _HReacbleTime("Reachable Time  " ,0, active=False),
-                        _HRetransTime("Retrans Timer ", 0, active=False),   
+                        _HRetransTime("Retrans Timer ", 0, active=False),
                         _fields.IPv6AddrField("IP Address",'0:0:0:0:0:0:0:1', active=False),                     
                         _fields.DataField("Data", ''),
                         ]
@@ -222,7 +252,7 @@ class ICMPV6(_protocols.Protocol):
         super(ICMPV6, self).__setattr__(attr, value)   
         
         if attr == 'type':
-            self.disable_fields('unused', 'ident', 'seq','pointer','mtu','cur_limit','m','o','reserverd','life_time','data','ip_addr')
+            self.disable_fields('unused', 'ident', 'seq','pointer','mtu','cur_limit','m','o','reserverd','life_time','r','s','o_na','reserved_na','data','ip_addr')
             # activate dynamic header fields depending on the type  
             if self.type in ( _consts.ICMPV6_TYPE_ECHO_REQUEST, _consts.ICMPV6_TYPE_ECHO_REPLY, ):
                 self.enable_fields('ident', 'seq')
@@ -234,6 +264,8 @@ class ICMPV6(_protocols.Protocol):
                 self.enable_fields('cur_limit','m','o','reserverd','life_time','reachable_time','retrans_tme') 
             elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_SOLICITATION, ):
                 self.enable_fields('unused','ip_addr') 
+            elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_ADVERTISMENT, ):
+                self.enable_fields('r','s','o_na','reserved_na','ip_addr') 
             else:
                 self.enable_fields('unused') 
             # activate data fields depending on the type
@@ -244,6 +276,7 @@ class ICMPV6(_protocols.Protocol):
         """
 
         # Length
+        
         self.get_field('_checksum')._tmp_value = protocol_bits
 
         return raw_value, bit            
@@ -270,7 +303,8 @@ class ICMPV6(_protocols.Protocol):
             # TCP Header
             cksum |= raw_value << offset
             offset += bit
-            
+            print "print Bit"
+            print bit
             
             # calculate checksum and place it at the correct offset in raw_value
             total_length = offset
