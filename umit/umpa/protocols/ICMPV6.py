@@ -181,6 +181,7 @@ class ICMPV6(_protocols.Protocol):
                        'cur_limit','m','o','reserverd','life_time',
                        # data part, one per line
                        'reachable_time','retrans_tme',
+                       'ip_addr',
                        'data',
                        )
     def __init__(self, **kwargs):
@@ -204,7 +205,8 @@ class ICMPV6(_protocols.Protocol):
                         _HLifeTime("Router Lifetime",0,active=False),                        
                         ### Data part:
                         _HReacbleTime("Reachable Time  " ,0, active=False),
-                        _HRetransTime("Retrans Timer ", 0, active=False),                        
+                        _HRetransTime("Retrans Timer ", 0, active=False),   
+                        _fields.IPv6AddrField("IP Address",'0:0:0:0:0:0:0:1', active=False),                     
                         _fields.DataField("Data", ''),
                         ]
 
@@ -220,7 +222,7 @@ class ICMPV6(_protocols.Protocol):
         super(ICMPV6, self).__setattr__(attr, value)   
         
         if attr == 'type':
-            self.disable_fields('unused', 'ident', 'seq','pointer','mtu','cur_limit','m','o','reserverd','life_time','data')
+            self.disable_fields('unused', 'ident', 'seq','pointer','mtu','cur_limit','m','o','reserverd','life_time','data','ip_addr')
             # activate dynamic header fields depending on the type  
             if self.type in ( _consts.ICMPV6_TYPE_ECHO_REQUEST, _consts.ICMPV6_TYPE_ECHO_REPLY, ):
                 self.enable_fields('ident', 'seq')
@@ -230,6 +232,8 @@ class ICMPV6(_protocols.Protocol):
                 self.enable_fields('mtu') 
             elif self.type in (_consts.ICMPV6_TYPE_ROUTER_ADVERTISMENT, ):
                 self.enable_fields('cur_limit','m','o','reserverd','life_time','reachable_time','retrans_tme') 
+            elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_SOLICITATION, ):
+                self.enable_fields('unused','ip_addr') 
             else:
                 self.enable_fields('unused') 
             # activate data fields depending on the type

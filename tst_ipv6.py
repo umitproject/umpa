@@ -39,7 +39,7 @@ sock = super_priviliges(INET6)
 #second_packet = Packet(ip, udp)
 #print second_packet
 #sock.send(second_packet)
-icmp = ICMPV6(type = 134 , code = 0)
+icmp = ICMPV6(type = 135 , code = 0)
 #icmp.data = '00:00:00:00:00:00'
 second_packet = Packet(ip, icmp)
 print second_packet
