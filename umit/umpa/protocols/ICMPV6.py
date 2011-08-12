@@ -206,7 +206,7 @@ class ICMPV6(_protocols.Protocol):
                        'cur_limit','m','o','reserverd','life_time',
                        'r','s','o_na','reserved_na',
                        # data part, one per line
-                       'reachable_time','retrans_tme',
+                       'reachable_time','retrans_time',
                        'ip_addr',
                        'data',
                        )
@@ -261,7 +261,7 @@ class ICMPV6(_protocols.Protocol):
             elif self.type in (_consts.ICMPV6_TYPE_PACKET_BIG, ):
                 self.enable_fields('mtu') 
             elif self.type in (_consts.ICMPV6_TYPE_ROUTER_ADVERTISMENT, ):
-                self.enable_fields('cur_limit','m','o','reserverd','life_time','reachable_time','retrans_tme') 
+                self.enable_fields('cur_limit','m','o','reserverd','life_time','reachable_time','retrans_time') 
             elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_SOLICITATION, ):
                 self.enable_fields('unused','ip_addr') 
             elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_ADVERTISMENT, ):
@@ -338,6 +338,44 @@ class ICMPV6(_protocols.Protocol):
         if self.type in (_consts.ICMPV6_TYPE_ECHO_REQUEST, _consts.ICMPV6_TYPE_ECHO_REPLY,):
             self.ident = fields[3] >> 16
             self.seq   = fields[3] & 0x0000FFFF 
+        elif self.type in (_consts.ICMPV6_TYPE_PARAMETER, ):
+            self.pointer = fields[3]
+        elif self.type in (_consts.ICMPV6_TYPE_PACKET_BIG, ):
+            self.mtu = fields[3]
+        elif self.type in (_consts.ICMPV6_TYPE_ROUTER_ADVERTISMENT, ):
+            
+            data_size = 12
+            data_format = "!3I"
+            fields = struct.unpack(data_format, buffer[:data_size])
+            buffer = buffer[data_size:]
+            
+            self.cur_limit = fields[0] >> 24
+            self.m = fields[0] >> 23
+            self.o = fields[0] >> 22
+            self.reserverd = fields[0] >> 16
+            self.life_time = fields[0] 
+            self.reachable_time = fields[1]
+            self.retrans_time = fields[2] 
+            
+        elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_SOLICITATION, ):
+            data_size = 20
+            data_format = "!5I"
+            fields = struct.unpack(data_format, buffer[:data_size])
+            buffer = buffer[data_size:]
+            
+            self.unused = fields[0]
+            self.ip_addr = fields[1:4]
+        elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_ADVERTISMENT, ):
+            data_size = 20
+            data_format = "!5I"
+            fields = struct.unpack(data_format, buffer[:data_size])
+            buffer = buffer[data_size:]
+            
+            self.r = fields[0] >> 31
+            self.s = fields[0] >> 30
+            self.o_na = = fields[0] >> 29
+            self.reserved_na = fields[0]
+            self.ip_addr = fields[1:4]
         else:
             self.unused = fields[3]
 
