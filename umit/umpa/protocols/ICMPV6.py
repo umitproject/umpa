@@ -1,4 +1,24 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2010 Adriano Monteiro Marques.
+#
+# Author: Gaurav Ranjan < g.ranjan143@gmail.com>
+#
+# This library is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU Lesser General Public License as published 
+# by the Free Software Foundation; either version 2.1 of the License, or 
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License 
+# along with this library; if not, write to the Free Software Foundation, 
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
 """
 ICMPV6 (Internet Control Message Protocol for IPV6) implementation.
 """
@@ -176,7 +196,6 @@ class _HONAValue(_fields.IntField):
 class _HReservedNA(_fields.IntField):
     """
     """
-    print "i am here=="
 
     bits = 29
 
@@ -231,8 +250,8 @@ class ICMPV6(_protocols.Protocol):
                         _HLifeTime("Router Lifetime",0,active=False),
                         _HRValue("R",0,active=False),
                         _HSValue("S",1,active=False), 
-                        _HONAValue("R",0,active=False), 
-                        _HReservedNA("Reserved",0,active=False),                        
+                        _HONAValue("O_NA",0,active=False), 
+                        _HReservedNA("Reserved_NA",0,active=False),                        
                         ### Data part:
                         _HReacbleTime("Reachable Time  " ,0, active=False),
                         _HRetransTime("Retrans Timer ", 0, active=False),
@@ -252,7 +271,10 @@ class ICMPV6(_protocols.Protocol):
         super(ICMPV6, self).__setattr__(attr, value)   
         
         if attr == 'type':
-            self.disable_fields('unused', 'ident', 'seq','pointer','mtu','cur_limit','m','o','reserverd','life_time','r','s','o_na','reserved_na','data','ip_addr')
+            self.disable_fields('unused', 'ident', 'seq','pointer','mtu',
+                                'cur_limit','m','o','reserverd','life_time','r','s','o_na',
+                                'reachable_time','retrans_time','reserved_na','data','ip_addr')
+            
             # activate dynamic header fields depending on the type  
             if self.type in ( _consts.ICMPV6_TYPE_ECHO_REQUEST, _consts.ICMPV6_TYPE_ECHO_REPLY, ):
                 self.enable_fields('ident', 'seq')
@@ -329,6 +351,8 @@ class ICMPV6(_protocols.Protocol):
         header_format = '!BBHI'
         fields = struct.unpack(header_format, buffer[:header_size])
         buffer = buffer[header_size:]
+        
+        
 
         self.type = fields[0]
         self.code = fields[1]
@@ -343,44 +367,54 @@ class ICMPV6(_protocols.Protocol):
         elif self.type in (_consts.ICMPV6_TYPE_PACKET_BIG, ):
             self.mtu = fields[3]
         elif self.type in (_consts.ICMPV6_TYPE_ROUTER_ADVERTISMENT, ):
-            
-            data_size = 12
-            data_format = "!3I"
-            fields = struct.unpack(data_format, buffer[:data_size])
-            buffer = buffer[data_size:]
-            
-            self.cur_limit = fields[0] >> 24
-            self.m = fields[0] >> 23
-            self.o = fields[0] >> 22
-            self.reserverd = fields[0] >> 16
-            self.life_time = fields[0] 
-            self.reachable_time = fields[1]
-            self.retrans_time = fields[2] 
+            self.cur_limit = fields[3] >> 24
+            self.m = (fields[3] & 0x00800000 ) >> 23
+            self.o = (fields[3] & 0x400000) >> 22
+            self.reserverd = (fields[3] & 0x3F0000) >> 16
+            self.life_time = fields[3] & 0x0000FFFF
+
             
         elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_SOLICITATION, ):
-            data_size = 20
-            data_format = "!5I"
-            fields = struct.unpack(data_format, buffer[:data_size])
-            buffer = buffer[data_size:]
+
+            self.unused = fields[3]
             
-            self.unused = fields[0]
-            self.ip_addr = fields[1:4]
         elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_ADVERTISMENT, ):
-            data_size = 20
-            data_format = "!5I"
-            fields = struct.unpack(data_format, buffer[:data_size])
-            buffer = buffer[data_size:]
             
-            self.r = fields[0] >> 31
-            self.s = fields[0] >> 30
-            self.o_na = = fields[0] >> 29
-            self.reserved_na = fields[0]
-            self.ip_addr = fields[1:4]
+            self.r =    fields[3]  >> 31
+            self.s =    (fields[3] & 0x40000000 )  >> 30
+            self.o_na = (fields[3] & 0x20000000 ) >> 29
+            self.reserved_na = fields[3] & 0x1FFFFFFF
         else:
             self.unused = fields[3]
 
+        
         # fill in data fields depending on the type
-        self.data = buffer
+       
+        if self.type in (_consts.ICMPV6_TYPE_ROUTER_ADVERTISMENT,):
+            data_size = 8
+            data_format = "!2I"
+            fields = struct.unpack(data_format, buffer[:data_size])
+            buffer = buffer[data_size:]
+
+            self.reachable_time = fields[0]
+            self.retrans_time = fields[1]
+        elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_SOLICITATION, ):
+            data_size = 16
+            data_format = "!8H"
+            fields = struct.unpack(data_format, buffer[:data_size])
+            buffer = buffer[data_size:]
+
+            self.ip_addr = ':'.join(["%.4x"] * 8) % (fields[0:8])
+        elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_ADVERTISMENT, ):
+            data_size = 16
+            data_format = "!8H"
+            fields = struct.unpack(data_format, buffer[:data_size])
+            buffer = buffer[data_size:]
+             
+            self.ip_addr = ':'.join(["%.4x"] * 8) % (fields[0:8])
+        else:
+            # unknown/generic data
+            self.data = buffer
 
         return buffer
 

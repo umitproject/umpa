@@ -235,13 +235,14 @@ class IPV6(_protocols.Protocol):
 		fields = struct.unpack(header_format, buffer[:header_size])
 
 		self._version = fields[0] >> 28
-		self._taffic_class = (fields[0] & 0x0FF00000) >> 8
+		self.dscp = (fields[0] & 0x0FC00000) >> 22
+		self.ds = (fields[0] & 0x00300000) >> 20
 		self._flow_label = fields[0] & 0x000FFFFF
 		self._payload = fields[1]
 		self._nxt_hdr = fields[2]
 		self._hop_limit = fields[3]
 		self.src = ':'.join(["%.4x"] * 8) % (fields[4:12])
-		self.dst = ':'.join(["%.4x"] * 8) % (fields[4:12])
+		self.dst = ':'.join(["%.4x"] * 8) % (fields[12:20])
 
 		# check if options are not missed
 		
