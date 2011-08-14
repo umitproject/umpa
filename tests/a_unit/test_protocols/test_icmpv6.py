@@ -37,7 +37,7 @@ class TestICMPV6(object):
         # default - no type
         for name in ( 'ident', 'seq','pointer','mtu',
                       'cur_limit','m','o','reserverd','life_time','r','s','o_na',
-                      'reachable_time','retrans_time','reserved_na','ip_addr' ):
+                      'reachable_time','retrans_time','reserved_na','ip_addr' ,'target_addr','dest_addr' ):
             assert i.get_field(name).active == False
         for name in ( 'unused', 'data', ):
             assert i.get_field(name).active == True
@@ -45,7 +45,7 @@ class TestICMPV6(object):
         for type in ( 128,129 ):
             i.type = type
             for name in ( 'pointer','mtu','cur_limit','m','o','reserverd','life_time',
-                          'r','s','o_na','reachable_time','retrans_time','reserved_na','ip_addr'):
+                          'r','s','o_na','reachable_time','retrans_time','reserved_na','ip_addr', 'target_addr','dest_addr'):
                 assert i.get_field(name).active == False
             for name in ( 'ident', 'seq', ):
                 assert i.get_field(name).active == True
@@ -53,7 +53,7 @@ class TestICMPV6(object):
         for type in ( 4 ,):
             i.type = type
             for name in ( 'ident', 'seq','mtu','cur_limit','m','o','reserverd','life_time',
-                          'r','s','o_na','reachable_time','retrans_time','reserved_na','ip_addr'):
+                          'r','s','o_na','reachable_time','retrans_time','reserved_na','ip_addr', 'target_addr','dest_addr'):
                 assert i.get_field(name).active == False
             for name in ( 'pointer', ):
                 assert i.get_field(name).active == True
@@ -62,7 +62,7 @@ class TestICMPV6(object):
         for type in ( 2,):
             i.type = type
             for name in ( 'ident', 'seq','pointer','cur_limit','m','o','reserverd','life_time',
-                          'r','s','o_na','reachable_time','retrans_time','reserved_na','ip_addr'):
+                          'r','s','o_na','reachable_time','retrans_time','reserved_na','ip_addr', 'target_addr','dest_addr'):
                 assert i.get_field(name).active == False
             for name in ( 'mtu', ):
                 assert i.get_field(name).active == True
@@ -70,7 +70,7 @@ class TestICMPV6(object):
         for type in ( 134 ,):
             i.type = type
             for name in ( 'ident', 'seq','pointer',
-                          'r','s','o_na','reserved_na','ip_addr'):
+                          'r','s','o_na','reserved_na','ip_addr' ,'target_addr','dest_addr'):
                 assert i.get_field(name).active == False
             for name in ( 'cur_limit','m','o','reserverd','life_time','reachable_time','retrans_time', ):
                 assert i.get_field(name).active == True    
@@ -79,7 +79,7 @@ class TestICMPV6(object):
         for type in ( 135,):
             i.type = type
             for name in ( 'ident', 'seq','pointer','cur_limit','m','o','reserverd','life_time',
-                          'r','s','o_na','reachable_time','retrans_time','reserved_na','mtu'):
+                          'r','s','o_na','reachable_time','retrans_time','reserved_na','mtu' ,'target_addr','dest_addr'):
                 assert i.get_field(name).active == False
             for name in ( 'ip_addr', ):
                 assert i.get_field(name).active == True      
@@ -88,11 +88,18 @@ class TestICMPV6(object):
         for type in ( 136,):
             i.type = type
             for name in ( 'ident', 'seq','pointer','mtu','cur_limit','m','o','reserverd','life_time',
-                          'reachable_time','retrans_time'):
+                          'reachable_time','retrans_time' ,'target_addr','dest_addr'):
                 assert i.get_field(name).active == False
             for name in ( 'r','s','o_na','reserved_na','ip_addr', ):
                 assert i.get_field(name).active == True 
 
+        for type in ( 137,):
+            i.type = type
+            for name in ( 'ident', 'seq','pointer','mtu','cur_limit','m','o','reserverd','life_time',
+                          'r','s','o_na','reserved_na','ip_addr','reachable_time','retrans_time'):
+                assert i.get_field(name).active == False
+            for name in (  'target_addr','dest_addr', ):
+                assert i.get_field(name).active == True 
 
     def test_load_raw(self):
         i = ICMPV6()
@@ -153,4 +160,15 @@ class TestICMPV6(object):
         assert i.s == 0
         assert i.o_na == 1 
         assert i.reserved_na == 313808504
-        assert i.ip_addr == '0004:1528:0006:8412:9284:12b4:56b4:5678'                                                            
+        assert i.ip_addr == '0004:1528:0006:8412:9284:12b4:56b4:5678' 
+        
+        
+        i.load_raw("\x89\x00\x92\x84\xB2\xB4\x56\x78\x00\x04\x15\x28\x00\x06\x84\x12\x92\x84\x12\xB4\x56\xB4\x56\x78\x80\x04\x16\x28\x03\x06\x84\x12\x02\x84\x14\xB4\x53\xB4\x56\x78")
+        assert i.type == 137
+        assert i.code == 0
+        assert i._checksum == 0x9284 
+        assert i.unused == 2998163064L
+        assert i.target_addr == '0004:1528:0006:8412:9284:12b4:56b4:5678'
+        assert i.dest_addr == '8004:1628:0306:8412:0284:14b4:53b4:5678'  
+        
+                                                                       

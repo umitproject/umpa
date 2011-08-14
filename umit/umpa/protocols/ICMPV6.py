@@ -227,6 +227,7 @@ class ICMPV6(_protocols.Protocol):
                        # data part, one per line
                        'reachable_time','retrans_time',
                        'ip_addr',
+                       'target_addr','dest_addr',
                        'data',
                        )
     def __init__(self, **kwargs):
@@ -255,7 +256,9 @@ class ICMPV6(_protocols.Protocol):
                         ### Data part:
                         _HReacbleTime("Reachable Time  " ,0, active=False),
                         _HRetransTime("Retrans Timer ", 0, active=False),
-                        _fields.IPv6AddrField("IP Address",'0:0:0:0:0:0:0:1', active=False),                     
+                        _fields.IPv6AddrField("IP Address",'0:0:0:0:0:0:0:1', active=False),
+                        _fields.IPv6AddrField("Target IP Address",'0:0:0:0:0:0:0:1', active=False), 
+                        _fields.IPv6AddrField("Destination IP Address",'0:0:0:0:0:0:0:1', active=False),                      
                         _fields.DataField("Data", ''),
                         ]
 
@@ -273,7 +276,7 @@ class ICMPV6(_protocols.Protocol):
         if attr == 'type':
             self.disable_fields('unused', 'ident', 'seq','pointer','mtu',
                                 'cur_limit','m','o','reserverd','life_time','r','s','o_na',
-                                'reachable_time','retrans_time','reserved_na','data','ip_addr')
+                                'reachable_time','retrans_time','reserved_na','data','ip_addr','target_addr','dest_addr',)
             
             # activate dynamic header fields depending on the type  
             if self.type in ( _consts.ICMPV6_TYPE_ECHO_REQUEST, _consts.ICMPV6_TYPE_ECHO_REPLY, ):
@@ -288,6 +291,8 @@ class ICMPV6(_protocols.Protocol):
                 self.enable_fields('unused','ip_addr') 
             elif self.type in (_consts.ICMPV6_TYPE_NEIGHBOUR_ADVERTISMENT, ):
                 self.enable_fields('r','s','o_na','reserved_na','ip_addr') 
+            elif self.type in (_consts.ICMPV6_TYPE_REDIRECT_MESSAGE, ):
+                self.enable_fields('unused','target_addr','dest_addr')            
             else:
                 self.enable_fields('unused') 
             # activate data fields depending on the type
@@ -412,6 +417,14 @@ class ICMPV6(_protocols.Protocol):
             buffer = buffer[data_size:]
              
             self.ip_addr = ':'.join(["%.4x"] * 8) % (fields[0:8])
+        elif self.type in (_consts.ICMPV6_TYPE_REDIRECT_MESSAGE, ):
+            data_size = 32
+            data_format = "!8H8H"
+            fields = struct.unpack(data_format, buffer[:data_size])
+            buffer = buffer[data_size:]
+             
+            self.target_addr = ':'.join(["%.4x"] * 8) % (fields[0:8]) 
+            self.dest_addr = ':'.join(["%.4x"] * 8) % (fields[8:16])           
         else:
             # unknown/generic data
             self.data = buffer
