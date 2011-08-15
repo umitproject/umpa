@@ -3,6 +3,7 @@
 from umit.umpa.protocols import IPV6
 from umit.umpa.protocols import TCP
 from umit.umpa.protocols import UDP
+from umit.umpa.protocols import ICMP
 from umit.umpa.protocols import ICMPV6
 from umit.umpa.protocols import Payload
 from umit.umpa import Packet
@@ -37,20 +38,20 @@ def raw(obj):
 
 #print first_packet
 #print "_____________________"
-#sock = super_priviliges(INET6)
+sock = super_priviliges(INET6)
 #sock.send(first_packet)
 #udp = UDP(srcport=263, dstport=153)
 #second_packet = Packet(ip, udp)
 #print second_packet
 #sock.send(second_packet)
-#icmp = ICMPV6(type = 128 , code = 0)
+icmp = ICMPV6(type = 137 , code = 0)
 #icmp.data = '00:00:00:00:00:00'
 #icmp.ident = 4660
 #icmp.seq = 22136
-#icmp.data = 'ABCD'
-#second_packet = Packet(ip, icmp)
-#print second_packet
-#sock.send(second_packet)
+icmp.data = 'ABCD'
+second_packet = Packet(ip, icmp)
+print second_packet
+sock.send(second_packet)
 #i = IPV6()
 #i.load_raw("\x88\x00\x92\x84\xB2\xB4\x56\x78\x00\x04\x15\x28\x00\x06\x84\x12\x92\x84\x12\xB4\x56\xB4\x56\x78\x80\x04\x16\x28\x03\x06\x84\x12\x02\x84\x14\xB4\x53\xB4\x56\x78")
 #print i._version
@@ -65,9 +66,6 @@ def raw(obj):
 
 
 #########################################################
-
-
-
 
 
 

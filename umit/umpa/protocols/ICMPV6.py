@@ -56,23 +56,23 @@ class _HType(_fields.EnumField):
         "ECHO_REPLY" : _consts.ICMPV6_TYPE_ECHO_REPLY,
         "ROUTER_SOLICITATION" : _consts.ICMPV6_TYPE_ROUTER_SOLICITATION,
         "ROUTER_ADVERTISMENT" : _consts.ICMPV6_TYPE_ROUTER_ADVERTISMENT,
-        "135" : _consts.ICMPV6_TYPE_NEIGHBOUR_SOLICITATION,
-        "136" : _consts.ICMPV6_TYPE_NEIGHBOUR_ADVERTISMENT,
-        "137" : _consts.ICMPV6_TYPE_REDIRECT_MESSAGE,
-        "138" : _consts.ICMPV6_TYPE_ROUTER_RENUMBERING,
-        "139" : _consts.ICMPV6_TYPE_ICMP_NODE_QUERY,
-        "140" : _consts.ICMPV6_TYPE_ICMP_NODE_RESPONSE,
-        "141" : _consts.ICMPV6_TYPE_INDSM,
-        "142" : _consts.ICMPV6_TYPE_INDAM,
-        "144" : _consts.ICMPV6_TYPE_HAAD_REQUEST,
-        "145" : _consts.ICMPV6_TYPE_HAAD_REPLY,
-        "146" : _consts.ICMPV6_TYPE_MPS,
-        "147" : _consts.ICMPV6_TYPE_MPA,
-        "148" : _consts.ICMPV6_TYPE_CPS,
-        "149" : _consts.ICMPV6_TYPE_CPA,
-        "151" : _consts.ICMPV6_TYPE_MRA,
-        "152" : _consts.ICMPV6_TYPE_MRS,
-        "153" : _consts.ICMPV6_TYPE_MRT,
+        "NEIGHBOUR_SOLICITATION" : _consts.ICMPV6_TYPE_NEIGHBOUR_SOLICITATION,
+        "NEIGHBOUR_ADVERTISMENT" : _consts.ICMPV6_TYPE_NEIGHBOUR_ADVERTISMENT,
+        "REDIRECT_MESSAGE" : _consts.ICMPV6_TYPE_REDIRECT_MESSAGE,
+        "ROUTER_RENUMBERING" : _consts.ICMPV6_TYPE_ROUTER_RENUMBERING,
+        "ICMP_NODE_QUERY" : _consts.ICMPV6_TYPE_ICMP_NODE_QUERY,
+        "ICMP_NODE_RESPONSE" : _consts.ICMPV6_TYPE_ICMP_NODE_RESPONSE,
+        "INDSM" : _consts.ICMPV6_TYPE_INDSM,
+        "INDAM" : _consts.ICMPV6_TYPE_INDAM,
+        "HAAD_REQUEST" : _consts.ICMPV6_TYPE_HAAD_REQUEST,
+        "HAAD_REPLY" : _consts.ICMPV6_TYPE_HAAD_REPLY,
+        "MPS" : _consts.ICMPV6_TYPE_MPS,
+        "MPA" : _consts.ICMPV6_TYPE_MPA,
+        "CPS" : _consts.ICMPV6_TYPE_CPS,
+        "CPA" : _consts.ICMPV6_TYPE_CPA,
+        "MRA" : _consts.ICMPV6_TYPE_MRA,
+        "MRS" : _consts.ICMPV6_TYPE_MRS,
+        "MRT" : _consts.ICMPV6_TYPE_MRT,
         "200" : _consts.ICMPV6_TYPE_PRIVATE_EXP200,
         "201" : _consts.ICMPV6_TYPE_PRIVATE_EXP201,
         "255" : _consts.ICMPV6_TYPE_RESERVED255,
@@ -330,8 +330,6 @@ class ICMPV6(_protocols.Protocol):
             # TCP Header
             cksum |= raw_value << offset
             offset += bit
-            print "print Bit"
-            print bit
             
             # calculate checksum and place it at the correct offset in raw_value
             total_length = offset

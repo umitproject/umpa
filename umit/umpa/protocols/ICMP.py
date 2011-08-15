@@ -415,7 +415,7 @@ class ICMP(_protocols.Protocol):
         """
 
         super(ICMP, self).__setattr__(attr, value)
-        print "i am here "
+
 
         if attr == 'type':
             # disable all variable fields initially
@@ -502,10 +502,13 @@ class ICMP(_protocols.Protocol):
             self.ident = fields[3] >> 16
             self.seq   = fields[3] & 0x0000FFFF
         elif self.type in (_consts.ICMP_TYPE_REDIRECT, ):
-            self.redir_gw = ( (fields[3]>>24) & 0xff,
-                              (fields[3]>>16) & 0xff,
-                              (fields[3]>> 8) & 0xff,
-                              (fields[3]    ) & 0xff, )
+            
+            addr = []
+            addr.append((fields[3]>>24) & 0xff)
+            addr.append((fields[3]>>16) & 0xff)
+            addr.append((fields[3]>> 8) & 0xff)
+            addr.append((fields[3]    ) & 0xff)
+            self.redir_gw = '.'.join("%s" % addr_part for addr_part in addr)
         elif self.type in (_consts.ICMP_TYPE_PARAMETER_PROBLEM, ):
             self.pointer = fields[3] >> 24
             self.pointer_unused = fields[3] & 0x00ffffff
@@ -520,7 +523,8 @@ class ICMP(_protocols.Protocol):
             fields = struct.unpack(data_format, buffer[:data_size])
             buffer = buffer[data_size:]
 
-            self.addressmask = fields[0:4]
+            self.addressmask = '%d.%d.%d.%d' %  (fields[0:4] )
+            
         elif self.type in (_consts.ICMP_TYPE_TIMESTAMP,
                            _consts.ICMP_TYPE_TIMESTAMP_REPLY,):
             data_size = 12
