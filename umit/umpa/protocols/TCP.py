@@ -599,8 +599,8 @@ class TCP(_protocols.Protocol):
             # TCP header length...converted to bits unit
             total_length = self.get_field('_hdr_len').fillout()*32
             # add payload
-            print "prot bit value"
-            print offset
+            #print "prot bit value"
+            #print offset
             total_length += protocol_bits
             # conversion to bytes unit
             total_length /= 8
@@ -611,7 +611,7 @@ class TCP(_protocols.Protocol):
             it = iter(protocol_container)
             for proto in it:
                 if isinstance(proto, IPV6):
-                    print "i am here "
+                    #print "i am here "
                     pheader = _layer4_ipv6.PseudoHeader6(self.protocol_id, total_length)
                     pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
                     cksum |= pheader_raw << offset
