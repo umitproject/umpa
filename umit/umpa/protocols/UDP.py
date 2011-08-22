@@ -386,7 +386,8 @@ class UDP(_protocols.Protocol):
                     pheader_raw = pheader.get_raw(protocol_container, protocol_bits)[0]
                     cksum |= pheader_raw << offset
                     raw_cksum = _net.in_cksum(cksum)
-                    cksum_cal = ((raw_cksum << 8) | (raw_cksum >> 8)) & 0xFFFF
+                    #cksum_cal = ((raw_cksum << 8) | (raw_cksum >> 8)) & 0xFFFF
+                    cksum_cal = raw_cksum
                     raw_value |= cksum_cal << cksum_rev_offset
                 elif isinstance(proto, IP):
                     pheader = _layer4.PseudoHeader(self.protocol_id,self.get_field('_length').fillout())
