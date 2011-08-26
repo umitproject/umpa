@@ -358,7 +358,7 @@ class _HSequenceNumber(_fields.IntField):
 
         # TODO: implemention real auto-filling here ;)
         # otherwise we can simple return 0
-        return 0
+        return self._tmp_value
 
 class _HAcknowledgmentNumber(_fields.IntField):
     """
@@ -487,6 +487,7 @@ class TCP(_protocols.Protocol):
         """
         Create a new TCP().
         """
+        #print "in tcp.py init"
 
         control_bits = ('urg', 'ack', 'psh', 'rst', 'syn', 'fin')
         control_bits_predefined = dict.fromkeys(control_bits, 0)
@@ -524,6 +525,7 @@ class TCP(_protocols.Protocol):
         self.get_field('_padding').set_doc("The TCP header padding is used "
             "to ensure that the TCP header ends and data begins on a 32 bit "
             "boundary. See RFC 793 for more.")
+        self.get_field('_seq')._tmp_value  = 1234
 
     def _pre_raw(self, raw_value, bit, protocol_container, protocol_bits):
         """
@@ -545,7 +547,10 @@ class TCP(_protocols.Protocol):
 
         @return: C{raw_value, bit}
         """
+        #print "in tcp,py pre raw"
 
+        self.get_field('_seq')._tmp_value = self.get_field('_seq')._tmp_value + 1
+        
         # Padding
         self.get_field('_padding')._tmp_value = \
                                                 self.get_field('options').bits
@@ -577,6 +582,7 @@ class TCP(_protocols.Protocol):
         @return: C{raw_value, bit}
         """
 
+        #print "in tcp.py files"
         # rev_offset it the offset from the right side
         cksum_rev_offset = bit - self.get_offset('_checksum') - \
                                             self.get_field('_checksum').bits
